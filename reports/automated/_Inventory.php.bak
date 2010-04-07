@@ -1,0 +1,4 @@
+<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Top_Automated.php" ?>
+
+
+<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Bottom_Automated.php" ?>

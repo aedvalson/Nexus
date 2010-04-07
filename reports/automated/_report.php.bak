@@ -1,0 +1,26 @@
+<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Top_Automated.php" ?>
+
+
+<STYLE>
+table {
+border-collapse: collapse;
+}
+</STYLE>
+
+
+<?
+
+	$DB = new conn();
+	$DB->connect();
+	$sql = "select data from reports where id = " . $DB->sanitize($_REQUEST["report_id"]);
+	$result = $DB->query_scalar($sql);
+	echo $result;
+?>
+
+
+<script type="text/javascript">
+
+
+
+
+<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Bottom_Automated.php" ?>

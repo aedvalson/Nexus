@@ -1,0 +1,12 @@
+[17-Feb-2010 12:03:27] PHP Fatal error:  Call to undefined method TableRowBox::get_rhc() in /home/republic/public_html/php2/reports/pdf/height.php on line 121
+[17-Feb-2010 13:44:58] PHP Fatal error:  Call to undefined method TableRowBox::get_rhc() in /home/republic/public_html/php2/reports/pdf/height.php on line 121
+[17-Feb-2010 13:50:36] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=223&output=pdf' completed in 4 seconds
+[17-Feb-2010 13:51:18] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=224&output=pdf' completed in 11 seconds
+[17-Feb-2010 13:54:18] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=225&output=pdf' completed in 11 seconds
+[17-Feb-2010 14:12:59] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=226&output=pdf' completed in 11 seconds
+[17-Feb-2010 14:14:10] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=227&output=pdf' completed in 12 seconds
+[17-Feb-2010 14:51:30] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=228&output=pdf' completed in 6 seconds
+[17-Feb-2010 21:20:02] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=229&output=pdf' completed in 3 seconds
+[03-Apr-2010 13:46:54] Processing of 'http://republictech.net/php2/reports/automated/_report.php?report_id=230&output=pdf' completed in 3 seconds
+[03-Apr-2010 14:07:21] Processing of 'http://www.republictech.net/php2/reports/automated/_report.php?report_id=232&output=pdf' completed in 3 seconds
+[03-Apr-2010 14:13:28] Processing of 'http://www.republictech.net/php2/reports/automated/_report.php?report_id=235&output=pdf' completed in 3 seconds

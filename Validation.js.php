@@ -1,9 +1,4 @@
 <? 
-header("Content-type: text/css");
-include "./findconfig.php";
-
-?>
-<? 
 header("Content-type: text/javascript");
 include "./findconfig.php";
 

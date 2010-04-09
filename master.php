@@ -99,9 +99,13 @@
 	function fixHeight()
 	{
 		// Adjust height of left pane to force line all the way down page
-		$('#navMenu').css("height", $('#pageContent').height() + "px");
-		$('.contentBody').css("height", $('#navMenu').height() + "px");
-		$('.navPageSpacing, .navSpacer').css("height", $('.contentBody').height() - $('#bullets').height() + 'px');
+		$('.navMenu').css("height", $('.pageContent').height() + "px");
+		if ($('.contentBody').height())
+		{
+			$('.contentBody').css("height", $('.navMenu').height() + "px");
+			$('.navPageSpacing, .navSpacer').css("height", $('.contentBody').height() - $('#bullets').height() + 'px');
+		}
+
 	}
 
 	-->

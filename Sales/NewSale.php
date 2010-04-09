@@ -148,13 +148,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 				<div class="formOptionSet" id="orderCompleteOptions">
 					<span class="label">Date Completed:</span>
-					<span class="value" /><input type="text" id="tbDateCompleted" class="datepicker"></input>
+					<input type="text" id="tbDateCompleted" class="datepicker value"></input>
 				</div>
 
 				<div style="clear:both"></div>
-				<ul class="form">
-					
-				</ul>
+
 			</div>
 		</div>
 <!-- END ORDER STATUS DIV -->

@@ -1,4 +1,5 @@
-<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Top.php" ?>
+<? include "findconfig.php" ?>
+<? include $DOCROOT."/".$ROOTPATH."/Includes/Top.php" ?>
 
 
 <?
@@ -23,8 +24,8 @@ $DB->close();
  */
 
  // Standard inclusions      
- include($_SERVER['DOCUMENT_ROOT']."/php/pChart/pChart/pData.class");   
- include($_SERVER['DOCUMENT_ROOT']."/php/pChart/pChart/pChart.class");   
+ include($DOCROOT.$ROOTPATH."/pChart/pChart/pData.class");   
+ include($DOCROOT."/".$ROOTPATH."/pChart/pChart/pChart.class");   
   
  // Dataset definition    
  $DataSet = new pData;   
@@ -36,16 +37,16 @@ $DB->close();
   
  // Initialise the graph   
  $Test = new pChart(700,500);  
- $Test->setFontProperties($_SERVER['DOCUMENT_ROOT']."/php/pChart/Fonts/tahoma.ttf",13);   
+ $Test->setFontProperties($DOCROOT."/".$ROOTPATH."/pChart/Fonts/tahoma.ttf",13);   
  
   
   
  // Finish the graph   
- $Test->setFontProperties($_SERVER['DOCUMENT_ROOT']."/php/pChart/Fonts/tahoma.ttf",13);   
+ $Test->setFontProperties($DOCROOT."/".$ROOTPATH."/pChart/Fonts/tahoma.ttf",13);   
  $Test->drawPieGraph($DataSet->GetData(),$DataSet->GetDataDescription(),250,210,240,PIE_PERCENTAGE_LABEL,TRUE,50,20,5);  
  $Test->drawPieLegend(510,15,$DataSet->GetData(),$DataSet->GetDataDescription(),250,250,250);  
    
- $Test->Render("example1.png");
+ $Test->Render($TempDir . "/example1.png");
 ?>
 
 
@@ -106,7 +107,7 @@ $DB->close();
 			</tr>
 			<tr>
 				<td colspan="4">
-					<img src="/php/reports/example1.png" style="width:700px">
+					<img src="/<?= $ROOTPATH . $TempDirVirtual ?>/example1.png" style="width:700px">
 				</td>
 			</tr>
 		</table>
@@ -162,4 +163,4 @@ $DB->close();
 		</SCRIPT>
 
 
-<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Bottom.php" ?>
+<? include $DOCROOT."/".$ROOTPATH."/Includes/Bottom.php" ?>

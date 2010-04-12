@@ -1,12 +1,14 @@
 <?
+$dbuser = "NexusDevAccount";
+$dbpass = "abc123^";
+$dbname = "NexusDev";
 
-$dbuser = "republic_nexAdmn";
-$dbpass = "P0p0puoiy";
-$dbname = "republic_Nexus";
 
 $DOCROOT = $_SERVER['DOCUMENT_ROOT'];
-$ROOTPATH = "php2";
-$FQDN			= "http://www.republictech.net";
+$ROOTPATH = "php";
+$TempDir	= $DOCROOT . $ROOTPATH . "/temp";
+$TempDirVirtual	= "/temp";
+$FQDN			= "http://65.87.195.10";
 $tcpdfPath		= "3rdParty/tcpdf";
 $imagePath		= "/" . $ROOTPATH . "/images";
 

@@ -108,6 +108,27 @@
 
 	}
 
+	function pdfReport( $element )
+	{
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "generateReport",  value: "<HTML><HEAD></HEAD><BODY>" + $element.html() + "</BODY></HTML>" }, function(json) {
+			eval("var args = " + json);		
+			if (args.success == "success")
+			{
+				if (args.output)
+				{
+					report = args.output;
+					url = '<?= $FQDN ?>/<?= $ROOTPATH ?>/reports/pdf/generate/html2ps.php?process_mode=single&URL=URLGOESHERE&proxy=&pixels=1024&scalepoints=1&renderimages=1&renderlinks=1&renderfields=1&media=Letter&cssmedia=Screen&leftmargin=15&rightmargin=15&topmargin=15&bottommargin=15&encoding=&headerhtml=&footerhtml=&watermarkhtml=&toc-location=before&smartpagebreak=1&pslevel=3&method=fpdf&pdfversion=1.3&output=0&convert=Convert+File457'
+					.replace('URLGOESHERE', escape('<?= $FQDN ?>/<?= $ROOTPATH ?>/reports/automated/_report.php?report_id=' + report + '&output=pdf'));
+					window.open(url);
+				}
+			}
+			else
+			{
+				 alert("Ajax failed.");
+			}
+		});
+	}
+
 	-->
 	</script>
 

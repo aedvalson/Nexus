@@ -64,7 +64,7 @@ table.report
 	font-weight: normal;
 	font-size: 11px;
 	color: #404040;
-	background-color: #fafafa;
+	/* background-color: #fafafa; */
 	/*border: 1px #6699CC solid; */
 	border-collapse: collapse;
 	margin-bottom:1em;

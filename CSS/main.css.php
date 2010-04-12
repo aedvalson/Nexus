@@ -70,7 +70,7 @@ table.report
 	font-weight: normal;
 	font-size: 11px;
 	color: #404040;
-	background-color: #fafafa;
+	background-color: white;
 	/*border: 1px #6699CC solid; */
 	border-collapse: collapse;
 	margin-bottom:1em;
@@ -84,6 +84,7 @@ table.report td
 	font-weight: normal;
 	font-size: 11px;
 	color: #404040;
+	background-color: white;
 	vertical-align:top;
 		border-collapse: collapse;
 	border: 2px solid silver;
@@ -97,7 +98,7 @@ table.report td
 
 table.report tr td
 {
-	background-color: #f1f1f1;
+	background-color: white;
 	padding: 6px 10px 6px 10px;
 }
 

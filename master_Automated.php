@@ -59,7 +59,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
   <title> Nexus </title>
 
 	<? $time = time(); ?>
-	<link rel="StyleSheet" href="<?= $FQDN ?>/<?= $ROOTPATH ?>/CSS/main.css?<?= $time ?>" />
+	<link rel="StyleSheet" href="<?= $FQDN ?>/<?= $ROOTPATH ?>/CSS/main.css.php?<?= $time ?>" />
 
  </head>
 

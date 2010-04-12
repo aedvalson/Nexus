@@ -53,7 +53,8 @@ $DB->close();
 
 
 <div id="container">
-	<div style="width:1020px;" id="reportDiv">
+	<a href="#" onclick="pdfReport( $('#reportDiv') ); return false;">PDF</a>
+	<div style="background-color: white; width:1020px;" id="reportDiv">
 
 		<center>
 		<h1>General Sales Report</h1>
@@ -62,7 +63,7 @@ $DB->close();
 
 		<br><br><br>
 
-		<table class="report" CELLSPACING="0" >
+		<table class="report" CELLSPACING="0" style="width: 1000px;"
 			<tr>
 				<td class="labelCell">TOTAL SALES:</td>
 				<td><?= $total_sales ?></td>
@@ -106,8 +107,8 @@ $DB->close();
 				</td>
 			</tr>
 			<tr>
-				<td colspan="4">
-					<img src="/<?= $ROOTPATH . $TempDirVirtual ?>/example1.png" style="width:700px">
+				<td colspan="4" id="imgCell">
+					<img src="<?= $FQDN . "/" . $ROOTPATH . $TempDirVirtual ?>/example1.png" />
 				</td>
 			</tr>
 		</table>
@@ -119,48 +120,6 @@ $DB->close();
 <br><br><br><br>
 <div style="clear:both; height:1px">&nbsp;</div>
 
-		<SCRIPT type="text/javascript">
-			$().ready( function() {
-				var _element = $('#container');
-				var $element = _element.clone(true);
-				var method = 'pdfLink';
-				
-				$($element).find('#filterRow').remove();
-				$($element).find('tfoot').remove();
-				
-				$.post('/php/Includes/ajax.php', { id: "generateReport",  value: $($element).html() }, function(json) {
-					eval("var args = " + json);		
-					if (args.success == "success")
-					{
-						if (args.output)
-						{
-							report = args.output;
-
-							if (method == 'pdfLink')
-							{
-								url = '/php/reports/pdf/generate/html2ps.php?process_mode=single&URL=URLGOESHERE&proxy=&pixels=1024&scalepoints=1&renderimages=1&renderlinks=1&renderfields=1&media=Letter&cssmedia=Screen&leftmargin=30&rightmargin=15&topmargin=15&bottommargin=15&encoding=&headerhtml=&footerhtml=General%20Sales%20Report&watermarkhtml=&toc-location=before&smartpagebreak=1&pslevel=3&method=fpdf&pdfversion=1.3&output=0&convert=Convert+File457'
-								.replace('URLGOESHERE', escape('republictech.net/php/reports/automated/_report.php?report_id=' + report + '&output=pdf'));
-								window.open(url);
-							}
-
-							if (method == 'excelLink')
-							{
-								window.open('http://aedvalson.info/php/reports/automated/_report.php?report_id=' + report + '&output=excel');
-							}
-						}
-						else
-						{
-
-						}
-					}
-					else
-					{
-						 alert("Ajax failed.");
-					}
-				});
-
-			});
-		</SCRIPT>
 
 
 <? include $DOCROOT."/".$ROOTPATH."/Includes/Bottom.php" ?>

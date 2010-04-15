@@ -83,17 +83,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$prod2 = json_encode($products["products"]);
 		$prodArray = json_decode($prod2, true);
 
-		// Update inventory status for items in order.
-		if ($prodArray)
-		{
-			foreach ($prodArray as $product)
-			{
-					$serial = $product['Serial'];
-					$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
-					$DB->execute_nonquery($sql);
-			}
-		}
-
 
 		if (is_numeric($order_id))
 		{
@@ -108,6 +97,31 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 			$query1 = 'insert into orders (order_status_id, contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\')';
 
 			$output = $DB->insert($query1);
+			$order_id = $output;
+		}
+
+
+
+		// Get First storage location from DB. TODO: Get DEFAULT
+		$sql = "select * from storagelocations";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_assoc($result);
+		$storagelocation_id = $row["storagelocation_id"];
+		$storagelocation_name = $row["storagelocation_name"];
+
+		// Reset all inventory that is contained in this product to default locationa
+		$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE status = 4 AND status_data = " . $order_id;
+		$DB->execute_nonquery($sql);
+
+		// Update inventory status for items in order.
+		if ($prodArray)
+		{
+			foreach ($prodArray as $product)
+			{
+					$serial = $product['Serial'];
+					$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
+					$DB->execute_nonquery($sql);
+			}
 		}
 	}
 

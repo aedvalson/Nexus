@@ -831,7 +831,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				var quant = prod.Serial;
 				var prod_id = prod.Product_ID;
 				var prod_name = prod.Name;
-				text = text + "<tr class=\"row" + row + "\"><td>" + prod_id + "</td><td>" + prod_name + "</td><td>" + quant + "</td><td></td></tr>";
+				var index = prod.Index;
+				text = text + "<tr class=\"row" + row + "\"><td>" + prod_id + "</td><td>" + prod_name + "</td><td>" + quant + "</td><td><a href=\"#\" onclick=\"deleteProduct(" + index + "); return false;\">Delete</a></td></tr>";
 				row = 1 - row;
 			}	
 			text = text + "</table>";
@@ -1757,6 +1758,48 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 
 	// Equipment Panel Scripts
+	function deleteProduct (index)
+	{
+		alert(index);		
+		var $prodArrayHiddenField = $('#hProductArray');
+
+		// See if we already have a value in the field
+		if ($prodArrayHiddenField.val() != '')
+		{
+			// Read the existing object
+			var theObject = JSON.parse($prodArrayHiddenField.val());
+
+			for (var j in theObject.products)
+			{
+				if (theObject.products[j].Index == index)
+				{
+					delete theObject.products[j];
+				}
+			}
+
+			// Clear Null nodes and rewrite products array
+			var j = 0;
+			var newElements = [];
+			for (var k in theObject.products)
+			{
+				if (theObject.products[k] != null)
+				{
+					var newElement = theObject.products[k];
+					newElements[newElements.length] = newElement;
+				}
+			}
+
+			theObject.products = newElements;
+
+			// Store new object
+			$prodArrayHiddenField.val(JSON.stringify(theObject));
+			alert($prodArrayHiddenField.val());
+			updateForm();
+		}
+	}
+
+
+
 	var $addProductLink = $('#formAddProduct, #formAddAccessory');
 	$addProductLink.submit( function() {
 
@@ -1976,17 +2019,17 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		nextPage();
 	}
 
-	function nextPage()
+	function nextPage() // Advances to next page.
 	{
 		var nextPage = null;
 		switch(pageStatus)
 		{
 			case "customerInfo":	nextPage = "equipment"; break;
-			case "equipment":		nextPage = "status"; break;
-			case "status":			nextPage = "payment"; break;
+			case "equipment":		nextPage = "payment"; break;
 			case "payment":			nextPage = "roles"; break;
 			case "roles":			nextPage = "dealer"; break;
-			case "dealer":			nextPage = "customerInfo"; break;
+			case "dealer":			nextPage = "status"; break;
+			case "status":			nextPage = "customerInfo"; break;
 		}
 		pageStatus = nextPage;
 		pager();

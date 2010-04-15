@@ -65,16 +65,17 @@ select
 
 table.report
 {
+	width: 1000px;
 	text-align: center;
 	font-family: Verdana;
 	font-weight: normal;
 	font-size: 11px;
 	color: #404040;
 	background-color: white;
-	/*border: 1px #6699CC solid; */
+	/*border: 1px #ddd solid; */
 	border-collapse: collapse;
 	margin-bottom:1em;
-	border: 2px solid silver;
+	border: 1px solid silver;
 	font-size: 2em;
 }
 table.report td
@@ -87,7 +88,7 @@ table.report td
 	background-color: white;
 	vertical-align:top;
 		border-collapse: collapse;
-	border: 2px solid silver;
+	border: 1px solid #aaa;
 	font-size: 0.5em;
  }
 
@@ -98,8 +99,34 @@ table.report td
 
 table.report tr td
 {
-	background-color: white;
 	padding: 6px 10px 6px 10px;
+}
+
+table.report thead td
+{
+	background-color: #aaa;
+	height: 2em;
+}
+
+table.report tbody tr.even td
+{
+	background-color: white;
+}
+
+table.report tbody tr.odd td
+{
+	background-color: #eee;
+}
+
+table.report tbody tr td.shaded
+{
+	background-color: #ddd;
+}
+
+div.reportContainer
+{
+	width: 1020px;
+	background-color: white;
 }
 
 

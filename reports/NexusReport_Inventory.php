@@ -25,8 +25,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 
 // Construct Query
 	$sql = "SELECT * from inventory ";
+	$sql .= "JOIN products on inventory.product_id = products.product_id ";
+	$sql .= "JOIN inventory_status on inventory.status = inventory_status.status_id ";
 	$sql .= "WHERE DateAdded >= STR_TO_DATE('" . $startDate . "', '%Y-%m-%d') ";
 	$sql .= "AND DateAdded < STR_TO_DATE('" . $endDate . "', '%Y-%m-%d') ";
+	$sql .= "ORDER BY DateAdded, inventory_id ";
 
 	$DB = new conn();
 	$DB->connect();
@@ -38,23 +41,42 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 	}
 	$DB->close();
 
-echo "Start: $startDate <br/>";
-echo "end: $endDate<br/>";
-echo "sql: $sql";
-
 ?>
 
-<TABLE>
+<div class="reportContainer">
+	<h1>Inventory Report</h1>
 
-<? 
-foreach ($InventoryArray as $InventoryRow)
-{
-	?> <TR><TD>Row</TD></TR> <?
-}
-	?>
+	<TABLE class="report">
+		<THEAD>
+			<TR>
+				<TD>Serial #</TD>
+				<TD>Type</TD>
+				<TD>Date Received</TD>
+				<TD>Status</TD>
+				<TD>Location</TD>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<? 
+				$row = "even";
+			foreach ($InventoryArray as $InventoryRow)
+			{
+				if ($rowClass == "even") $rowClass = "odd";
+				else $rowClass = "even";
 
+			?> 
+			<TR class="<?= $rowClass ?>">
+				<TD class="shaded"><?= $InventoryRow["inventory_id"] ?></TD>
+				<td><?= $InventoryRow["product_name"] ?></td>
+				<td><?= date("m/d/Y", strtotime($InventoryRow["DateAdded"])) ?></td>
+				<td><?= $InventoryRow["status_name"] ?></td>
+				<td><?= $InventoryRow["status_data_text"] ?></td>
+			</TR> 
+			<? } ?>
+		</TBODY>
 
-</TABLE>
+	</TABLE>
+</div>
 
 
 

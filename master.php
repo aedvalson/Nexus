@@ -63,6 +63,16 @@
 		return _prettyDate;
 	}
 
+	function getPrettyDate(datetext)
+	{		
+		var _date = datetext.split(" ")[0];
+		_date = replaceAll(_date, "-", "/");
+		var myDate = new Date(_date);
+		var month = myDate.getMonth() + 1;
+		_prettyDate = month + '/' + myDate.getDate() + '/' + myDate.getFullYear();
+		return _prettyDate;
+	}
+
 
 	function editLinkContent()
 	{
@@ -154,7 +164,7 @@
 			<li><a href="/<?= $ROOTPATH ?>/Inventory/ManageInventory.php">Inventory</a></li>
 			<li><a href="/<?= $ROOTPATH ?>/Sales/ManageSales.php">Sales / Leads</a></li>
 			<li><a href="/<?= $ROOTPATH ?>/Customers/ManageContacts.php">Contacts</a></li>
-			<li><a href="#">Reports</a></li>
+			<li><a href="/<?= $ROOTPATH ?>/reports/index.php">Reports</a></li>
 			<li><a href="/<?= $ROOTPATH ?>/Admin/index.php">Admin</a></li>
 		</ul>
 	</div>

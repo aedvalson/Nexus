@@ -412,7 +412,7 @@ SQLEND;
 							prettyDate = '<span style="display: block; margin-top:7px;">Sale Date: ' + month + '/' + myDate.getDate() + '/' + myDate.getFullYear() + '</span>';
 						}
 
-						$('#theTable tbody').append('<tr id = "row'+_r.order_id+'" ><td>'+_r.order_id+'</td><td>' + _r.contact_DisplayName + '</td><td>'+formatCurrency(_r.amount)+'</td><td>' + productText + '</td><td>' +_r.DateAdded + '<br>by: ' + _r.username + '</td><td>' + dealerText +  '</td><td>' + _r.order_status+ prettyDate + '</td></tr>');
+						$('#theTable tbody').append('<tr id = "row'+_r.order_id+'" ><td>'+_r.order_id+'</td><td>' + _r.contact_DisplayName + '</td><td>'+formatCurrency(_r.amount)+'</td><td>' + productText + '</td><td>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.username + '</td><td>' + dealerText +  '</td><td>' + _r.order_status+ prettyDate + '</td></tr>');
 						row = 1 - row;
 					}
 					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="3" style="border:0px;"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/><select class="pagesize"><option selected="selected"  value="10">10</option><option value="20">20</option><option value="30">30</option><option  value="40">40</option></select></td><td style="text-align: right" colspan="4">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></td></tr></tfoot>');

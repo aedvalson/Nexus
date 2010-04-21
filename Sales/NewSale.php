@@ -257,11 +257,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						<tr>
 							<th>Dealer</th>
 							<th>Role</th>
+							<th>Delete</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td colspan="2">No Dealers have been added to this Sale.</td>
+							<td colspan="3">No Dealers have been added to this Sale.</td>
 						</tr>
 					</tbody>
 				</table></div>
@@ -1298,7 +1299,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				}
 				else
 				{
-					var elements = JSON.parse($('#hCommissionArray').val()).elements;
+					var elements = $('#hCommissionArray').val() ? JSON.parse($('#hCommissionArray').val()).elements : "";
 				}
 				
 				var div = $('#dealerBox');
@@ -1976,14 +1977,53 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		}
 		else return; // no data, do nothing
 
+		$('#roleTable tbody > tr').remove();
 		if (theObject.roles.length > 0)
 		{
-			$('#roleTable tbody > tr').remove();
+			
 			for (i=0; i < theObject.roles.length ; i++)
 			{
-				$('#roleTable tbody').append('<tr><td>' + theObject.roles[i].userText + '</td><td>' + theObject.roles[i].roleText + '</td></tr>');
+				$('#roleTable tbody').append('<tr><td>' + theObject.roles[i].userText + '</td><td>' + theObject.roles[i].roleText + '</td><td><a href="#" onClick="deleteRole(' + theObject.roles[i].Index + '); return false;">Delete</a></tr>');
 			}
 		}
+		else
+		{
+			$('#roleTable tbody').append('<tr><td colspan="3">No Dealer Roles Added Yet.</td></tr>');
+		}
+	}
+
+	function deleteRole(index)
+	{
+		var $roleStorage = $('#hRolesArray');
+		// See if we already have a value in the field
+		if ($roleStorage.val() != '')
+		{
+			// Read the existing object
+			var theObject = JSON.parse($roleStorage.val());
+		}
+		for (var j in theObject.roles)
+		{
+			if (theObject.roles[j].Index == index)
+			{
+				delete theObject.roles[j];
+			}
+		}
+
+		// Clear Null nodes and rewrite products array
+		var j = 0;
+		var newroles = [];
+		for (var k in theObject.roles)
+		{
+			if (theObject.roles[k] != null)
+			{
+				var newElement = theObject.roles[k];
+				newroles[newroles.length] = newElement;
+			}
+		}
+		theObject.roles = newroles;
+		$('#hRolesArray').val(JSON.stringify(theObject));
+		populateRoles();
+		return false;
 	}
 
 

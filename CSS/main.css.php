@@ -63,13 +63,31 @@ select
 	margin-left:15px;
 	}
 
+div.reportHeader
+{
+	font-family: Verdana,sans-serif,Arial;
+	font-weight: normal;
+	padding: 1em 0em 2em 4em;
+}
+
+.reportHeader h1
+{
+	font-size: 1.6em;
+	margin-bottom: 0.2em;
+}
+
+.reportHeader h2
+{
+	font-size: 1.1em;
+}
+
 table.report
 {
 	width: 1000px;
 	text-align: center;
 	font-family: Verdana;
 	font-weight: normal;
-	font-size: 11px;
+	font-size: 14px;
 	color: #404040;
 	background-color: white;
 	/*border: 1px #ddd solid; */
@@ -83,13 +101,12 @@ table.report td
 	text-align: left;
 	font-family: Verdana, sans-serif, Arial;
 	font-weight: normal;
-	font-size: 11px;
 	color: #404040;
 	background-color: white;
 	vertical-align:top;
 		border-collapse: collapse;
-	border: 1px solid #aaa;
-	font-size: 0.5em;
+	border: 2px solid #aaa;
+	font-size: 0.6em;
  }
 
  table.report td.labelCell

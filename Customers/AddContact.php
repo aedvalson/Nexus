@@ -51,6 +51,22 @@ $DB->close();
 
 
 <form name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+<div class="navMenu" id="navMenu">
+	<div id="bullets">
+		<div class="navHeaderdiv"><h1>Contacts</h1></div>
+		<div class="navBulletBorderTop"></div>
+		<div class="navBullet navBulletSelected" id="custBullet"><a href="#" id="custBulletLink">Add Contact</a></div>
+		<div class="navBulletBorderBottom"></div>
+	</div>
+	<div class="navPageSpacing"></div>
+</div>
+
+
+<div class="pageContent" id="pageContent">
+	<div class="contentDiv">
+
+		<div class="formDiv" style="display: block; background-color: #EDECDC">
+			<h1>Add Contact</h1>
 
    <ul class="form">
 	 <li class="validated" id="tbContactType_li">
@@ -144,6 +160,9 @@ $DB->close();
                
    </ul>
 
+</div>
+</div>
+</div>
 
 </form>
 

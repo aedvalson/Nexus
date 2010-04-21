@@ -61,10 +61,25 @@ $DB->connect();
 $DB->close();
 
 ?>
-
-
-
 <form name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+<div class="navMenu" id="navMenu">
+	<div id="bullets">
+		<div class="navHeaderdiv"><h1>Inventory</h1></div>
+		<div class="navBulletBorderTop"></div>
+		<div class="navBullet navBulletSelected" id="custBullet"><a href="#" id="custBulletLink">Add Inventory</a></div>
+		<div class="navBulletBorderBottom"></div>
+	</div>
+	<div class="navPageSpacing"></div>
+</div>
+
+
+<div class="pageContent" id="pageContent">
+	<div class="contentDiv">
+
+		<div class="formDiv" style="display: block; background-color: #EDECDC">
+			<h1>Add Inventory</h1>
+
+
 
 
 	<div style="float:left;">
@@ -164,8 +179,12 @@ $DB->close();
 
 	</div>
 	<div class="spacer">
-</form>
 
+
+</div>
+</div>
+</div>
+</form>
 
 <script type="text/javascript">
 	$('#tbAmtToAdd').change(function() {

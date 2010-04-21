@@ -55,17 +55,17 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$DB = new conn();
 		$DB->connect();
 		
-		$orderStatus = $DB->sanitize($_REQUEST["orderStatus"]);
-		$customer_id = $DB->sanitize($_REQUEST["customer_id"]);
-		$amount = $DB->sanitize($_REQUEST["amount"]);
-		$CommStructureString = $_REQUEST["CommStructureString"];
-		$ProductsString = $_REQUEST["ProductsString"];
-		$AccessoriesString = $DB->sanitize($_REQUEST["AccessoriesString"]);
-		$PaymentString = $DB->sanitize($_REQUEST["PaymentString"]);
-		$order_id = $DB->sanitize($_REQUEST["order_id"]);
-		$user_id = $DB->sanitize($_REQUEST["user_id"]);
-		$dateCompleted = $DB->sanitize($_REQUEST["dateCompleted"]);
-		$dealerArray = $DB->sanitize($_REQUEST["dealerArray"]);
+		$orderStatus		= $DB->sanitize($_REQUEST["orderStatus"]);
+		$customer_id		= $DB->sanitize($_REQUEST["customer_id"]);
+		$amount				= $DB->sanitize($_REQUEST["amount"]);
+		$CommStructureString= $_REQUEST["CommStructureString"];
+		$ProductsString		= $_REQUEST["ProductsString"];
+		$AccessoriesString	= $DB->sanitize($_REQUEST["AccessoriesString"]);
+		$PaymentString		= $DB->sanitize($_REQUEST["PaymentString"]);
+		$order_id			= $DB->sanitize($_REQUEST["order_id"]);
+		$user_id			= $DB->sanitize($_REQUEST["user_id"]);
+		$dateCompleted		= $DB->sanitize($_REQUEST["dateCompleted"]);
+		$dealerArray		= $DB->sanitize($_REQUEST["dealerArray"]);
 		$date = "";
 		
 		if ($dateCompleted != "")
@@ -75,7 +75,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 			$date = ", dateCompleted = '" . $date . "'";
 		}
 
-		if ($orderStatus < 5 || $orderStatus = 7)		$newStatus = 4;
+		if ($orderStatus < 5 || $orderStatus == 7)		$newStatus = 4;
 		if ($orderStatus == 5 || $orderStatus == 6)		$newStatus = 5;
 		if ($orderStatus == 8)							$newStatus = 1;
 
@@ -87,6 +87,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		if (is_numeric($order_id))
 		{
 			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . $dealerArray . '\' WHERE order_id = ' . $order_id;
+
+			echo $query2;
 
 			$DB->execute_nonquery($query2);
 			$output = $order_id;
@@ -1236,7 +1238,7 @@ SQLEND;
 				from orders
 
 				left outer join contacts on orders.contact_id = contacts.contact_id
-				left outer join order_status on order_status.order_status_id = orders.order_status_id
+				left outer join order_status on orders.order_status_id = order_status.order_status_id
 				left outer join users on orders.AddedBy = users.user_id
 SQLEND;
 

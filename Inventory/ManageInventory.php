@@ -274,7 +274,7 @@ SQLEND;
 				$(this).click(function() {
 					var id = this.id;
 					var inventory_id = id.replace("expand_", "");
-					$("#td_" + inventory_id).html("<img src='/<?= $ROOTPATH ?>/Images/Loading.gif'>");
+					$("#td_" + inventory_id).html("<img src='/<?= $ROOTPATH ?>/images/loading.gif'>");
 					$("#tr_" +  inventory_id).toggle();
 		        	$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getInventoryDetails",  value: inventory_id }, function(json) {
 	                  	eval("var args = " + json);		
@@ -388,7 +388,7 @@ SQLEND;
 				$(this).remove(); // Remove all existing rows
 			}
 		});
-		$('#theTable').append('<tr id="loadingRow"><td style="padding:25px"><center><img src="/<?= $ROOTPATH ?>/Images/Loading.gif"><br>Filtering Results</center></td></tr>');
+		$('#theTable').append('<tr id="loadingRow"><td style="padding:25px"><center><img src="/<?= $ROOTPATH ?>/images/loading.gif"><br>Filtering Results</center></td></tr>');
 
        	$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', filters, function(json) {
 			eval("var args = " + json);		
@@ -404,7 +404,7 @@ SQLEND;
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable tbody').append('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td>'+_r.product_name+'</td><td>'+_r.invoice+'</td><td>'+_r.serial+'</td><td>' + _r.DateAdded + '<br>by: ' + _r.AddedByName + '</td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="mask"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+_r.status_data_text +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+						$('#theTable tbody').append('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + ' ' + getPrettyTime(_r.DateAdded) +  '<br>by: ' + _r.AddedByName + '</span></div></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+_r.status_data_text +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{
@@ -427,7 +427,8 @@ SQLEND;
 						$('#theTable').tablesorterPager({container: $("#pager"), positionFixed: false}).tablesorterFilter({filterContainer: $("#filter-box"),
 						  filterClearContainer: $("#filter-clear-button"),
 						  filterColumns: [1, 2, 3, 4, 5],
-						  filterCaseSensitive: false});
+						  filterCaseSensitive: false,
+							debug: true});
 					}
 					fixHeight();
 					$('.editLink').live("click", function() {
@@ -527,6 +528,7 @@ SQLEND;
 								}
 								else alert("Ajax failed.");
 							});
+							return false;
 						});
 
 						$('.cancelLink').unbind();

@@ -397,7 +397,7 @@ SQLEND;
 			$statusdatatext = '';
 		}
 
-		$sql = "UPDATE INVENTORY SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y') WHERE inventory_id = ".$inventory_id;
+		$sql = "UPDATE inventory SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y') WHERE inventory_id = ".$inventory_id;
 
 		$DB->execute_nonquery($sql);
 		$error = $sql;
@@ -1467,6 +1467,9 @@ SQLEND;
 				$and = true;
 			}
 		}
+
+		$sql = $sql . " ORDER BY serial ";
+
 		$result = mysql_query($sql);
 
 		$error = $sql;

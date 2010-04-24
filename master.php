@@ -73,6 +73,21 @@
 		return _prettyDate;
 	}
 
+	function getPrettyTime(datetext)
+	{
+		var _time = datetext.split(" ")[1];
+		return _time;
+	}
+
+	function pause(millis)
+	{
+	var date = new Date();
+	var curDate = null;
+
+	do { curDate = new Date(); }
+	while(curDate-date < millis);
+	} 
+
 
 	function editLinkContent()
 	{

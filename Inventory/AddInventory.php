@@ -1,6 +1,7 @@
 <? 
 include "./findconfig.php";
-include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" 
+include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
+$F = new FormElements();
 ?>
 <?
 
@@ -143,7 +144,7 @@ $DB->close();
 					  <div id="tbInvoice_msg"></div>
 			  </li>     
 			  
-		   
+		<? $F->tbNotVal("receivedDate", "Date Received", "datepicker"); ?>		   
 
 		 <li class="validated" id="btnSubmit_li">
 					  <label for="r_btnSubmit"></label>
@@ -152,6 +153,8 @@ $DB->close();
 					  <input id="btnSubmit" type="Submit" maxlength="20" value="Submit"  />
 					  <div id="btnSubmit_msg"></div>
 			  </li>          
+
+
 	   </ul>
 	</div>
 	<div style="float:left">

@@ -123,9 +123,10 @@ SQLEND;
 				<TR id="headerRow">
 				<th></th>
 				<th>Product Name</th>
-				<th style="width:90px;">Invoice</th>
-				<th>Serial</th>
-				<th>Date Added</th>
+				<th style="width:60px;">Invoice</th>
+				<th style="width:90px;">Serial</th>
+				<th style="width:80px;">Added</th>
+				<th style="width:70px;">Received</th>
 				<th>Status</th>
 				</TR>
 
@@ -146,6 +147,7 @@ SQLEND;
 					<td><Input id="tbInvoiceH" TYPE="TEXT"></TD>
 					<TD><INPUT id="tbSerialH" TYPE="TEXT"></TD>
 					<TD><input id="tbDateH" Type="text" class="datepicker"></td>
+					<TD><input id="tbDateReceivedH" Type="text" class="datepicker"></td>
 					<TD>
 						<SELECT id="ddlStatusH" style="width:90%;">
 							<OPTION value="%">Any Status</OPTION>
@@ -404,15 +406,15 @@ SQLEND;
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable tbody').append('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + ' ' + getPrettyTime(_r.DateAdded) +  '<br>by: ' + _r.AddedByName + '</span></div></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+_r.status_data_text +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+						$('#theTable tbody').append('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+_r.status_data_text +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{
 							?><OPTION value="<?= $prod["status_id"] ?>"><? echo $prod["status_name"]; ?></option><?
 						}
-						?></SELECT><br> ' +  _r.preposition + ': <select style="width:70%" id="ddlStatusData_' + _r.inventory_id + '"></select><br>date: <input type="text" style="width:70%" class="datepicker" id="tbDate_' + _r.inventory_id + '"></input></div></td></tr>');
+						?></SELECT><br> ' +  _r.preposition + ': <select style="width:70%" id="ddlStatusData_' + _r.inventory_id + '"></select><br>date:&nbsp;<input type="text" style="width:70%" class="datepicker" id="tbDate_' + _r.inventory_id + '"></input></div></td></tr>');
 					}
-					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="6" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 					$(".datepicker").datepicker( {duration: 'fast'} );
 
@@ -426,7 +428,7 @@ SQLEND;
 						$("#theTable").trigger("appendCache"); 
 						$('#theTable').tablesorterPager({container: $("#pager"), positionFixed: false}).tablesorterFilter({filterContainer: $("#filter-box"),
 						  filterClearContainer: $("#filter-clear-button"),
-						  filterColumns: [1, 2, 3, 4, 5],
+						  filterColumns: [1, 2, 3, 4, 5, 6],
 						  filterCaseSensitive: false,
 							debug: true});
 					}
@@ -434,6 +436,7 @@ SQLEND;
 					$('.editLink').live("click", function() {
 
 						var inventory_id = this.id.replace("editLink_", "");
+
 						$('#ddlStatus_' + inventory_id + ' option').each( function() {
 							var inv = $(this).val();
 							if (inv == 4 || inv == 5)
@@ -451,11 +454,15 @@ SQLEND;
 
 						// Reset all fields
 						$('.maskEdit').css("display", "none");
-						$('.mask').css("display", "block");
+						$('.view').css("display", "block");
 
 						// Reset Commands
 						$('.selected').css("display", "none");
 						$('.unselected').css("display", "block");
+
+						// Date Received Column
+						$('#view_dateReceived_' + inventory_id).css("display", "none");
+						$('#edit_dateReceived_' + inventory_id).css("display", "block");
 
 
 						// Status Column
@@ -497,34 +504,19 @@ SQLEND;
 							var status = $('#ddlStatus_' + inventory_id).val();
 							var statusdata = $('#ddlStatusData_' + inventory_id).val();
 							var date = $('#tbDate_' + inventory_id).val();
+							var receivedDate = $('#dateReceived_' + inventory_id).val();
 
 							$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', 
 								{ id: "updateInventoryStatus",
 									inventory_id: inventory_id,
 									status: status,
 									statusdata: statusdata,
+									receivedDate: receivedDate,
 									date: date}, function(json) {
 								eval("var args = " + json);		
 								if (args.success == "success")
 								{
-									// reset Rows
-									$('#theTable tr').removeClass("edit");
-
-									// Update Spans
-									$('#currentStatusName_' + inventory_id).html(args.output[0].status_name);
-									$('#currentStatus_' + inventory_id).html(args.output[0].status);
-									$('#currentDataText_' + inventory_id).html(args.output[0].status_data_text);
-									$('#currentStatusData_' + inventory_id).html(args.output[0].status_data);
-									$('#currentStatusPreposition_' + inventory_id).html(args.output[0].preposition);
-									$('#current_date_' + inventory_id).html(prettyDate(args.output[0].status_date));
-
-									// Reset all fields
-									$('.maskEdit').css("display", "none");
-									$('.mask').css("display", "block");
-
-									// Reset Commands
-									$('.selected').css("display", "none");
-									$('.unselected').css("display", "block");
+									createFilters();
 								}
 								else alert("Ajax failed.");
 							});
@@ -539,7 +531,7 @@ SQLEND;
 
 							// Reset Status
 							$('.maskEdit').css("display", "none");
-							$('.mask').css("display", "block");
+							$('.view').css("display", "block");
 
 							// Reset Commands
 							$('.selected').css("display", "none");

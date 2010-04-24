@@ -378,6 +378,7 @@ SQLEND;
 		$status = $DB->sanitize($_REQUEST["status"]);
 		$statusdata = $DB->sanitize($_REQUEST["statusdata"]);
 		$statusdate = $DB->sanitize($_REQUEST["date"]);
+		$receivedDate = $DB->sanitize($_REQUEST["receivedDate"]);
 		$statusdatatext = '';
 
 		if ($status == 1)
@@ -397,7 +398,7 @@ SQLEND;
 			$statusdatatext = '';
 		}
 
-		$sql = "UPDATE inventory SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y') WHERE inventory_id = ".$inventory_id;
+		$sql = "UPDATE inventory SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y'), DateReceived = STR_TO_DATE('".$receivedDate."', '%m/%d/%Y') WHERE inventory_id = ".$inventory_id;
 
 		$DB->execute_nonquery($sql);
 		$error = $sql;
@@ -1406,7 +1407,7 @@ SQLEND;
 
 
 		$sql = <<<SQLEND
-			select inventory.inventory_id, inventory.product_id, inventory.invoice, products.product_model, products.product_name, inventory.serial, inventory.status, inventory.status_date, inventory.status_data, inventory.storagelocation_id, sl.storagelocation_name as slname, inventory_status.status_name, inventory_status.preposition, inventory.status_data_text, inventory.DateAdded, users.username AS AddedByName
+			select inventory.inventory_id, inventory.product_id, inventory.invoice, products.product_model, products.product_name, inventory.serial, inventory.status, inventory.status_date, inventory.status_data, inventory.storagelocation_id, sl.storagelocation_name as slname, inventory_status.status_name, inventory_status.preposition, inventory.status_data_text, inventory.DateAdded, inventory.DateReceived, users.username AS AddedByName
 			from inventory
 			join products on inventory.product_id = products.product_id
 			join storagelocations sl on inventory.storagelocation_id = sl.storagelocation_id

@@ -20,14 +20,25 @@ class FormElements
 		<?
 	}
 
-	function tbNotVal($id)
+	function tbNotVal($id, $text="", $inputclass)
 	{
+		if ($text == "")
+		{
+			$text = $id;
+		}
+
+		$class = "notvalidated";
+		if ($inputclass)
+		{
+			$class = "notvalidated " . $inputclass;
+		}
+
 		?>
 		 <li class="validated" id="tb<?= $id ?>_li">
 					  <div class="imgDiv" id="tb<?= $id ?>_img"></div>
-					  <label for="r_tb<?= $id ?>"><?= $id ?>:</label>
+					  <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
 
-						<input class="notvalidated" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value=""  />		
+						<input class="<?= $class ?>" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value=""  />		
 						<input type="hidden" id="tb<?= $id ?>_val" value="waiting" />
 					  <div id="tb<?= $id ?>_msg"></div>
 			  </li>    

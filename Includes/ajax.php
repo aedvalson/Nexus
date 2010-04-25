@@ -1379,6 +1379,18 @@ SQLEND;
 			}
 		}
 
+		if (isset($_POST["products"]))
+		{
+			$products = $DB->sanitize($_POST["products"]);
+			if ($products != '')
+			{
+				if ($and) $sql = $sql . " AND ";
+				else $sql = $sql . " WHERE ";
+				$sql = $sql . " ( ProductsArray LIKE '%".$products."%' OR AccessoriesArray LIKE '%".$products."%') ";
+				$and = true;
+			}
+		}
+
 
 		
 

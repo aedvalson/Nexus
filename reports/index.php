@@ -9,12 +9,12 @@ if ($_REQUEST["report"] )
 {
 	if ($_REQUEST["report"] == "inventory")
 	{
-		if ($_REQUEST["tbStartDate"] && $_REQUEST["tbEndDate"])
+		if ($_REQUEST["StartDate"] && $_REQUEST["EndDate"])
 		{
 			$db->connect();
 			
-			$startDate = $db->Sanitize($_REQUEST["tbStartDate"]);
-			$endDate = $db->Sanitize($_REQUEST["tbEndDate"]);
+			$startDate = $db->Sanitize($_REQUEST["StartDate"]);
+			$endDate = $db->Sanitize($_REQUEST["EndDate"]);
 			$productType = $db->Sanitize($_REQUEST["ProductType"]);
 			$db->close();
 			header("Location: NexusReport_Inventory.php?startDate=".$startDate."&endDate=".$endDate."&productType=".$productType);
@@ -45,25 +45,13 @@ if ($_REQUEST["report"] )
 			<h1>Inventory Report</h1>
 			<form autocomplete="off" name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
 			<ul class="form">
-				 <li class="validated" id="tbStartDate_li">
-							  <label for="r_tbStartDate">Start Date:</label>
-							  <div id="tbStartDate_img"></div>
-							  <input autocomplete="off" class="datepicker validated" name="tbStartDate" id="tbStartDate" type="text" maxlength="20" value=""  />
-							  <input type="hidden" id="tbStartDate_val" value="waiting">
-							  <div id="tbStartDate_msg"></div>
-					  </li>
-				 <li class="validated" id="tbEndDate_li">
-							  <label for="r_tbEndDate">End Date:</label>
-							  <div id="tbEndDate_img"></div>
-							  <input autocomplete="off" class="datepicker validated" name="tbEndDate" id="tbEndDate" type="text" maxlength="20" value=""  />
-							  <input type="hidden" id="tbEndDate_val" value="waiting">
-							  <div id="tbEndDate_msg"></div>
-					  </li>
-
+				<? $F->tbNotVal("StartDate", "Start Date", "datepicker"); ?>
+				<? $F->tbNotVal("EndDate", "End Date", "datepicker"); ?>
+				 
 				 <li class="validated" id="ddlProductType_li">
 							  <label for="r_ddlProductType">Product Type:</label>
 							  <div id="ddlProductType_img"></div>
-								<select class="validated" name="ProductType" id="ddlProductType" >
+								<select  name="ProductType" id="ddlProductType" >
 									<option value="All">Select Product Type</option>
 									<option value="Kirbys">Kirbys</option>
 									<option value="Accessories">Accessories</option>

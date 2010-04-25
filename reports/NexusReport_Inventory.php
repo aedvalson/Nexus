@@ -55,8 +55,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 	$sql .= "AND products.product_type LIKE '%" . $sqlProductType . "%' ";
 	$sql .= "ORDER BY DateAdded, inventory_id ";
 
-	echo $sql;
-
 	$result = mysql_query($sql);
 	if ($result)
 	{

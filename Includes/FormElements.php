@@ -20,7 +20,7 @@ class FormElements
 		<?
 	}
 
-	function tbNotVal($id, $text="", $inputclass)
+	function tbNotVal($id, $text="", $inputclass="")
 	{
 		if ($text == "")
 		{

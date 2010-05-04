@@ -399,7 +399,8 @@ SQLEND;
 								{
 									roles[thisRoleText] = dealerArray.roles[i].roleText.replace(" ", "&nbsp;") + ":";
 								}
-								roles[thisRoleText] = roles[thisRoleText] + "<br>&nbsp;&nbsp;<span style=\"text-decoration: underline; color: #CC0000\">" + dealerArray.roles[i].userText + "</span>";
+								var name = dealerArray.roles[i].displayName ? dealerArray.roles[i].displayName.replace(" ", "&nbsp;") : dealerArray.roles[i].userText;
+								roles[thisRoleText] = roles[thisRoleText] + "<br>&nbsp;&nbsp;<span style=\"text-decoration: underline; color: #CC0000\">" + name + "</span>";
 							}
 							for (var k in roles)
 							{
@@ -417,7 +418,7 @@ SQLEND;
 							prettyDate = '<span style="display: block; margin-top:7px;">Sale Date: ' + month + '/' + myDate.getDate() + '/' + myDate.getFullYear() + '</span>';
 						}
 
-						$('#theTable tbody').append('<tr id = "row'+_r.order_id+'" ><td>'+_r.order_id+'</td><td>' + _r.contact_DisplayName + '</td><td>'+formatCurrency(_r.amount)+'</td><td><span>' + productText + '</span></td><td><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.username + '</span></td><td><span>' + dealerText +  '</span></td><td><span>' + _r.order_status + prettyDate + '</span></td></tr>');
+						$('#theTable tbody').append('<tr id = "row'+_r.order_id+'" ><td>'+_r.order_id+'</td><td>' + _r.contact_DisplayName + '</td><td>'+formatCurrency(_r.amount)+'</td><td><span>' + productText + '</span></td><td><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.FirstName + ' ' +  _r.LastName + '</span><span style="display: none">' + _r.username + '</span></td><td><span>' + dealerText +  '</span></td><td><span>' + _r.order_status + prettyDate + '</span></td></tr>');
 						row = 1 - row;
 					}
 

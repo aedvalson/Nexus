@@ -1,7 +1,10 @@
 <? 
 include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
-
+	require_once( $DOCROOT.$ROOTPATH."/firephp/FirePHP.class.php");
+	$firephp = FirePHP::getInstance(true);
+  
+  ob_start();
    if (isset($_POST["id"]))
    {
    }
@@ -65,7 +68,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$order_id			= $DB->sanitize($_REQUEST["order_id"]);
 		$user_id			= $DB->sanitize($_REQUEST["user_id"]);
 		$dateCompleted		= $DB->sanitize($_REQUEST["dateCompleted"]);
-		$dealerArray		= $DB->sanitize($_REQUEST["dealerArray"]);
+		$dealerArray		= $_REQUEST["dealerArray"];
 		$date = "";
 		
 		if ($dateCompleted != "")
@@ -83,12 +86,26 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$prod2 = json_encode($products["products"]);
 		$prodArray = json_decode($prod2, true);
 
+		if ($dealerArray)
+		{
+			// Insert Real Dealer Names from DB
+			$dealerArrayObject = json_decode($dealerArray, true);
+			$rolesArray = $dealerArrayObject["roles"];
+			$newRolesArray = array();
+			foreach ($rolesArray as $role)
+			{
+				$username = $role["userText"];
+				$sql = "select CONCAT(FirstName, ' ', LastName) as DisplayName from users where Username = '" . $username . "'";
+				$role["displayName"] = $DB->query_scalar($sql);
+				$newRolesArray[] = $role;
+				$firephp->log($newRolesArray);
+			}
+			$dealerArrayObject["roles"] = $newRolesArray;
+		}
 
 		if (is_numeric($order_id))
 		{
-			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . $dealerArray . '\' WHERE order_id = ' . $order_id;
-
-			echo $query2;
+			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
 
 			$DB->execute_nonquery($query2);
 			$output = $order_id;
@@ -1234,7 +1251,7 @@ SQLEND;
 		$DB->connect();
 		$sql = <<<SQLEND
 			select orders.*, order_status.order_status_name as order_status,
-				users.username, contacts.contact_DisplayName
+				users.username, users.FirstName, users.LastName, contacts.contact_DisplayName
 			
 				from orders
 

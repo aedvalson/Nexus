@@ -31,7 +31,10 @@ if ($pos === false)
 }
 
   //Buffer larger content areas like the main page content
+  
+	require_once( $DOCROOT.$ROOTPATH."/firephp/FirePHP.class.php");
+	$firephp = FirePHP::getInstance(true);
+ 
   ob_start();
-
 
 ?>

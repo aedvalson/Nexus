@@ -20,6 +20,16 @@ if ($_REQUEST["report"] )
 			header("Location: NexusReport_Inventory.php?startDate=".$startDate."&endDate=".$endDate."&productType=".$productType);
 		}
 	}
+	if ($_REQUEST["report"] == "IndividualOrder")
+	{
+		if ($_REQUEST["OrderID"])
+		{
+			$db->connect();
+			$order_id = $DB->sanitize($_REQUEST["OrderID"]);
+			$db->close();
+			header("Location: NexusReport_IndividualOrder.php?OrderID=".$order_id);
+		}
+	}
 }
 
 
@@ -32,6 +42,7 @@ if ($_REQUEST["report"] )
 		<div class="navHeaderdiv"><h1>Reports</h1></div>
 		<div class="navBulletBorderTop"></div>
 		<div class="navBullet navBulletSelected" id="custBullet"><a href="#" class="pagetab" id="reportInventoryLink">Inventory Report</a></div>
+		<div class="navBullet" id="individualSaleBullet"><a href="#" class="pagetab" id="individualSaleLink">Individual Sale</a></div>
 		<div class="navBulletBorderBottom"></div>
 	</div>
 	<div class="navPageSpacing"></div>
@@ -41,7 +52,7 @@ if ($_REQUEST["report"] )
 <div class="pageContent" id="pageContent">
 	<div class="contentDiv">
 
-		<div class="formDiv" style="display: block; background-color: #EDECDC">
+		<div class="formDiv" id="reportInventoryDiv" style="display: block; background-color: #EDECDC">
 			<h1>Inventory Report</h1>
 			<form autocomplete="off" name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
 			<ul class="form">
@@ -66,7 +77,33 @@ if ($_REQUEST["report"] )
 			</form>
 		</div>
 
+		<div class="formDiv" id="individualSaleDiv" style="display: none; background-color: #EDECDC">
+			<h1>Individual Sale Report</h1>
+			<form autocomplete="off" name="individualSaleForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+			<ul class="form">
+				<? $F->tbNotVal("OrderID", "Order ID"); ?>
+				<? $F->SubmitButton("Open Report"); ?>
+			</ul>
+			<input type="hidden" name="report" value="IndividualOrder">
+			</form>
+		</div>
+
 	</div>
 </div>
+
+<SCRIPT>
+
+$('#reportInventoryLink, #individualSaleLink').click( function() {
+	$('.navBullet').removeClass("navBulletSelected");
+	$(this).parent('.navBullet').addClass("navBulletSelected");
+	var formDivName = $(this).attr("id").replace("Link", "Div");
+
+	$('.formDiv').hide();
+	$('#' + formDivName).show();
+	return false;
+});
+
+
+</SCRIPT>
 
 <? include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Bottom.php" ?>

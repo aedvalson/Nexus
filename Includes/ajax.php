@@ -71,12 +71,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$dealerArray		= $_REQUEST["dealerArray"];
 		$date = "";
 		
-		if ($dateCompleted != "")
+		if ($dateCompleted != "" && $orderStatus == 5) // We only add a completed date if order is actually completed.
 		{
 			$ts = strtotime($dateCompleted);
 			$date = date("Y-m-d", $ts);
-			$date = ", dateCompleted = '" . $date . "'";
 		}
+		else $date = "";
 
 		if ($orderStatus < 5 || $orderStatus == 7)		$newStatus = 4;
 		if ($orderStatus == 5 || $orderStatus == 6)		$newStatus = 5;
@@ -141,6 +141,16 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 					$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
 					$DB->execute_nonquery($sql);
 			}
+		}
+
+		// Update CompletedDate for order if set
+		if ($date && $orderStatus == 5) $sql = "UPDATE orders SET DateCompleted = '".$date."' WHERE order_id = " . $order_id;
+		else $sql = "UPDATE orders SET DateCompleted = null WHERE order_id = " . $order_id;
+		$firephp->log($sql);
+		$DB->execute_nonquery($sql);
+		
+		{
+
 		}
 	}
 

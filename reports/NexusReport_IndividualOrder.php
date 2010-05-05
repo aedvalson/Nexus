@@ -85,6 +85,7 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 
 ?>
 <a href="#" onclick="pdfReport($('.reportContainer')); return false;">PDF</a>
+
 <div class="reportContainer">
 	<div class="reportHeader">
 		<h1>Individual Sale Report</h1>
@@ -176,7 +177,7 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 		</tr>
 	</TABLE>
 
-
+	<? if ($commissions) { ?>
 	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
 		<tr>
 			<td class="shaded" style="width: 25%">Commissions</td>
@@ -197,21 +198,21 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 					}
 
 					// Display Comm
-					if ($comm["payeeType"] != "corporate")
+					if ($comm["payeeType"] == "employee")
 					{
-						if ($comm["payeeType"] == "employee")
+						$dealerCount = count($comm["dealers"]);
+						foreach ($comm["dealers"] as $dealer)
 						{
-							$dealerCount = count($comm["dealers"]);
-							foreach ($comm["dealers"] as $dealer)
-							{
-								$myComm = $commAmount / $dealerCount;
-								$user_id = $dealer["user"];
-								$role = $dealer["role"];
-								$displayName = $allUsers[$user_id]["FirstName"] . " " . $allUsers[$user_id]["LastName"];
-								echo $displayName . " (" . $role . "): $" . money_format("%i", $myComm) . "<br />";
-							}
+							$myComm = $commAmount / $dealerCount;
+							$user_id = $dealer["user"];
+							$role = $dealer["role"];
+							$displayName = $allUsers[$user_id]["FirstName"] . " " . $allUsers[$user_id]["LastName"];
+							echo $displayName . " (" . $role . "): $" . money_format("%i", $myComm) . "<br />";
 						}
-						
+					}
+					if ($comm["payeeType"] == "corporate")
+					{	
+						echo "Corporate: $" . money_format("%i", $commAmount) . "<br /><br />";
 					}
 
 					$remaining -= $commAmount;
@@ -220,6 +221,7 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 			</td>
 		</tr>
 	</TABLE>
+	<? } ?>
 
 	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
 		<tr>

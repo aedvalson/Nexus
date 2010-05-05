@@ -69,6 +69,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$user_id			= $DB->sanitize($_REQUEST["user_id"]);
 		$dateCompleted		= $DB->sanitize($_REQUEST["dateCompleted"]);
 		$dealerArray		= $_REQUEST["dealerArray"];
+		$tax				= $DB->sanitize($_REQUEST["tax"]);
+		if (!$tax) { $tax = 0; }
 		$date = "";
 		
 		if ($dateCompleted != "" && $orderStatus == 5) // We only add a completed date if order is actually completed.
@@ -105,7 +107,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 		if (is_numeric($order_id))
 		{
-			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
+			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', tax=' . $tax . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
+			$firephp->log($query2);
 
 			$DB->execute_nonquery($query2);
 			$output = $order_id;
@@ -113,7 +116,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 		else
 		{
-			$query1 = 'insert into orders (order_status_id, contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\')';
+			$query1 = 'insert into orders (order_status_id, contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray, tax) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\', ' . $tax . ')';
 
 			$output = $DB->insert($query1);
 			$order_id = $output;

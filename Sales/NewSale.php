@@ -144,7 +144,14 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			<div class="commandBox">
 				<h1>Order Details</h1>
 				<span class="label">Order ID:</span><span class="value" id="spanOrderID"></span>
+
+				<div class="formOptionSet" id="viewReport">
+					<span class="label">Reports:</span>
+					<span class="value"><a id="saleReportLink">Individual Sale Report</a>
+				</div>
+
 				<span class="label">Order Status:</span><span class="value"><? $F->ddlOrderStatuses($DB); ?></span>
+
 
 				<div class="formOptionSet" id="orderCompleteOptions">
 					<span class="label">Date Completed:</span>
@@ -1468,8 +1475,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		$('.formDiv').css('display', 'none');
 		$('#commandDiv').css('display', 'block');
 
-		$('.formOptionSet').css('display', 'none');
-
 		$('#' + $('#ddlPaymentType').val() + 'Options').css('display', 'block');
 		if ($('#ddlPaymentType').val() == 'finance')
 		{
@@ -1517,17 +1522,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	{
 		var orderId = $('#hOrderId').val();
 		var customerID = $('#h_contact_id').val();
-
-		if (orderId == "")
-		{
-			//alert("Do you wish to add this order to the database?");
-		}
-		else
-		{
-			
-			
-		}
-
 		var orderStatus = $('#ddlOrderStatuses').val();
 		var customer_id = $('#h_contact_id').val();
 		var amount = $('#tbSalePrice').val();
@@ -1538,6 +1532,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var dateCompleted = $('#tbDateCompleted').val();
 		var dealerArray = $('#hRolesArray').val();
 		var user_id = "<?= $_SESSION["user_id"] ?>";
+		var tax = $('#tbSalesTax').val().replace("$", "");
 
 
 		if (!IsNumeric(customer_id))
@@ -1557,7 +1552,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				PaymentString: PaymentString,
 				dealerArray: dealerArray,
 				user_id: user_id,
-				dateCompleted: dateCompleted
+				dateCompleted: dateCompleted,
+				tax: parseFloat(tax)
 			}, function(json)
 		{
 			eval("var args = " + json);
@@ -1912,6 +1908,16 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				$("#tbDateCompleted").val(prettyDate);	
 			}
 		}
+		var qs = new Querystring();
+		var order_id = qs.get("order_id", "");
+		
+		if (order_id != "")
+		{
+			// Show Link Box
+			$('#viewReport').css("display", "block");
+			$('#saleReportLink').attr("href", "/<?= $ROOTPATH ?>/reports/NexusReport_IndividualOrder.php?OrderID=" + order_id);
+		}
+
 	}
 		
 	// Roles Panel Scripts
@@ -2035,6 +2041,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	$('.continueLink').click( function() {
 		continueLink();
+		return false;
 	});
 
 	$('.saveAndQuitLink').click( function() {
@@ -2072,6 +2079,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			case "status":			nextPage = "customerInfo"; break;
 		}
 		pageStatus = nextPage;
+		$('#hPageStatus').val(pageStatus);
+		populateRoles();
+		updateSalesTax();
 		pager();
 	}
 

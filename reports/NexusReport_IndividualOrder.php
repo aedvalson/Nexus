@@ -13,6 +13,7 @@ $order_id = $DB->sanitize($_REQUEST["OrderID"]);
 // Construct Query
 $sql = "SELECT * from orders";
 $sql .= " join contacts on orders.contact_id = contacts.contact_id";
+$sql .= " join order_status on orders.order_status_id = order_status.order_status_id";
 $sql .= " where order_id = ".$order_id;
 
 $result = mysql_query($sql);
@@ -21,15 +22,36 @@ if ($result)
 {
 	$row = mysql_fetch_assoc($result); // Just 1
 }
-$DB->close();
-
+$firephp->log($row);
 $roles			= json_decode($row["dealerArray"], true);
 $products		= json_decode($row["ProductsArray"], true);
 $products		= $products["products"];
 $accessories	= json_decode($row["AccessoriesArray"], true);
-$firephp->log($accessories);
 $accessories	= $accessories["products"];
-$firephp->log($accessories);
+$commissions	= json_decode($row["CommStructure"], true);
+$commissions	= $commissions["elements"];
+$payments		= json_decode($row["PaymentArray"], true);
+$payments		= $payments["paymentMethods"];
+
+
+
+// Get Users
+$sql = "SELECT * from users";
+$result = $DB->query($sql);
+$allUsers = array();
+if ($result)
+{
+	while ($userRow = mysql_fetch_assoc($result))
+	{
+		$allUsers[$userRow["user_id"]] = $userRow;  // Creating dictionary of users
+	}
+}
+
+
+
+$DB->close();
+
+
 
 
 $saleText = "Sale to";
@@ -57,12 +79,12 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 	$saleText .= " on " . date("m/d/Y", strtotime ( $row["DateCompleted"] ));
 }
 
-$firephp->log($saleText);
-$firephp->log($sql);
-$firephp->log($row);
+//$firephp->log($saleText);
+//$firephp->log($sql);
+//$firephp->log($row);
 
 ?>
-
+<a href="#" onclick="pdfReport($('.reportContainer')); return false;">PDF</a>
 <div class="reportContainer">
 	<div class="reportHeader">
 		<h1>Individual Sale Report</h1>
@@ -72,7 +94,7 @@ $firephp->log($row);
 	<center>
 	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
 	<? foreach ($roles["roles"] as $i)
-	{  $firephp->log($i); ?>
+	{ // $firephp->log($i); ?>
 		<tr>
 			<td class="shaded" style="width: 25%"><?= $i["roleText"] ?></td>
 			<td><?= $i["displayName"] ?></td>
@@ -112,6 +134,108 @@ $firephp->log($row);
 				?>
 			</td>
 		</tr>
+		<tr>
+			<td class="shaded">Payment Info</td>
+			<td>
+				Total Sale Price: $<?= $row["amount"] ?><br /><br />
+
+				<? 
+				$reserveTotal = 0;
+
+				// Cash First
+				foreach ($payments as $payment)
+				{
+					//$firephp->log($payment);
+					if ($payment["paymentType"] == "cash")
+					{
+						?>Cash Downpayment: $<?= money_format("%i", $payment["amount"]) ?><br/><?
+					}
+				} 
+
+				foreach ($payments as $payment)
+				{
+//					$firephp->log($payment); // Financing Second
+					if ($payment["paymentType"] == "finance")
+					{
+						?>
+						Financed: $<?= money_format("%i", $payment["amount"]) ?><br/><br />
+						Financier: <?= $payment["financeCompany"] ?><br />
+						Loan Type: <?= $payment["loanOption"] ?><br />
+						Reserve: <?= $payment["reserveRate"] ?> ($<?= money_format("%i", $payment["amount"] / $payment["reserveRate"]) ?>) <br />
+						<?
+						$reserveTotal = $reserveTotal + ($payment["amount"] / $payment["reserveRate"]);
+					}
+
+				} 
+				
+				?> 
+				<br />
+				Sales Tax: $<?= money_format("%i", $row["tax"]) ?><br />
+				Total Profit: $<?= money_format("%i", $row["amount"] - $reserveTotal) ?><br />
+			</td>
+		</tr>
+	</TABLE>
+
+
+	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
+		<tr>
+			<td class="shaded" style="width: 25%">Commissions</td>
+			<td>
+			<?
+				$remaining = $row["amount"] - $reserveTotal;
+				$commAmount = 0;
+				foreach ($commissions as $comm)
+				{
+					// Recalc comm amt
+					if ($comm["paymentType"] == "flat")
+					{
+						$commAmount = $comm["flatAmount"];
+					}
+					if ($comm["paymentType"] == "remaining")
+					{
+						$commAmount = $remaining;
+					}
+
+					// Display Comm
+					if ($comm["payeeType"] != "corporate")
+					{
+						if ($comm["payeeType"] == "employee")
+						{
+							$dealerCount = count($comm["dealers"]);
+							foreach ($comm["dealers"] as $dealer)
+							{
+								$myComm = $commAmount / $dealerCount;
+								$user_id = $dealer["user"];
+								$role = $dealer["role"];
+								$displayName = $allUsers[$user_id]["FirstName"] . " " . $allUsers[$user_id]["LastName"];
+								echo $displayName . " (" . $role . "): $" . money_format("%i", $myComm) . "<br />";
+							}
+						}
+						
+					}
+
+					$remaining -= $commAmount;
+				}
+			?>
+			</td>
+		</tr>
+	</TABLE>
+
+	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
+		<tr>
+			<td class="shaded" style="width: 25%">Status</td>
+			<td><?= $row["order_status_name"] ?></td>
+		</tr>
+		<?
+		if ($row["DateCompleted"] && $row["order_status_id"] == 5)
+		{ ?>
+		<tr>
+			<td class="shaded" style="width: 25%">Date Completed</td>
+			<td>
+				<?= date("m/d/Y", strtotime ( $row["DateCompleted"] )) ?>
+			</td>
+		</tr>
+		<? } ?>
 	</TABLE>
 	</center>
 

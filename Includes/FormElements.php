@@ -205,11 +205,12 @@ class FormElements
 	{
 		?>
 		 <li class="validated" id="ddlPayeeType_li">
-			  <label for="r_tbPayeeType">Payee Type:</label>
+			  <label for="r_tbPayeeType">Commission Type:</label>
 			  <div id="tbPayeetype_img"></div>
 				<select class="validated" name="PayeeType" id="ddlPayeeType" >
 						<option value="corporate">Corporate</option>
 						<option value="employee">Dealer(s)</option>
+						<option value="adjustment">Adjustment</option>
 				</select>	
 			  <div id="ddlPayeeType_msg"></div>
 			</li>

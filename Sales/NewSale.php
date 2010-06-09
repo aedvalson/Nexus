@@ -362,14 +362,22 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						<? $F->ddlDealerRoles(); ?>
 					</div>
 
+					<div id="commissionAmountDiv">
+						<? $F->ddlCommPaymentTypes("ddlDealerPaymentType"); ?>
+						<div id="flatRateDiv">
+							<? $F->tbVal("Flat_Amount", "Flat Amount", "0.00"); ?>
+						</div>
 
-					<? $F->ddlCommPaymentTypes("ddlDealerPaymentType"); ?>
-					<div id="flatRateDiv">
-						<? $F->tbVal("Flat_Amount", "Flat Amount", "0.00"); ?>
+						<div id="percentageDiv" style="display:none;">
+							<? $F->tbVal("Percentage", "Percentage", "0"); ?>
+						</div>
 					</div>
 
-					<div id="percentageDiv" style="display:none;">
-						<? $F->tbVal("Percentage", "Percentage", "0"); ?>
+
+					<!-- Adjustment Stuff -->
+					<div id="adjustmentDiv" style="display:none;">
+						<? $F->ddlStaff($DB, "staffAdjustment"); ?>
+						<? $F->tbNotVal("tbAdjustmentAmount", "Amount (-)"); ?>
 					</div>
 
 					<? $F->submitButton("Submit", "btnAddLine"); ?>
@@ -927,6 +935,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		{
 			var amount = $('#tbPercentage').val();
 		}
+		if ($('#ddlPayeeType').val() == "adjustment")
+		{
+			var amount = 0 - parseFloat($('#tbtbAdjustmentAmount').val());
+		}
+
 
 		var dealerObject = { dealers:[] };
 		var i = 0;
@@ -942,10 +955,21 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				dealer.userText = dealerInfo.userText;
 				dealer.user = dealerInfo.user;
 			}
-			dealerObject.dealers[i] = dealer
+			dealerObject.dealers[i] = dealer;
 			i++;
 		});
-		
+
+		if ($('#ddlPayeeType').val() == "adjustment")
+		{
+			payeeType = "adjustment";
+			paymentType = "adjustment";
+
+			var dealerObject = { dealers:[] };
+			var dealer = {};
+			dealer.userText = $('#ddlstaffAdjustment option:selected').html();
+			dealer.user = $('#ddlstaffAdjustment').val();
+			dealerObject.dealers[i] = dealer;
+		}
 		AddCommLine(payeeType, paymentType, amount, JSON.stringify(dealerObject));
 	}
 
@@ -990,7 +1014,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function AddCommLine(payeeType, paymentType, amount, dealersString)
 	{
-
 		// See if we already have a value in the field
 		if ($('#hCommissionArray').val() != '')
 		{
@@ -1018,10 +1041,15 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		{
 			var role = dealersobj.dealers[j].role;
 			var dealer = getDealerByRole(role);
-			if(JSON.stringify(dealer) == '""')
+			if(JSON.stringify(dealer) == '""' && !dealersobj.dealers[j].userText && !dealersobj.dealers[j].user)
 			{
 				var userText = "";
 				var user = "";
+			}
+			else if (dealersobj.dealers[j].userText && dealersobj.dealers[j].user)
+			{
+				var userText = dealersobj.dealers[j].userText;
+				var user = dealersobj.dealers[j].user;
 			}
 			else
 			{
@@ -1047,6 +1075,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			thisElement.percentage = amount;
 		}
 		
+		if ($('#ddlPayeeType').val() == "adjustment")
+		{
+			thisElement.amount = amount;
+		}
+
 		theObject.elements[i] = thisElement;
 		var storage = JSON.stringify(theObject);
 
@@ -1102,8 +1135,21 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		if ($('#ddlPayeeType').val() == 'employee')
 		{
 			$dealerElements.show();
+			$('#adjustmentDiv').hide();
+			$('#commissionAmountDiv').show();
 		}
-		else $dealerElements.hide();
+		else if ($('#ddlPayeeType').val() == 'adjustment')
+		{
+			$dealerElements.hide();
+			$('#adjustmentDiv').show();
+			$('#commissionAmountDiv').hide();
+		}
+		else 
+		{
+			$dealerElements.hide();
+			$('#adjustmentDiv').hide();
+			$('#commissionAmountDiv').show();
+		}
 	}
 
 	function updateAmounts()
@@ -1341,7 +1387,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 
 					var c1 = data.payeeType;					
-					if (data.payeeType == 'employee')
+					if (data.payeeType == 'employee' || data.payeeType == 'adjustment')
 					{
 						if (data.dealers)
 						{
@@ -1349,7 +1395,15 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 							for (var i = 0; i < dealers.length; i++)
 							{
-								dealerText = dealerText + dealers[i].userText + " - " + dealers[i].role + "<br />";
+								if (data.payeeType == 'employee')
+								{
+									dealerText = dealerText + dealers[i].userText + " - " + dealers[i].role + "<br />";
+								}
+								else
+								{
+									dealerText = dealerText + dealers[i].userText + "<br />";
+								}
+								
 							}						
 							c1 = dealerText;
 						}
@@ -1370,6 +1424,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						var c3 = data.percentage + "%";
 						var rowAmount = price * data.percentage / 100;
 						var c4 = formatCurrency(rowAmount);
+					}
+					else if (c2 == 'adjustment')
+					{
+						var rowAmount = data.amount;
+						var c3 = formatCurrency(rowAmount);
+						var c4 = c3;
 					}
 					else 
 					{
@@ -1757,7 +1817,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	// Equipment Panel Scripts
 	function deleteProduct (index)
 	{
-		alert(index);		
 		var $prodArrayHiddenField = $('#hProductArray');
 
 		// See if we already have a value in the field
@@ -1790,7 +1849,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 			// Store new object
 			$prodArrayHiddenField.val(JSON.stringify(theObject));
-			alert($prodArrayHiddenField.val());
 			updateForm();
 		}
 	}
@@ -1924,17 +1982,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function addRole(user, role, userText, roleText)
 	{
 		//
-		// Delete Role from the dropdown
-		//
-		$('#ddlDealerRoles2 option').each( function() {
-		if ($(this).html() == roleText)
-			{
-				$(this).remove();
-			}
-		});
-
-
-		//
 		// Add Stuff to the JSON element in the hidden field
 		//
 		var $roleStorage = $('#hRolesArray');
@@ -1990,6 +2037,16 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			for (i=0; i < theObject.roles.length ; i++)
 			{
 				$('#roleTable tbody').append('<tr><td>' + theObject.roles[i].userText + '</td><td>' + theObject.roles[i].roleText + '</td><td><a href="#" onClick="deleteRole(' + theObject.roles[i].Index + '); return false;">Delete</a></tr>');
+
+				
+				// Delete Role from the dropdown
+				$('#ddlDealerRoles2 option').each( function() {
+				if ($(this).html() == theObject.roles[i].roleText)
+					{
+						$(this).remove();
+					}
+				});
+
 			}
 		}
 		else
@@ -2000,6 +2057,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function deleteRole(index)
 	{
+		// Clone dealerroles to dealerroles2
+		$('#ddlDealerRoles2').html( $('#ddlDealerRole').html() );
+
 		var $roleStorage = $('#hRolesArray');
 		// See if we already have a value in the field
 		if ($roleStorage.val() != '')

@@ -117,6 +117,30 @@ foreach ($orders as $order)
 }
 
 
+// Get All Users
+$sql = "select * from users join teams on users.team_id = teams.team_id";
+$result = $DB->query($sql);
+$users = array();
+while ($userRow = mysql_fetch_assoc($result))
+{
+	$users[$userRow["user_id"]] = $userRow;
+}
+$firephp->log($users);
+
+
+// Build Team Hash
+$teams = array();
+foreach ($users as $user)
+{
+	if (!$teams[$user["team_id"]]) { $teams[$user["team_id"]]["quantity"] = 0; }
+	$teams[$user["team_id"]]["teamname"] = $user["team_name"];
+	$teams[$user["team_id"]]["teamleader_id"] = $user["team_leader"];
+	$teams[$user["team_id"]]["teamid"] = $user["team_id"];
+	$teams[$user["team_id"]]["teamleader_name"] = $users[$user["team_leader"]]["FirstName"] . " " .  $users[$user["team_leader"]]["LastName"];
+}
+
+
+
 // Build Dealers Array
 $AllDealers = array();
 $financeTypes = array();
@@ -126,16 +150,24 @@ foreach ($orders as $order)
 	$roles = $dealersArray["roles"];
 	foreach ($roles as $role)
 	{
-		if (!$AllDealers[$role["user"]])
+		if ($role["roleText"] == "Dealer")
 		{
-			$AllDealers[$role["user"]]["displayName"] = $role["displayName"];
-			$AllDealers[$role["user"]]["quantity"] = 0;
+			if (!$AllDealers[$role["user"]])
+			{
+				$AllDealers[$role["user"]]["displayName"] = $role["displayName"];
+				$AllDealers[$role["user"]]["quantity"] = 0;
+			}
+			$AllDealers[$role["user"]]["quantity"] += 1;
+
+			// Add sale to teams array
+			$teams[$users[$role["user"]]["team_id"]]["quantity"]++;
 		}
-		$AllDealers[$role["user"]]["quantity"] += 1;
 	}
 }
 usort($AllDealers, "CompareQuantities");
-$firephp->log($orders);
+usort($teams, "CompareQuantities");
+$firephp->log($teams);
+
 
 
 // Calculate Revenue and Build finance types hash
@@ -216,32 +248,10 @@ foreach ($orders as $order)
 }
 $NetRevenue = $TotalRevenue - $TotalCommissions;
 usort($financeTypes, "CompareQuantityAndType");
-$firephp->log("Rev: " . $TotalRevenue . " Net: " . $NetRevenue . " Comm: " . $TotalCommissions);
-$firephp->log($financeTypes);
+//$firephp->log("Rev: " . $TotalRevenue . " Net: " . $NetRevenue . " Comm: " . $TotalCommissions);
+//$firephp->log($financeTypes);
 
 
-// Get All Users
-$sql = "select * from users join teams on users.team_id = teams.team_id";
-$result = $DB->query($sql);
-$users = array();
-while ($userRow = mysql_fetch_assoc($result))
-{
-	$users[$userRow["user_id"]] = $userRow;
-}
-$firephp->log($users);
-
-
-// Build Team Hash
-$teams = array();
-foreach ($users as $user)
-{
-	if (!$teams[$user["team_id"]]) { $teams[$user["team_id"]]["quantity"] = 0; }
-	$teams[$user["team_id"]]["quantity"]++;
-	$teams[$user["team_id"]]["teamname"] = $user["team_name"];
-	$teams[$user["team_id"]]["teamleader_id"] = $user["team_leader"];
-	$teams[$user["team_id"]]["teamleader_name"] = $users[$user["team_leader"]]["FirstName"] . " " .  $users[$user["team_leader"]]["LastName"];
-}
-usort($teams, "CompareQuantities");
 
 // Build By-Zip Array
 $zipcodes = array();
@@ -309,8 +319,8 @@ foreach ($zipcodes as $zipcode)
 	$DataSet->SetSerieName("Sales By Zip Code","Series1");
 	$DataSet->RemoveSerie("Series2");
 }
-$firephp->log($zipcodes);
-$firephp->log($DataSet);
+//$firephp->log($zipcodes);
+//$firephp->log($DataSet);
 
   // Initialise the graph
   $Test = new pChart(700,230);

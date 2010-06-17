@@ -92,7 +92,7 @@ table.report
 	background-color: white;
 	/*border: 1px #ddd solid; */
 	border-collapse: collapse;
-	margin-bottom:1em;
+	margin-bottom:0px;
 	border: 1px solid silver;
 	font-size: 2em;
 }

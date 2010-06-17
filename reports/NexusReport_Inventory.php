@@ -109,22 +109,23 @@ function getLocation ($status, $data)
 
 
 ?>
-<a href="#" onclick="pdfReport($('.reportContainer')); return false;">PDF</a>
+<a href="#" onclick="pdfReport($('.reportContainer')); return false;">View PDF</a> | <a href="#" onclick="pdfReport($('.reportContainer'), 1); return false;">Save PDF</a>
 <div class="reportContainer">
 	<div class="reportHeader">
 		<h1>Inventory Report <?= $ProductHeader ?></h1>
-		<h2><?= date("m/d/Y", strtotime($startDate)) ?> - <?= date("m/d/Y", strtotime($endDate)) ?>
+		<h2><?= date("m/d/Y", strtotime($startDate)) ?> - <?= date("m/d/Y", strtotime($endDate)) ?></h2>
 		<h2>American Eagle Corp.</h2>
 	</div>
 
-	<TABLE class="report" BORDER="1" CELLSPACING="1">
+	<TABLE style="page-break-inside: avoid" class="report" BORDER="1" CELLSPACING="1">
 		<THEAD>
 			<TR>
-				<TD>Serial #</TD>
-				<TD>Type</TD>
-				<TD>Date Received</TD>
-				<TD>Status</TD>
-				<TD>Location</TD>
+				<TD style="width: 12%">Serial #</TD>
+				<TD style="width: 22%">Type</TD>
+				<TD style="width: 22%">Date Received</TD>
+				<TD style="width: 22%">Status</TD>
+				<TD style="width: 22%">Location</TD>
+
 			</TR>
 		</THEAD>
 		<TBODY>
@@ -132,18 +133,26 @@ function getLocation ($status, $data)
 				$row = "even";
 			if ($InventoryArray)
 			{
+				$i = 2;
 				foreach ($InventoryArray as $InventoryRow)
 				{
+					$i++;
 					if ($rowClass == "even") $rowClass = "odd";
 					else $rowClass = "even";
 
+					if ($i > 23)
+					{
+						echo "</TABLE><TABLE style=\"page-break-inside: avoid\" class=\"report\" BORDER=\"1\" CELLSPACING=\"1\">";
+						$i = 0;
+					}
+
 			?> 
-			<TR class="<?= $rowClass ?>">
-				<TD class="shaded"><?= $InventoryRow["inventory_id"] ?></TD>
-				<td><?= $InventoryRow["product_name"] ?></td>
-				<td><?= date("m/d/Y", strtotime($InventoryRow["DateAdded"])) ?></td>
-				<td><?= $InventoryRow["status_name"] ?></td>
-				<td><?= getLocation($InventoryRow["invStatus"], $InventoryRow["invStatusData"]) ?></td>
+			<TR style="page-break-before: auto;" class="<?= $rowClass ?>">
+				<TD style="width: 12%" class="shaded"><?= $InventoryRow["serial"] ?></TD>
+				<td style="width: 22%"><?= $InventoryRow["product_name"] ?></td>
+				<td style="width: 22%"><?= date("m/d/Y", strtotime($InventoryRow["DateAdded"])) ?></td>
+				<td style="width: 22%"><?= $InventoryRow["status_name"] ?></td>
+				<td style="width: 22%"><?= getLocation($InventoryRow["invStatus"], $InventoryRow["invStatusData"]) ?></td>
 			</TR> 
 			<? }
 			}

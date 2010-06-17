@@ -46,7 +46,7 @@ if ($result)
 		$allUsers[$userRow["user_id"]] = $userRow;  // Creating dictionary of users
 	}
 }
-
+$firephp->log($allUsers);
 
 
 $DB->close();
@@ -220,6 +220,36 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 			?>
 			</td>
 		</tr>
+		<?
+		$adjustments = 0;
+		foreach ($commissions as $comm)
+		{
+			if ($comm["paymentType"] == "adjustment")
+			{
+				$firephp->log($comm["paymentType"]);
+				$adjustments++;
+			}
+		}
+		if ($adjustments > 0)
+		{
+			$firephp->log($adjustments);
+		?>
+		<tr>
+			<td class="shaded" style="width: 25%">Adjustments</td>
+			<td>
+			<?
+			foreach ($commissions as $comm)
+			{
+				if ($comm["paymentType"] == "adjustment")
+				{
+					$firephp->log($comm);
+					echo $allUsers[$comm["dealers"][0]["user"]]["FirstName"] . " " . $allUsers[$comm["dealers"][0]["user"]]["LastName"] . ": -$" . money_format("%i", 0-$comm["amount"]);
+				}
+			}
+			?>
+			</td>
+		</tr>
+		<? } ?>
 	</TABLE>
 	<? } ?>
 

@@ -468,6 +468,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	if (isset($newCustomer)) echo $newCustomer;
 	else echo "Not Yet Set"
 	?>">
+<input type="hidden" name="h_contact_id_previous" id="h_contact_id_previous" value="NOTSET">
 
 
 <SCRIPT type="text/javascript">
@@ -673,6 +674,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function bindSerialBox()
 	{
 		var product_id = $('#ddlprodProdID').val();
+		$('#ddlSerial option').remove();
+		$('#ddlSerial').attr("diabled", "disabled");
+		$('#ddlSerial').append("<option value=''>Checking Available Inventory...</option>");
 		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getSerials",  product_id: product_id }, function(json) 
 		{
 			eval("var args = " + json);		
@@ -681,7 +685,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				$('#ddlSerial option').remove();
 				if (args.output)
 				{
-					$('#ddlSerial option').remove();
 					for (i = 0; i < args.output.length ; i++ )
 					{
 						// See if serial is included in this order before adding to list.
@@ -784,28 +787,32 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		// Populate Customer Info
 		if (isNumeric(contact_id))
 		{
-			$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getContact",  value: contact_id }, function(json) 
+			if ( $('#h_contact_id').val() != $('#h_contact_id_previous').val() )
 			{
-				eval("var args = " + json);		
-				if (args.success == "success")
+				$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getContact",  value: contact_id }, function(json) 
 				{
-					if (args.output)
+					eval("var args = " + json);		
+					if (args.success == "success")
 					{
-						var firstName = args.output[0]["contact_firstname"];
-						var lastName = args.output[0]["contact_lastname"];
-						var address = args.output[0]["contact_address"];
-						var city = args.output[0]["contact_city"];
-						var state = args.output[0]["contact_state"];
-						var zip = args.output[0]["contact_zipcode"];
-						var county = args.output[0]["county"];
-	
-						$('#hCounty').val(county);
-						$('#hState').val(state);
-						$('#spanContactInfo').html(firstName + " " + lastName + "<br>" + address + "<br>" + city + ", " + state + " " + zip);
+						if (args.output)
+						{
+							var firstName = args.output[0]["contact_firstname"];
+							var lastName = args.output[0]["contact_lastname"];
+							var address = args.output[0]["contact_address"];
+							var city = args.output[0]["contact_city"];
+							var state = args.output[0]["contact_state"];
+							var zip = args.output[0]["contact_zipcode"];
+							var county = args.output[0]["county"];
+		
+							$('#hCounty').val(county);
+							$('#hState').val(state);
+							$('#spanContactInfo').html(firstName + " " + lastName + "<br>" + address + "<br>" + city + ", " + state + " " + zip);
+							$('#h_contact_id_previous').val(contact_id);
+						}
+						fixHeight();
 					}
-					fixHeight();
-				}
-			});
+				});
+			}
 		}
 
 	
@@ -2220,6 +2227,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		pageStatus = 'equipment';
 		$('#hPageStatus').val(pageStatus);
 		pager();
+		bindSerialBox();
 	});
 
 	$('#statusBullet, #statusBulletLink').click( function() {

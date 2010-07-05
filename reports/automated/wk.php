@@ -49,6 +49,7 @@
                 private $copies=1;
                 private $grayscale=false;
                 private $title='';
+				private $footer='';
                 private static $cpu='';
                 /**
                  * Advanced execution routine.
@@ -178,6 +179,9 @@
                         $this->html=$html;
                         file_put_contents($this->tmp,$html);
                 }
+				public function set_footer($footer){
+						$this->footer='"' . $footer . '"';
+				}
                 /**
                  * Returns WKPDF print status.
                  * @return string WPDF print status.
@@ -200,14 +204,17 @@
                         $web=$GLOBALS['WKPDF_BASE_SITE']. $GLOBALS['WKPDF_VIRTUAL_PATH'] .'/reports/automated/tmp/'.basename($this->tmp);
                         
 			//echo $this->copies;
-
+			//echo $this->footer;
 			$this->pdf=self::_pipeExec(
+			//echo (
                                 '"'.$this->cmd.'"'
-                                .(($this->copies>1)?' --copies '.$this->copies:'')                              // number of copies
-                                .($this->toc?' --toc':'')                                                                               // table of contents
-                                .($this->grayscale?' --grayscale':'')                                                   // grayscale
-                                .(($this->title!='')?' --title "'.$this->title.'"':'')                  // title
-                                .' "'.$web.'" -'                                                                                                // URL and optional to write to STDOUT
+								.' --orientation '.$this->orient
+								.' -B 0.5in -L 0.5in -T 0.5in -R 0.5in'
+								.($this->footer?' --footer-html footer.html':'')
+                                .($this->toc?' --toc':'')                                 // table of contents
+                                .($this->grayscale?' --grayscale':'')                     // grayscale
+                                .(($this->title!='')?' --title "'.$this->title.'"':'')    // title
+                                .' "'.$web.'" -'                                          // URL and optional to write to STDOUT
                         );
                         if(strpos(strtolower($this->pdf['stderr']),'error')!==false)throw new Exception('WKPDF system error: <pre>'.$this->pdf['stderr'].'</pre>');
                         if($this->pdf['stdout']=='')throw new Exception('WKPDF didn\'t return any data. <pre>'.$this->pdf['stderr'].'</pre>');

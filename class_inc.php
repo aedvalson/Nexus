@@ -28,6 +28,18 @@ function plural( $singular ) {
 	return $singular;
 }
 
+function format_phone($phone)
+{
+	$phone = preg_replace("/[^0-9]/", "", $phone);
+
+	if(strlen($phone) == 7)
+		return preg_replace("/([0-9]{3})([0-9]{4})/", "$1-$2", $phone);
+	elseif(strlen($phone) == 10)
+		return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "($1) $2-$3", $phone);
+	else
+		return $phone;
+}
+
 
 function firstOfMonth() {
 return date("m/d/Y", strtotime(date('m').'/01/'.date('Y').' 00:00:00'));
@@ -416,14 +428,18 @@ class conn
 		$this->connect();
 		$sql = "SELECT * FROM contacts where contact_id = ".$contact_id;
 		$result = $this->query($sql);
-		if (mysql_num_rows($result) == 1)
+		if ($result)
 		{
-			while ($row = mysql_fetch_assoc($result))
+			if (mysql_num_rows($result) == 1)
 			{
-				$retArray[] = $row;
+				while ($row = mysql_fetch_assoc($result))
+				{
+					$retArray[] = $row;
+				}
 			}
 		}
 		return $retArray;
+
 	}
 
 

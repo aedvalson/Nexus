@@ -568,44 +568,47 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function bindLoanOptions()
 	{
 		var financeCompany = $('#ddlFinanceCompany').val();
-		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getNewFinanceOptionsTable", financeCompany: financeCompany }, function(json) 
+		if (financeCompany)
 		{
-			eval("var args = " + json);		
-			if (args.success == "success")
+			$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getNewFinanceOptionsTable", financeCompany: financeCompany }, function(json) 
 			{
-				var theOutput = args.output;
-				for (i = 0; i < theOutput.length ; i++ )
+				eval("var args = " + json);		
+				if (args.success == "success")
 				{
-					if (theOutput[i].id == financeCompany)
+					var theOutput = args.output;
+					for (i = 0; i < theOutput.length ; i++ )
 					{
-						var myCompany = theOutput[i];
-						if (myCompany.LoanOptions)
+						if (theOutput[i].id == financeCompany)
 						{
-							var myLoanOptions = JSON.parse(myCompany.LoanOptions);
+							var myCompany = theOutput[i];
+							if (myCompany.LoanOptions)
+							{
+								var myLoanOptions = JSON.parse(myCompany.LoanOptions);
+							}
 						}
 					}
-				}
-				$('#ddlLoanOption option').remove();
-				if (!myLoanOptions || myLoanOptions.length == 0)
-				{
-					$('#ddlLoanOption').append('<option value="">No Loan Options Added - Add some in Admin</option>');
-					$('#ddlLoanOption').attr('disabled', 'disabled');
-				}
-				else
-				{
-					// Parse the JSON thingy
-					for (i = 0; i < myLoanOptions.loanOptions.length ; i++ )
+					$('#ddlLoanOption option').remove();
+					if (!myLoanOptions || myLoanOptions.length == 0)
 					{
-						$('#ddlLoanOption').append('<option value="' + myLoanOptions.loanOptions[i].optionName + '|||' + myLoanOptions.loanOptions[i].reserve + '">' + myLoanOptions.loanOptions[i].optionName + ' (' + myLoanOptions.loanOptions[i].reserve + '% Reserve)</option>');
+						$('#ddlLoanOption').append('<option value="">No Loan Options Added - Add some in Admin</option>');
+						$('#ddlLoanOption').attr('disabled', 'disabled');
 					}
-					$('#ddlLoanOption').removeAttr('disabled');
-				}
+					else
+					{
+						// Parse the JSON thingy
+						for (i = 0; i < myLoanOptions.loanOptions.length ; i++ )
+						{
+							$('#ddlLoanOption').append('<option value="' + myLoanOptions.loanOptions[i].optionName + '|||' + myLoanOptions.loanOptions[i].reserve + '">' + myLoanOptions.loanOptions[i].optionName + ' (' + myLoanOptions.loanOptions[i].reserve + '% Reserve)</option>');
+						}
+						$('#ddlLoanOption').removeAttr('disabled');
+					}
 
-				var reserveRate = parseFloat( $('#ddlLoanOption').val().split('|||')[1] );
-				$('#hReserveRate').val(reserveRate);
-				fixHeight();
-			}
-		});
+					var reserveRate = parseFloat( $('#ddlLoanOption').val().split('|||')[1] );
+					$('#hReserveRate').val(reserveRate);
+					fixHeight();
+				}
+			});
+		}
 	}
 
 	function bindFinanceBox()
@@ -664,6 +667,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				fixHeight();
 			}
 		});
+
 	}
 
 	function bindSerialBox()
@@ -680,7 +684,27 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					$('#ddlSerial option').remove();
 					for (i = 0; i < args.output.length ; i++ )
 					{
-						$('#ddlSerial').append('<option value="' + args.output[i].serial + '">' + args.output[i].serial + '</option>');
+						// See if serial is included in this order before adding to list.
+						var $prodArrayHiddenField = $('#hProductArray');
+						var used = 0; // Checking to see if serial is in use in this order
+
+						// See if we already have a value in the field
+						if ($prodArrayHiddenField.val() != '')
+						{
+							// Read the existing object
+							var theObject = JSON.parse($prodArrayHiddenField.val());
+							for (var j in theObject.products)
+							{
+								if (theObject.products[j].Serial == args.output[i].serial)
+								{
+									used = 1;
+								}
+							}
+						}
+						if (!used)
+						{
+							$('#ddlSerial').append('<option value="' + args.output[i].serial + '">' + args.output[i].serial + '</option>');
+						}
 					}
 					$('#ddlSerial').removeAttr("disabled");
 					$('#btnSubmitProduct').removeAttr("disabled");
@@ -789,11 +813,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var salePrice = $('#tbSalePrice').val();
 		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getCommissionTemplates",  price: salePrice }, function(json) 
 		{
-			eval("var args = " + json);		
+			eval("var args = " + json);
 			if (args.success == "success")
 			{
 				$ddlTemplates = $('#ddlcommTemplate');
-				if (args.output.length > 0)
+				if (args.output.length > 0 && args.output != 'none')
 				{
 					$('#hCommTemplatesArray').val(JSON.stringify(args.output));
 					$('#ddlcommTemplate option').remove();
@@ -1849,6 +1873,10 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 			// Store new object
 			$prodArrayHiddenField.val(JSON.stringify(theObject));
+
+			// Update Serial numbers
+			bindSerialBox();
+
 			updateForm();
 		}
 	}
@@ -1938,6 +1966,13 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			// Store object back in Hidden Variable
 			var storage = JSON.stringify(theObject);
 			$prodArrayHiddenField.val(storage);
+
+			// Remove serial from dropdown
+			if (serial)
+			{
+				$('#ddlSerial option:selected').remove();
+			}
+
 
 			// Update Form and Return false to prevent postback.
 			updateForm();
@@ -2031,7 +2066,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		else return; // no data, do nothing
 
 		$('#roleTable tbody > tr').remove();
-		if (theObject.roles.length > 0)
+		if (theObject && theObject.roles.length > 0)
 		{
 			
 			for (i=0; i < theObject.roles.length ; i++)

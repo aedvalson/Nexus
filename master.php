@@ -133,7 +133,7 @@
 
 	}
 
-	function pdfReport( $element, save )
+	function pdfReport( $element, save, footer, orient )
 	{
 		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "generateReport",  value: "<HTML><HEAD></HEAD><BODY>" + $element.html() + "</BODY></HTML>" }, function(json) {
 			eval("var args = " + json);		
@@ -148,6 +148,14 @@
 					{
 						url = url + "&output=pdf";
 					}
+					if (footer)
+					{
+						url = url + "&footer=1";
+					}
+					if (orient)
+					{
+						url = url + "&orient=" + orient;
+					}
 					window.open(url);
 				}
 			}
@@ -157,6 +165,15 @@
 			}
 		});
 	}
+
+	// remove all event bindings , 
+	// and the jQ data made for jQ event handling
+	jQuery.unbindall = function () { jQuery('*').unbind(); }
+	//
+	$(document).unload(function() { 
+	  jQuery.unbindall()
+	});
+
 
 	-->
 	</script>

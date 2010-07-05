@@ -7,6 +7,21 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" ;
 $DB = new conn();
 $DB->connect();
 
+// Get Contact Types
+$sql = "select * from contact_types";
+$result = $DB->query($sql);
+$types = array();
+if ($result)
+{
+	while ($row = mysql_fetch_assoc($result))
+	{
+		$types[] = $row;
+	}
+}
+
+
+$firephp->log($types);
+
 
 // Form Vars
 	if ($_REQUEST)
@@ -32,10 +47,12 @@ $DB->connect();
 				$Notes = $DB->sanitize($_REQUEST["Notes"]);
 				$ContactType = $DB->sanitize($_REQUEST["ContactType"]);
 
+				$firephp->log("contact: " . $ContactType);
+
 
 
 				
-				$sql = "INSERT INTO CONTACTS (contact_firstname, contact_lastname, contact_email, contact_phone, contact_phonedetails, contact_address, contact_city, contact_state, contact_zipcode, contact_country, contact_notes, contact_type_id) VALUES ('".$FirstName."', '".$LastName."', '".$Email."', '".$Phone."', '".$PhoneDetails."', '".$Address."', '".$City."', '".$State."', '".$ZipCode."', '".$Country."', '".$Notes."', '".$ContactType."')";
+				$sql = "INSERT INTO contacts (contact_firstname, contact_lastname, contact_email, contact_phone, contact_phonedetails, contact_address, contact_city, contact_state, contact_zipcode, contact_country, contact_notes, contact_type_id) VALUES ('".$FirstName."', '".$LastName."', '".$Email."', '".$Phone."', '".$PhoneDetails."', '".$Address."', '".$City."', '".$State."', '".$ZipCode."', '".$Country."', '".$Notes."', '".$ContactType."')";
 				$DB->execute_nonquery($sql);
 				header("Location: ManageContacts.php");
 			}
@@ -73,8 +90,12 @@ $DB->close();
                   <label for="r_tbContactType">ContactType:</label>
                   <div id="tbContactType_img"></div>
 					<select class="validated" name="ContactType" id="ddlContactType" >
-						<OPTION Value="2">Lead</OPTION>
-						<OPTION Value="3">Customer</OPTION>
+						<?
+						foreach ($types as $type)
+						{
+							?><OPTION Value="<?= $type["contact_type_id"] ?>"><?= $type["contact_type_name"] ?></OPTION><?
+						}
+						?>
 					</select>	
                   <div id="tbContactType_msg"></div>
           </li>

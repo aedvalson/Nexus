@@ -132,7 +132,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$storagelocation_name = $row["storagelocation_name"];
 
 		// Reset all inventory that is contained in this product to default locationa
-		$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE status = 4 AND status_data = " . $order_id;
+		$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE (status = 4 or status = 5) AND status_data = " . $order_id;
+		$firephp->log($sql);
 		$DB->execute_nonquery($sql);
 
 		// Update inventory status for items in order.

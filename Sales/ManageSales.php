@@ -392,19 +392,22 @@ SQLEND;
 							var dealerArray = JSON.parse(_r.dealerArray);
 							var roles = {};
 							roleLength = 0;
-							for (i in dealerArray.roles)
+							if (dealerArray)
 							{
-								var thisRoleText = dealerArray.roles[i].roleText;
-								if (!roles[thisRoleText])
+								for (i in dealerArray.roles)
 								{
-									roles[thisRoleText] = dealerArray.roles[i].roleText.replace(" ", "&nbsp;") + ":";
+									var thisRoleText = dealerArray.roles[i].roleText;
+									if (!roles[thisRoleText])
+									{
+										roles[thisRoleText] = dealerArray.roles[i].roleText.replace(" ", "&nbsp;") + ":";
+									}
+									var name = dealerArray.roles[i].displayName ? dealerArray.roles[i].displayName.replace(" ", "&nbsp;") : dealerArray.roles[i].userText;
+									roles[thisRoleText] = roles[thisRoleText] + "<br>&nbsp;&nbsp;<span style=\"text-decoration: underline; color: #CC0000\">" + name + "</span>";
 								}
-								var name = dealerArray.roles[i].displayName ? dealerArray.roles[i].displayName.replace(" ", "&nbsp;") : dealerArray.roles[i].userText;
-								roles[thisRoleText] = roles[thisRoleText] + "<br>&nbsp;&nbsp;<span style=\"text-decoration: underline; color: #CC0000\">" + name + "</span>";
-							}
-							for (var k in roles)
-							{
-								dealerText = dealerText + '<span>' + roles[k] + '</span><br><br>';
+								for (var k in roles)
+								{
+									dealerText = dealerText + '<span>' + roles[k] + '</span><br><br>';
+								}
 							}
 						}
 						

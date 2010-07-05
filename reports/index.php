@@ -44,20 +44,26 @@ if ($_REQUEST["report"] )
 	// General Sales Report
 	if ($_REQUEST["report"] == "GeneralSales")
 	{
-			$firephp->log($_REQUEST["report"]);
-			$firephp->log($_REQUEST["generalSalesStartDate"]);
-			$firephp->log($_REQUEST["generalSalesEndDate"]);
 		if ($_REQUEST["generalSalesStartDate"] && $_REQUEST["generalSalesEndDate"])
 		{
-			$firephp->log($_REQUEST["report"]);
-			$firephp->log($_REQUEST["generalSalesStartDate"]);
-			$firephp->log($_REQUEST["generalSalesEndDate"]);
-			$firephp->log($_REQUEST["report"]);
 			$db->connect();
 			$startDate = $db->Sanitize($_REQUEST["generalSalesStartDate"]);
 			$endDate = $db->Sanitize($_REQUEST["generalSalesEndDate"]);
 			$db->close();
-			header("Location: NexusReport_GeneralSales.php?startDate=".$startDate."&endDate=".$endDate."&productType=".$productType);
+			header("Location: NexusReport_GeneralSales.php?startDate=".$startDate."&endDate=".$endDate);
+		}
+	}
+
+	// Direct Sales Report
+	if ($_REQUEST["report"] == "DirectSales")
+	{
+		if ($_REQUEST["directSalesStartDate"] && $_REQUEST["directSalesEndDate"])
+		{
+			$db->connect();
+			$startDate = $db->Sanitize($_REQUEST["directSalesStartDate"]);
+			$endDate = $db->Sanitize($_REQUEST["directSalesEndDate"]);
+			$db->close();
+			header("Location: NexusReport_DirectSales.php?startDate=".$startDate."&endDate=".$endDate);
 		}
 	}
 }
@@ -74,6 +80,7 @@ if ($_REQUEST["report"] )
 		<div class="navBullet navBulletSelected" id="custBullet"><a href="#" class="pagetab" id="reportInventoryLink">Inventory Report</a></div>
 		<div class="navBullet" id="generalSalesBullet"><a href="#" class="pagetab" id="generalSalesLink">General Sales</a></div>
 		<div class="navBullet" id="individualSaleBullet"><a href="#" class="pagetab" id="individualSaleLink">Individual Sale</a></div>
+		<div class="navBullet" id="directSalesBullet"><a href="#" class="pagetab" id="directSalesLink">Direct Sales</a></div>
 		<div class="navBulletBorderBottom"></div>
 	</div>
 	<div class="navPageSpacing"></div>
@@ -121,6 +128,18 @@ if ($_REQUEST["report"] )
 			</form>
 		</div>
 
+		<div class="formDiv" id="directSalesDiv" style="display: none; background-color: #EDECDC">
+			<h1>Consumer Installation Report - Direct Sales Report</h1>
+			<form autocomplete="off" name="directSalesForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+			<ul class="form">
+				<? $F->tbNotVal("directSalesStartDate", "Start Date", "datepicker"); ?>
+				<? $F->tbNotVal("directSalesEndDate", "End Date", "datepicker"); ?>
+				<? $F->SubmitButton("Open Report"); ?>
+			</ul>
+			<input type="hidden" name="report" value="DirectSales">
+			</form>
+		</div>
+
 
 		<div class="formDiv" id="individualSaleDiv" style="display: none; background-color: #EDECDC">
 			<h1>Individual Sale Report</h1>
@@ -138,7 +157,7 @@ if ($_REQUEST["report"] )
 
 <SCRIPT>
 
-$('#reportInventoryLink, #individualSaleLink, #generalSalesLink').click( function() {
+$('#reportInventoryLink, #individualSaleLink, #generalSalesLink, #directSalesLink').click( function() {
 	$('.navBullet').removeClass("navBulletSelected");
 	$(this).parent('.navBullet').addClass("navBulletSelected");
 	var formDivName = $(this).attr("id").replace("Link", "Div");

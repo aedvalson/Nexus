@@ -145,7 +145,31 @@ div.reportContainer
 	width: 1020px;
 	background-color: white;
 }
-
+table.DirectSales
+{
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+tr.DirectSalesHeader td
+{
+	border:1px solid black;
+	border-top: 3px solid black;
+	border-bottom: 3px solid black;
+	text-align: center;
+	font-weight: bold;
+}
+tr.DirectSalesBody
+{
+	border: 1px solid black;
+	}
+tr.DirectSalesBody td
+{
+	font-family: courier;
+	font-size: 90%;
+	border:1px solid black;
+	text-align: center;
+	border-collapse: collapse:
+}
 
 
 

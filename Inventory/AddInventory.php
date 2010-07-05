@@ -24,6 +24,7 @@ $DB->connect();
 					$ProductId = $DB->sanitize($_REQUEST["ProductId"]);
 					$LocationId= $DB->sanitize($_REQUEST["LocationId"]);
 					$Invoice = $DB->sanitize($_REQUEST["Invoice"]);
+					$DateReceived = $DB->sanitize($_REQUEST["receivedDate"]);
 
 					$serials = Array();
 					foreach ( $_REQUEST as $key => $value)
@@ -38,7 +39,8 @@ $DB->connect();
 
 					foreach ($serials as $serial)
 					{
-						$sql = "INSERT INTO inventory (product_id, storagelocation_id, invoice, serial, status, status_data, AddedBy) VALUES (".$ProductId.", ".$LocationId.", '".$Invoice."', '".$serial."', '1', ".$LocationId.", ". $_SESSION["user_id"] .")";
+						$sql = "INSERT INTO inventory (product_id, storagelocation_id, invoice, serial, status, status_data, AddedBy, DateReceived) VALUES (".$ProductId.", ".$LocationId.", '".$Invoice."', '".$serial."', '1', ".$LocationId.", ". $_SESSION["user_id"] .", STR_TO_DATE('".$DateReceived."', '%m/%d/%Y') )";
+
 						$newId = $DB->insert($sql);
 						
 						$sql = "SELECT storagelocation_name from storagelocations where storagelocation_id = ".$LocationId;
@@ -210,9 +212,11 @@ $DB->close();
 		if (newTotal > oldTotal)
 		{
 			j = newTotal - oldTotal;
-			i = 0;
+			var i = $('#tbSerial input.validated[id^=tbSerial]').length + 1;
+			alert(i);
 
-			while (i < j)
+
+			while (i <= newTotal)
 			{
 				$('#tbSerial').append('<input class="validated" name="Serial' + i + '" id="tbSerial' + i + '" type="text" maxlength="20" value=""  />');
 				i++;

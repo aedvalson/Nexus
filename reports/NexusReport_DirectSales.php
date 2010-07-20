@@ -35,12 +35,12 @@ foreach ($orders as $order)
 {
 	if ($order["order_status_id"] == 5)
 	{
-		$DealerName="unknown";
+		$DealerName="";
 		$dealersArray = json_decode($order["dealerArray"], true);
 		$roles = $dealersArray["roles"];
 		foreach ($roles as $role)
 		{
-			if ($role["roleText"] == "Dealer")
+			if ( preg_match("/dealer/i", $role["roleText"]) )
 			{
 				$DealerName = $role["displayName"];
 			}
@@ -84,7 +84,8 @@ foreach ($orders as $order)
 		</center>
 	</div>
 
-	<table class="DirectSales" style="width: 100%; page-break-after: always;" CELLPADDING="0" CELLSPACING="0">
+	<div style="page-break-inside: avoid">
+	<table class="DirectSales" style="width: 100%;" CELLPADDING="0" CELLSPACING="0">
 		<thead>
 			<tr class="DirectSalesHeader">
 				<td colspan="2">Serial<br />Number</td>
@@ -110,6 +111,8 @@ foreach ($orders as $order)
 					?>
 		</tbody>
 	</table>
+	</div>
+	<div style="page-break-inside: avoid">
 	<table class="DirectSales" style="width: 100%" CELLPADDING="0" CELLSPACING="0">
 		<thead>
 			<tr class="DirectSalesHeader">
@@ -143,7 +146,7 @@ foreach ($orders as $order)
 			<? } ?>
 		</tbody>
 	</table>
-
+	</div>
 	<table BORDER="0" CELLPADDING="0" CELLSPACING="0" style="page-break-inside: avoid">
 	<tr>
 	<td>

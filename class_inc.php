@@ -414,9 +414,9 @@ class conn
 		}
 	}
 
-	function addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county)
+	function addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes="", $contacttype, $county="", $address2="", $home_status="", $home_type="", $license="", $licensestate="", $social="")
 	{
-		$sql = "INSERT INTO contacts (contact_firstname, contact_lastname, contact_DisplayName, contact_email, contact_phone, contact_phonedetails, contact_address, contact_city, contact_state, contact_zipcode, contact_country, contact_notes, contact_type_id, county) VALUES ('".$firstname."', '".$lastname."', '".$displayname."', '".$email."', '".$phone."', '".$phonedetails."', '".$address."', '".$city."', '".$state."', '".$zipcode."', '".$country."', '".$notes."', '".$contacttype."', '".$county."')";
+		$sql = "INSERT INTO contacts (contact_firstname, contact_lastname, contact_DisplayName, contact_email, contact_phone, contact_phonedetails, contact_address, contact_city, contact_state, contact_zipcode, contact_country, contact_notes, contact_type_id, county, contact_address2, contact_home_status, contact_home_type, contact_license, contact_license_state, contact_social) VALUES ('".$firstname."', '".$lastname."', '".$displayname."', '".$email."', '".$phone."', '".$phonedetails."', '".$address."', '".$city."', '".$state."', '".$zipcode."', '".$country."', '".$notes."', '".$contacttype."', '".$county."', '".$address2."', '".$home_status."', '".$home_type."', '".$license."', '".$licensestate."', '".$social."')";
 
 		$identity = $this->insert($sql);
 		return $identity;

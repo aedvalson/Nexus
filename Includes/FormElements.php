@@ -60,6 +60,40 @@ class FormElements
 		  <?
 	}
 
+	function ddlHomeType()
+	{
+		?>
+	 <li class="validated" id="tbHomeType_li">
+                  <label for="r_tbHomeType">Home Type:</label>
+                  <div id="tbHomeType_img"></div>
+					<select class="validated" name="HomeType" id="ddlHomeType" >
+						<OPTION Value="House">House</OPTION>
+						<OPTION Value="Apartment">Apartment</OPTION>
+						<OPTION Value="Condo">Condo</OPTION>
+						<OPTION Value="Other">Other</OPTION>
+					</select>	
+                  <div id="tbHomeType_msg"></div>
+          </li>
+		  <?
+	}
+
+	function ddlHomeStatus()
+	{
+		?>
+	 <li class="validated" id="tbHomeStatus_li">
+                  <label for="r_tbHomeStatus">Home Status:</label>
+                  <div id="tbHomeStatus_img"></div>
+					<select class="validated" name="HomeStatus" id="ddlHomeStatus" >
+						<OPTION Value="Own">Own</OPTION>
+						<OPTION Value="Renting">Renting</OPTION>
+					</select>	
+                  <div id="tbHomeStatus_msg"></div>
+          </li>
+		  <?
+	}
+
+
+
 	function ddlPaymentType()
 	{
 		?>
@@ -247,18 +281,18 @@ class FormElements
 		  <?
 	}
 
-	function ddlStates($state = "AL")
+	function ddlStates($state = "AL", $id = "State", $text="State")
 	{
 		?>
-	 <li class="validated" id="tbState_li">
-                  <label for="r_tbState">State:</label>
-                  <div id="tbState_img"></div>
-					<select class="validated" name="State" id="ddlState" >
+	 <li class="validated" id="tb<?=$id?>_li">
+                  <label for="r_tb<?=$id?>"><?=$text?>:</label>
+                  <div id="tb<?=$id?>_img"></div>
+					<select class="validated" name="<?=$id?>" id="ddl<?=$id?>" >
 						<? echoUsStateOptions(); ?>
 					</select>	
-                  <div id="tbState_msg"></div>
+                  <div id="tb<?=$id?>_msg"></div>
 				  <SCRIPT type="text/javascript">
-					$('#ddlState').val("<?= $state ?>");
+					$('#ddl<?=$id?>').val("<?= $state ?>");
 				  </SCRIPT>
           </li>
 		  <?

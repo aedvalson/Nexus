@@ -57,7 +57,7 @@ $DB->close();
 $saleText = "Sale to";
 foreach ($roles["roles"] as $i)
 {
-	if ($i["roleText"] == "Dealer")
+	if (preg_match("/dealer/i", $i["roleText"] ))
 	{
 		if ($i["displayName"])
 		{
@@ -89,8 +89,8 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 <div class="reportContainer">
 	<div class="reportHeader">
 		<h1>Individual Sale Report</h1>
-		<h2><?= $saleText ?></h2>
-		<h2>American Eagle Corp.</h2>
+		<h2 style="font-size: 100%"><?= $saleText ?></h2>
+		<h2 style="font-size: 100%">American Eagle Corp.</h2>
 	</div>
 	<center>
 	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
@@ -175,10 +175,10 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 				Total Profit: $<?= money_format("%i", $row["amount"] - $reserveTotal) ?><br />
 			</td>
 		</tr>
-	</TABLE>
+
 
 	<? if ($commissions) { ?>
-	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
+
 		<tr>
 			<td class="shaded" style="width: 25%">Commissions</td>
 			<td>
@@ -250,10 +250,10 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 			</td>
 		</tr>
 		<? } ?>
-	</TABLE>
+
 	<? } ?>
 
-	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
+
 		<tr>
 			<td class="shaded" style="width: 25%">Status</td>
 			<td><?= $row["order_status_name"] ?></td>

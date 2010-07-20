@@ -123,8 +123,8 @@ function getLocation ($status, $data)
 				<TD style="width: 12%">Serial #</TD>
 				<TD style="width: 22%">Type</TD>
 				<TD style="width: 22%">Date Received</TD>
-				<TD style="width: 22%">Status</TD>
-				<TD style="width: 22%">Location</TD>
+				<TD style="width: 16%">Status</TD>
+				<TD style="width: 28%">Location</TD>
 
 			</TR>
 		</THEAD>
@@ -151,8 +151,8 @@ function getLocation ($status, $data)
 				<TD style="width: 12%" class="shaded"><?= $InventoryRow["serial"] ?></TD>
 				<td style="width: 22%"><?= $InventoryRow["product_name"] ?></td>
 				<td style="width: 22%"><?= date("m/d/Y", strtotime($InventoryRow["DateAdded"])) ?></td>
-				<td style="width: 22%"><?= $InventoryRow["status_name"] ?></td>
-				<td style="width: 22%"><?= getLocation($InventoryRow["invStatus"], $InventoryRow["invStatusData"]) ?></td>
+				<td style="width: 16%"><?= $InventoryRow["status_name"] ?></td>
+				<td style="width: 28%; white-space:nowrap;"><?= getLocation($InventoryRow["invStatus"], $InventoryRow["invStatusData"]) ?></td>
 			</TR> 
 			<? }
 			}

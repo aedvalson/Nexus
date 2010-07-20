@@ -60,6 +60,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		
 		$orderStatus		= $DB->sanitize($_REQUEST["orderStatus"]);
 		$customer_id		= $DB->sanitize($_REQUEST["customer_id"]);
+		$cobuyer_id			= $DB->sanitize($_REQUEST["cobuyer_id"]);
 		$amount				= $DB->sanitize($_REQUEST["amount"]);
 		$CommStructureString= $_REQUEST["CommStructureString"];
 		$ProductsString		= $_REQUEST["ProductsString"];
@@ -70,7 +71,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$dateCompleted		= $DB->sanitize($_REQUEST["dateCompleted"]);
 		$dealerArray		= $_REQUEST["dealerArray"];
 		$tax				= $DB->sanitize($_REQUEST["tax"]);
-		if (!$tax) { $tax = 0; }
+		if (!$tax || !is_numeric($tax)) { $tax = 0; }
 		$date = "";
 		
 		if ($dateCompleted != "" && $orderStatus == 5) // We only add a completed date if order is actually completed.
@@ -107,7 +108,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 		if (is_numeric($order_id))
 		{
-			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', tax=' . $tax . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
+			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', cobuyer_contact_id = ' . $cobuyer_id . ',  tax=' . $tax . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
 			$firephp->log($query2);
 
 			$DB->execute_nonquery($query2);
@@ -116,8 +117,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 		else
 		{
-			$query1 = 'insert into orders (order_status_id, contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray, tax) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\', ' . $tax . ')';
-
+			$query1 = 'insert into orders (order_status_id, contact_id, cobuyer_contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray, tax) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', \'' . $cobuyer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\', ' . $tax . ')';
+			$firephp->log($query1);
 			$output = $DB->insert($query1);
 			$order_id = $output;
 		}

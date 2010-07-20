@@ -26,34 +26,36 @@ $firephp->log($types);
 // Form Vars
 	if ($_REQUEST)
 	{
-		if ($_REQUEST["Action"] )
+		if (isset($_REQUEST["Action"]))
 		{
-			$action = $_REQUEST["Action"];
-			//echo $action;
+			$action = $DB->sanitize($_REQUEST["Action"]);
+			$firephp->log($action);
 			if ($action == "addNew")
 			{
-				// ALL FORM INPUTS MUST BE SANITIZED
-
-				$FirstName = $DB->sanitize($_REQUEST["FirstName"]);
-				$LastName = $DB->sanitize($_REQUEST["LastName"]);
-				$Email = $DB->sanitize($_REQUEST["Email"]);
-				$Phone = $DB->sanitize($_REQUEST["Phone"]);
-				$PhoneDetails = $DB->sanitize($_REQUEST["PhoneDetails"]);
-				$Address = $DB->sanitize($_REQUEST["Address"]);
-				$City = $DB->sanitize($_REQUEST["City"]);
-				$State = $DB->sanitize($_REQUEST["State"]);
-				$ZipCode = $DB->sanitize($_REQUEST["ZipCode"]);
-				$Country = $DB->sanitize($_REQUEST["Country"]);
-				$Notes = $DB->sanitize($_REQUEST["Notes"]);
-				$ContactType = $DB->sanitize($_REQUEST["ContactType"]);
-
-				$firephp->log("contact: " . $ContactType);
-
+				$firstname = $DB->sanitize($_REQUEST["FirstName"]);
+				$lastname = $DB->sanitize($_REQUEST["LastName"]);
+				$displayname = $firstname . " " . $lastname;
+				$email = $DB->sanitize($_REQUEST["Email"]);
+				$address = $DB->sanitize($_REQUEST["Address"]);
+				$address2 = $DB->sanitize($_REQUEST["Address2"]);
+				$city = $DB->sanitize($_REQUEST["City"]);
+				$state = $DB->sanitize($_REQUEST["State"]);
+				$zipcode = $DB->sanitize($_REQUEST["ZipCode"]);
+				$country = $DB->sanitize($_REQUEST["Country"]);
+				$phone = $DB->sanitize($_REQUEST["Phone"]);
+				$phonedetails = $DB->sanitize($_REQUEST["PhoneDetails"]);
+				$notes = $DB->sanitize($_REQUEST["Notes"]);
+				$contacttype = $DB->sanitize($_REQUEST["ContactType"]);
+				$county = $DB->sanitize($_REQUEST["County"]);
+				$home_status = $DB->sanitize($_REQUEST["HomeStatus"]);
+				$home_type = $DB->sanitize($_REQUEST["HomeType"]);
+				$license = $DB->sanitize($_REQUEST["license"]);
+				$licensestate = $DB->sanitize($_REQUEST["licenseState"]);
+				$social = $DB->sanitize($_REQUEST["social"]);
 
 
 				
-				$sql = "INSERT INTO contacts (contact_firstname, contact_lastname, contact_email, contact_phone, contact_phonedetails, contact_address, contact_city, contact_state, contact_zipcode, contact_country, contact_notes, contact_type_id) VALUES ('".$FirstName."', '".$LastName."', '".$Email."', '".$Phone."', '".$PhoneDetails."', '".$Address."', '".$City."', '".$State."', '".$ZipCode."', '".$Country."', '".$Notes."', '".$ContactType."')";
-				$DB->execute_nonquery($sql);
+				$DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $social);
 				header("Location: ManageContacts.php");
 			}
 		}
@@ -68,6 +70,7 @@ $DB->close();
 
 
 <form name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+<input type="hidden" name="Action" value="addNew">
 <div class="navMenu" id="navMenu">
 	<div id="bullets">
 		<div class="navHeaderdiv"><h1>Contacts</h1></div>
@@ -84,108 +87,78 @@ $DB->close();
 
 		<div class="formDiv" style="display: block; background-color: #EDECDC">
 			<h1>Add Contact</h1>
-
-   <ul class="form">
-	 <li class="validated" id="tbContactType_li">
-                  <label for="r_tbContactType">ContactType:</label>
-                  <div id="tbContactType_img"></div>
-					<select class="validated" name="ContactType" id="ddlContactType" >
-						<?
-						foreach ($types as $type)
-						{
-							?><OPTION Value="<?= $type["contact_type_id"] ?>"><?= $type["contact_type_name"] ?></OPTION><?
-						}
-						?>
-					</select>	
-                  <div id="tbContactType_msg"></div>
-          </li>
-	 <li class="validated" id="tbFirstName_li">
-                  <label for="r_tbFirstName">FirstName:</label>
-                  <div id="tbFirstName_img"></div>
-                  <input class="validated" name="FirstName" id="tbFirstName" type="text" maxlength="20"  />
-                  <div id="tbFirstName_msg"></div>
-          </li>
-	 <li class="validated" id="tbLastName_li">
-                  <label for="r_tbLastName">LastName:</label>
-                  <div id="tbLastName_img"></div>
-                  <input class="validated" name="LastName" id="tbLastName" type="text" maxlength="20"   />
-                  <div id="tbLastName_msg"></div>
-          </li>
-	 <li class="validated" id="tbEmail_li">
-                  <label for="r_tbEmail">Email:</label>
-                  <div id="tbEmail_img"></div>
-                  <input class="validated" name="Email" id="tbEmail" type="text" maxlength="20"   />
-                  <div id="tbEmail_msg"></div>
-          </li>
-	 <li class="validated" id="tbPhone_li">
-                  <label for="r_tbPhone">Phone:</label>
-                  <div id="tbPhone_img"></div>
-                  <input class="validated" name="Phone" id="tbPhone" type="text" maxlength="20"   />
-                  <div id="tbPhone_msg"></div>
-          </li>
-	 <li class="validated" id="tbPhoneDetails_li">
-                  <label for="r_tbPhoneDetails">PhoneDetails:</label>
-                  <div id="tbPhoneDetails_img"></div>
-                  <input class="validated" name="PhoneDetails" id="tbPhoneDetails" type="text" maxlength="20"   />
-                  <div id="tbPhoneDetails_msg"></div>
-          </li>
-	 <li class="validated" id="tbAddress_li">
-                  <label for="r_tbAddress">Address:</label>
-                  <div id="tbAddress_img"></div>
-                  <input class="validated" name="Address" id="tbAddress" type="text" maxlength="20"   />
-                  <div id="tbAddress_msg"></div>
-          </li>
-	 <li class="validated" id="tbCity_li">
-                  <label for="r_tbCity">City:</label>
-                  <div id="tbCity_img"></div>
-                  <input class="validated" name="City" id="tbCity" type="text" maxlength="20"   />
-                  <div id="tbCity_msg"></div>
-          </li>
-	 <li class="validated" id="tbState_li">
-                  <label for="r_tbState">State:</label>
-                  <div id="tbState_img"></div>
-					<select class="validated" name="State" id="ddlState" >
-						<? echoUsStateOptions(); ?>
-					</select>	
-                  <div id="tbState_msg"></div>
-          </li>
-	 <li class="validated" id="tbZipCode_li">
-                  <label for="r_tbZipCode">ZipCode:</label>
-                  <div id="tbZipCode_img"></div>
-                  <input class="validated" name="ZipCode" id="tbZipCode" type="text" maxlength="20"   />
-                  <div id="tbZipCode_msg"></div>
-          </li>
-	 <li class="validated" id="tbCountry_li">
-                  <label for="r_tbCountry">Country:</label>
-                  <div id="tbCountry_img"></div>
-					<select class="validated" name="Country" id="ddlCountry" >
-						<? echoCountryOptions(); ?>
-					</select>	
-                  <div id="tbCountry_msg"></div>
-          </li>
-
-	 <li class="validated" id="tbNotes_li">
-                  <label for="r_tbNotes">Notes:</label>
-                  <div id="tbNotes_img"></div>
-					<textarea name="Notes" id="tbNotes"></textarea>
-                  <div id="tbNotes_msg"></div>
-          </li>
-
-	 <li class="validated" id="btnSubmit_li">
-                  <label for="r_btnSubmit"></label>
-                  <div id="btnSubmit_img"></div>
-                  <input type="hidden" name="Action" value="addNew"></input>
-                  <input id="btnSubmit" type="Submit" maxlength="20" value="Submit"  />
-                  <div id="btnSubmit_msg"></div>
-          </li>          
-               
-   </ul>
-
+					<div style="float:left; width:260px; padding:15px">
+					<? $F = new FormElements(); ?>
+					<ul class="form">
+						<? $F->ddlContactType(); ?>
+						<? $F->tbVal("FirstName"); ?>
+						<? $F->tbVal("LastName"); ?>
+						<? $F->tbNotVal("Email"); ?>
+						<? $F->tbNotVal("Phone"); ?>
+						<? $F->tbNotVal("PhoneDetails"); ?>
+						<? $F->ddlHomeType(); ?>
+						<? $F->ddlHomeStatus(); ?>
+						<? $F->tbContactNotes(); ?>
+					</ul>
+					</div>
+					<div style="float:left; width:260px; padding:15px">
+					<ul class="form">
+						<? $F->tbNotVal("Address"); ?>
+						<? $F->tbNotVal("Address2", "Address Line 2"); ?>
+						<? $F->tbNotVal("City"); ?>
+						<? $F->ddlStates(); ?>
+						<? $F->tbNotVal("ZipCode"); ?>
+						<? $F->ddlGeneric("County", "County"); ?>
+						<? $F->ddlCountries(); ?>
+						<? $F->tbNotVal("license", "Driver's License"); ?>
+						<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State"); ?>
+						<? $F->tbNotVal("social", "Social Security #"); ?>
+						<? $F->submitButton("Create Customer"); ?>						
+					</ul>
+					</div>
+					<div style="clear:both"></div>
 </div>
 </div>
 </div>
 
 </form>
+
+<SCRIPT type="text/javascript">
+	function bindCountyBox()
+	{
+		var state = $('#ddlState').val();
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getCounties",  state: state }, function(json) 
+		{
+			eval("var args = " + json);		
+			if (args.success == "success")
+			{
+				$('#ddlCounty option').remove();
+
+				if (args.output.length == 0)
+				{
+					$('#ddlCounty').append('<option value="">No Counties for ' + state + ' - Add some in Admin</option>');
+					$('#ddlCounty').attr('disabled', 'disabled');
+				}
+
+				else
+				{
+					for (i = 0; i < args.output.length ; i++ )
+					{
+						$('#ddlCounty').append('<option value="' + args.output[i].county + '">' + args.output[i].county + '</option>');
+					}
+					$('#ddlCounty').removeAttr('disabled');
+				}
+				fixHeight();
+			}
+		});
+
+	}
+
+	$(document).ready( function() {
+		bindCountyBox();
+		$('#ddlState').change( function() {   bindCountyBox();   });
+	});
+</SCRIPT>
 
 <? include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Bottom.php" ?>
 

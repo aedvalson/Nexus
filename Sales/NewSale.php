@@ -5,22 +5,35 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 <?
 
-				$DB = new conn();
-				$DB->connect();
+	$DB = new conn();
+	$DB->connect();
 
 	if ($_REQUEST)
 	{
+		if (isset($_REQUEST["order_id"]))
+		{
+			$id = $DB->sanitize($_REQUEST["order_id"]);
+			$sql = "SELECT * FROM orders WHERE order_id = '".$id."'";
+			$firephp->log($sql);
+
+			$result = $DB->query($sql);
+			$firephp->log($result);
+			if ($result) {
+				$order = mysql_fetch_assoc($result);
+				$firephp->log($order);
+			}
+		}
+
 		if (isset($_REQUEST["Action"]))
 		{
-			if ($_REQUEST["Action"] == "insertCustomer")
+			if ($_REQUEST["Action"] == "insertCustomer" || $_REQUEST["Action"] == "insertCobuyer")
 			{
-
-
 				$firstname = $DB->sanitize($_REQUEST["FirstName"]);
 				$lastname = $DB->sanitize($_REQUEST["LastName"]);
 				$displayname = $firstname . " " . $lastname;
 				$email = $DB->sanitize($_REQUEST["Email"]);
 				$address = $DB->sanitize($_REQUEST["Address"]);
+				$address2 = $DB->sanitize($_REQUEST["Address2"]);
 				$city = $DB->sanitize($_REQUEST["City"]);
 				$state = $DB->sanitize($_REQUEST["State"]);
 				$zipcode = $DB->sanitize($_REQUEST["ZipCode"]);
@@ -30,9 +43,22 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				$notes = $DB->sanitize($_REQUEST["Notes"]);
 				$contacttype = $DB->sanitize($_REQUEST["ContactType"]);
 				$county = $DB->sanitize($_REQUEST["County"]);
+				$home_status = $DB->sanitize($_REQUEST["HomeStatus"]);
+				$home_type = $DB->sanitize($_REQUEST["HomeType"]);
+				$license = $DB->sanitize($_REQUEST["license"]);
+				$licensestate = $DB->sanitize($_REQUEST["licenseState"]);
+				$social = $DB->sanitize($_REQUEST["social"]);
 
 
-				$newCustomer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county);
+
+				if ($_REQUEST["Action"] == "insertCustomer")
+				{
+					$newCustomer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $social);
+				}
+				if ($_REQUEST["Action"] == "insertCobuyer")
+				{
+					$newCobuyer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $social);
+				}
 			}
 		}
 	}
@@ -77,22 +103,53 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 			<div class="commandBox">
 				<h1>Customer Details</h1>
-				<span class="label">Customer ID:</span><span class="value" id="spanCustomerID"></span>
-				<span class="label">Contact Info:</span><span class="value contact" id="spanContactInfo"></span>
-				<div style="clear:both"></div>
+				<?
+				$errordisplay = $order["contact_id"] ? "none" : "block";
+				$divdisplay   = $order["contact_id"] ? "block" : "none";
+				?>
+				<div id="divCustomerNotSet" style="padding: 1em; display: <?= $errordisplay ?>;">
+					No Customer Set yet.
+				</div>
+				<div id="divCustomerSet" style="display: <?= $divdisplay ?>;">
+					<span class="label">Customer ID:</span><span class="value" id="spanCustomerID"></span>
+					<span class="label">Contact Info:</span><span class="value contact" id="spanContactInfo"></span>
+					<div style="clear:both"></div>
+				</div>
+				<div style="padding: 1em">
+					<a href="#" id="lbCreateNewContact" onClick="displayAddContactForm(); return false;">Create New Customer</a> |
+					<a href="#" id="lbSelectExistingContact" onClick="displaySelectContactForm(); return false;">Select Existing Contact</a>
+				</div>
 			</div>
 
 			<div class="commandBox">
-				<a href="#" id="lbCreateNewContact" onClick="displayAddContactForm(); return false;">Create New Contact</a> |
-				<a href="#" id="lbSelectExistingContact" onClick="displaySelectContactForm(); return false;">Select Existing Contact</a>
+				<h1>Co-Buyer Details</h1>
+				<?
+				$errordisplay = $order["cobuyer_id"] ? "none" : "block";
+				$divdisplay   = $order["cobuyer_id"] ? "block" : "none";
+				?>
+				<div id="divCobuyerNotSet" style="padding: 1em; display: <?= $errordisplay ?>;">
+					No Cobuyer Set
+				</div>
+				<div id="divCobuyerSet" style="display: <?= $divdisplay ?>;">
+					<span class="label">Customer ID:</span><span class="value" id="spanCobuyerID"></span>
+					<span class="label">Contact Info:</span><span class="value contact" id="spanCobuyerInfo"></span>
+					<div style="clear:both"></div>
+				</div>
+
+				<div style="padding: 1em">
+					<a href="#" id="lbCreateNewCobuyer" onClick="displayAddContactForm('cobuyer'); return false;">Create New Cobuyer</a> |
+					<a href="#" id="lbSelectExistingCobuyer" onClick="displaySelectContactForm('cobuyer'); return false;">Select Existing Contact</a>
+				</div>
 			</div>
 
-			<div class="formBoxDialog" id="fBoxCreateNewCustomer">
+
+			<div class="formBoxDialog" id="fBoxCreateNewCustomer" style="background-color: #EDECDC">
 				<h1>Create New Customer Form</h1>
 				<? $F = new FormElements(); ?>
 				<form id="formCreateNew" method="post" action="">
 				
 					<div style="float:left; width:260px; padding:15px">
+
 					<ul class="form">
 						<? $F->ddlContactType(); ?>
 						<? $F->tbVal("FirstName"); ?>
@@ -100,22 +157,28 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						<? $F->tbNotVal("Email"); ?>
 						<? $F->tbNotVal("Phone"); ?>
 						<? $F->tbNotVal("PhoneDetails"); ?>
+						<? $F->ddlHomeType(); ?>
+						<? $F->ddlHomeStatus(); ?>
 						<? $F->tbContactNotes(); ?>
 					</ul>
 					</div>
 					<div style="float:left; width:260px; padding:15px">
 					<ul class="form">
 						<? $F->tbNotVal("Address"); ?>
+						<? $F->tbNotVal("Address2", "Address Line 2"); ?>
 						<? $F->tbNotVal("City"); ?>
 						<? $F->ddlStates(); ?>
 						<? $F->tbNotVal("ZipCode"); ?>
 						<? $F->ddlGeneric("County", "County"); ?>
 						<? $F->ddlCountries(); ?>
+						<? $F->tbNotVal("license", "Driver's License"); ?>
+						<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State"); ?>
+						<? $F->tbNotVal("social", "Social Security #"); ?>
 						<? $F->submitButton("Create Customer"); ?>						
 					</ul>
 					</div>
 					<div style="clear:both"></div>
-					<input type="hidden" value="insertCustomer" name="Action" />
+					<input type="hidden" value="insertCustomer" id="insertCustomerAction" name="Action" />
 				</form>
 			</div>
 			
@@ -354,50 +417,68 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 			<div class="commandBox" id="addUserDiv" style="background-color: #EDECDC">
 			<h1>Add Custom Commission</h1>
-				<div style="float:left; width: 43%">
-				<ul class="form">
-					<? $F->ddlPayeeTypes(); ?>
+				<div id="divCustomCommissionMask" style="padding: 2em; display: none;">
+					<p>Custom Commission Added. <a href="#" id="linkShowCommissionForm" onclick="ShowCommissionForm();">Click Here</a> to add another Custom Commission.</p>
+				</div>
+				<div id="divCustomCommissions">
+					<div style="float:left; width: 43%">
+					<ul class="form">
+						<? $F->ddlPayeeTypes(); ?>
 
-					<div id="dealerSelectDiv">
-						<? $F->ddlDealerRoles(); ?>
-					</div>
-
-					<div id="commissionAmountDiv">
-						<? $F->ddlCommPaymentTypes("ddlDealerPaymentType"); ?>
-						<div id="flatRateDiv">
-							<? $F->tbVal("Flat_Amount", "Flat Amount", "0.00"); ?>
+						<div id="dealerSelectDiv">
+							<? //$F->ddlDealerRoles(); ?>
+							 <li class="validated" id="tbDealerRole_li">
+									  <label for="r_tbDealerRole">Dealer Role:</label>
+									  <div id="tbDealerRole_img"></div>
+										<select id="ddlDealerRole" class="validated" name="DealerRole">
+											<option value=""></option>
+										</select>
+								<input type="button" id="btnAddDealer" value="Add Another Dealer">
+											  <div id="tbDealerRole_msg"></div>
+										  </li>
 						</div>
 
-						<div id="percentageDiv" style="display:none;">
-							<? $F->tbVal("Percentage", "Percentage", "0"); ?>
+						<div id="commissionAmountDiv">
+							<? $F->ddlCommPaymentTypes("ddlDealerPaymentType"); ?>
+							<div id="flatRateDiv">
+								<? $F->tbVal("Flat_Amount", "Flat Amount", "0.00"); ?>
+							</div>
+
+							<div id="percentageDiv" style="display:none;">
+								<? $F->tbVal("Percentage", "Percentage", "0"); ?>
+							</div>
 						</div>
+
+
+						<!-- Adjustment Stuff -->
+						<div id="adjustmentDiv" style="display:none;">
+							<? $F->ddlStaff($DB, "staffAdjustment"); ?>
+							<? $F->tbNotVal("tbAdjustmentAmount", "Amount (-)"); ?>
+						</div>
+
+						<? $F->submitButton("Submit", "btnAddLine"); ?>
+					</ul>
 					</div>
 
-
-					<!-- Adjustment Stuff -->
-					<div id="adjustmentDiv" style="display:none;">
-						<? $F->ddlStaff($DB, "staffAdjustment"); ?>
-						<? $F->tbNotVal("tbAdjustmentAmount", "Amount (-)"); ?>
+					<div style="float:left; width: 53%">
+						<table class="data" id="dealerTable" style="margin-top:25px; display: none;">
+							<thead><tr><th style="width: 18px"></th>
+								<th>Dealer Role</th>
+								<th>Amount</th>
+								</tr><thead>
+								<tbody>
+									<tr class="error">
+										<td colspan="3">
+											No Dealers added yet. At least one dealer must be added to complete this Commission Element
+										</td>
+									</tr>
+								</tbody>
+						</table>
 					</div>
-
-					<? $F->submitButton("Submit", "btnAddLine"); ?>
-				</ul>
+					<div style="clear:both;"></div>
 				</div>
 
-				<div style="float:left; width: 53%">
-					<table class="data" id="dealerTable" style="margin-top:25px;">
-						<thead><tr><th style="width: 18px"></th>
-							<th>Dealer Role</th>
-							<th>Amount</th>
-							</tr><thead>
-						<tbody><tr class="error">
-								<td colspan="3">
-									No Dealers added yet. At least one dealer must be added to complete this Template
-								</td>
-							</tr></tbody>
-					</table>
-				</div>
-				<div style="clear:both;"></div>
+
 			</div>
 
 
@@ -464,11 +545,21 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 <input type="hidden" name="hCommissionArray" id="hCommissionArray" value="">
 <input type="hidden" name="hPaymentArray" id="hPaymentArray" value="">
 <input type="hidden" name="hRolesArray" id="hRolesArray" value="">
+<input type="hidden" name="hContactDestination" id="hContactDestination" value="h_contact_id" />
 <input type="hidden" name="contact_id" id="h_contact_id" value="<? 
+	$firephp->log($order["contact_id"]);
 	if (isset($newCustomer)) echo $newCustomer;
+	elseif (isset($order["contact_id"]) && $order["contact_id"] > 0) echo $order["contact_id"];
+	else echo "Not Yet Set"
+	?>">
+<input type="hidden" name="cobuyer_contact_id" id="h_cobuyer_contact_id" value="<? 
+	if (isset($newCobuyer)) echo $newCobuyer;
+	elseif (isset($order["cobuyer_id"])) echo $order["cobuyer_id"];
 	else echo "Not Yet Set"
 	?>">
 <input type="hidden" name="h_contact_id_previous" id="h_contact_id_previous" value="NOTSET">
+<input type="hidden" name="hremaining" id="hremaining" value="">
+<input type="hidden" name="dirty" id="dirty" value="">
 
 
 <SCRIPT type="text/javascript">
@@ -477,6 +568,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	var pageStatus = $('#hPageStatus').val();
 	var orderId = $('#hOrderId').val();
 	var productArray = $('#hProductArray').val();
+
+	function SetDirty()
+	{
+		$('#dirty').val("1");
+	}
 
 
 	// Update Form as soon as DOM is Ready
@@ -512,6 +608,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						var order_status = o.order_status_id;
 						var amount = o.amount;
 						var contact_id = o.contact_id;
+						var cobuyer_id = o.cobuyer_contact_id;
 						var commStructure = o.CommStructure;
 						var ProductsArray = o.ProductsArray;
 						var AccessoriesArray = o.AccessoriesArray;
@@ -530,8 +627,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 						$('#hOrderId').val(order_id);
 						$('#ddlOrderStatuses').val(order_status);
-						if ($('#h_contact_id').val() == "Not Yet Set")
+
+						if ($('#h_contact_id').val() == "Not Yet Set" && contact_id != "0")
 							$('#h_contact_id').val(contact_id);
+
+						$('#h_cobuyer_contact_id').val(cobuyer_id);
 						$('#tbSalePrice').val(amount);
 						$('#hCommissionArray').val(commStructure);
 						$('#hProductArray').val(ProductsArray);
@@ -563,6 +663,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		$('#ddlState').change( function() {   bindCountyBox();   });
 		$('#tbSalePrice').change( function() { updateSalesTax(); });
 		$('#ddlFinanceCompany').change( function() { bindLoanOptions(); });
+		$('form').submit( function() { SetDirty() });
 
 	});
 
@@ -763,11 +864,14 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		$('#' + $('#ddlPaymentType').val() + 'Options').css('display', 'block');
 
 
-		var contact_id = $('#h_contact_id').val()
+		var contact_id = $('#h_contact_id').val();
+		var cobuyer_id = $('#h_cobuyer_contact_id').val();
 		var orderId = $('#hOrderId').val();
 	
-		// Populate CustomerID
-		$('#spanCustomerID').html(contact_id);
+
+
+		// Populate Cobuyer ID
+		$('#spanCobuyerID').html(cobuyer_id);
 
 		// Populate Order Status
 		var $sOrderID = $('#spanOrderID');
@@ -784,9 +888,39 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		// Hide Dialogs
 		$('.formBoxDialog').css('display', 'none');
 
-		// Populate Customer Info
-		if (isNumeric(contact_id))
+		// Populate Cobuyer Info
+		if (isNumeric(cobuyer_id))
 		{
+			$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getContact",  value: cobuyer_id }, function(json) 
+			{
+				eval("var args = " + json);		
+				if (args.success == "success")
+				{
+					if (args.output)
+					{
+						var firstName = args.output[0]["contact_firstname"];
+						var lastName = args.output[0]["contact_lastname"];
+						var address = args.output[0]["contact_address"];
+						var city = args.output[0]["contact_city"];
+						var state = args.output[0]["contact_state"];
+						var zip = args.output[0]["contact_zipcode"];
+						var county = args.output[0]["county"];
+
+						$('#spanCobuyerInfo').html(firstName + " " + lastName + "<br>" + address + "<br>" + city + ", " + state + " " + zip);
+						$('#h_cobuyer_id_previous').val(cobuyer_id);
+
+						$('#divCobuyerNotSet').hide();
+						$('#divCobuyerSet').show();
+					}
+				}
+			});
+		}
+
+		// Populate Customer Info
+		if (isNumeric(contact_id) && contact_id-0 > 0)
+		{
+			// Populate CustomerID
+			$('#spanCustomerID').html(contact_id);
 			if ( $('#h_contact_id').val() != $('#h_contact_id_previous').val() )
 			{
 				$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getContact",  value: contact_id }, function(json) 
@@ -808,6 +942,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 							$('#hState').val(state);
 							$('#spanContactInfo').html(firstName + " " + lastName + "<br>" + address + "<br>" + city + ", " + state + " " + zip);
 							$('#h_contact_id_previous').val(contact_id);
+
+							$('#divCustomerNotSet').hide();
+							$('#divCustomerSet').show();
 						}
 						fixHeight();
 					}
@@ -844,7 +981,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 								if (args.output)
 								{								
 									var _r = args2.output[0];
-									AddCommLine(_r.payee_type, _r.payment_type, _r.amount, _r.dealers);
+									AddCommLine(_r.payee_type, _r.payment_type, _r.amount, _r.dealers, false);
 								}
 							}
 						});
@@ -860,7 +997,20 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			}
 		});
 
-
+		// Populate Dealer Roles for Commissions based on added dealers
+		if ($('#hRolesArray').val())
+		{
+			var rolesString = $('#hRolesArray').val();
+			var theObject = JSON.parse(rolesString);
+			$('#ddlDealerRole option').remove();
+			if (theObject)
+			{
+				for (var i in theObject.roles)
+				{
+					$('#ddlDealerRole').append("<option value=\"" + theObject.roles[i].role + "\">" + theObject.roles[i].roleText + " (" + theObject.roles[i].userText + ")</option>");
+				}
+			}
+		}
 
 
 		// Populate Equipment
@@ -971,24 +1121,27 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			var amount = 0 - parseFloat($('#tbtbAdjustmentAmount').val());
 		}
 
+		if ($('#dealerTable tr.dealer').length == 0)
+		{
+			if ( !addDealer() )
+			{
+				return 0;
+			}
+		}
 
 		var dealerObject = { dealers:[] };
 		var i = 0;
 		$('#dealerTable tr.dealer').each( function() {
 			var dealer = {};
-
-			dealer.role = $(this).children('#tdDealerText').html();
 			// See if there is a Dealer assigned to the role.
-			var role = dealer.role;
-			var dealerInfo = getDealerByRole(role);
-			if (dealerInfo.userText)
-			{
-				dealer.userText = dealerInfo.userText;
-				dealer.user = dealerInfo.user;
-			}
-			dealerObject.dealers[i] = dealer;
+
+			var role = $(this).children('#tdDealerText').html();
+			dealer.role =  role.split(" (")[0];
+			var dealerInfo = getDealerByRole(dealer.role);
+			dealerObject.dealers[i] = dealerInfo;
 			i++;
 		});
+
 
 		if ($('#ddlPayeeType').val() == "adjustment")
 		{
@@ -999,9 +1152,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			var dealer = {};
 			dealer.userText = $('#ddlstaffAdjustment option:selected').html();
 			dealer.user = $('#ddlstaffAdjustment').val();
-			dealerObject.dealers[i] = dealer;
+			dealerObject.dealers[0] = dealer;
 		}
-		AddCommLine(payeeType, paymentType, amount, JSON.stringify(dealerObject));
+		AddCommLine(payeeType, paymentType, amount, JSON.stringify(dealerObject), true);
 	}
 
 	function updateCommLines()
@@ -1019,7 +1172,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					for (j=0; j < theObject.elements[z].dealers.length ; j++ )
 					{
 						var role = theObject.elements[z].dealers[j].role;
-						var dealer = getDealerByRole(role);
+						var roleText = theObject.elements[z].dealers[j].roleText;
+						var dealer = getDealerByRole(roleText);
 						if(JSON.stringify(dealer) == '""')
 						{
 							var userText = "";
@@ -1027,11 +1181,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						}
 						else
 						{
-							var userText = dealer.userText ? dealer.userText : "";
-							var user = dealer.user ? dealer.user : "";
+							theObject.elements[z].dealers[j] = dealer;
 						}
-						theObject.elements[z].dealers[j].userText = userText;
-						theObject.elements[z].dealers[j].user = user;
 					}
 				}
 			}
@@ -1043,8 +1194,39 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	}
 
 
-	function AddCommLine(payeeType, paymentType, amount, dealersString)
+	function AddCommLine(payeeType, paymentType, amount, dealersString, HideCustomForm)
 	{
+		var remaining = $('#hremaining').val() ? $('#hremaining').val() : 0;
+		if ((amount-0) > (remaining-0) && paymentType != "adjustment")
+		{
+			alert("Insufficient Funds remaining to add that Commission.");
+			return false;
+		}
+
+		if (payeeType == "employee")
+		{
+			if (paymentType == "flat")
+			{
+				var amount = parseFloat($('#tbFlat_Amount').val());
+				if ( amount <= 0 || isNaN(amount) )
+				{
+					alert("Invalid Commission Amount. Please enter a valid amount for this Commission.");
+					$('#tbFlat_Amount').focus();
+					return 0;
+				}
+			}
+
+			if (paymentType == "percentage")
+			{
+				var percentage = parseFloat($('#tbPercentage').val());
+				if ( percentage >= 100 || percentage <= 0 || isNaN(percentage) )
+				{
+					alert("Invalid Commission Percentage Amount. Please enter a valid percentage (1-100) for this Commission.");
+					$('#tbPercentage').focus();
+					return 0;
+				}
+			}
+		}
 		// See if we already have a value in the field
 		if ($('#hCommissionArray').val() != '')
 		{
@@ -1065,30 +1247,31 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 		// Get Info and add it to object
 		var dealersobj = JSON.parse(dealersString);
-
-
-
-		for (j=0; j < dealersobj.dealers.length ; j++ )
+	
+		if (dealersobj)
 		{
-			var role = dealersobj.dealers[j].role;
-			var dealer = getDealerByRole(role);
-			if(JSON.stringify(dealer) == '""' && !dealersobj.dealers[j].userText && !dealersobj.dealers[j].user)
+			for (j=0; j < dealersobj.dealers.length ; j++ )
 			{
-				var userText = "";
-				var user = "";
+				var role = dealersobj.dealers[j].role;
+				var dealer = getDealerByRole(role);
+				if(JSON.stringify(dealer) == '""' && !dealersobj.dealers[j].userText && !dealersobj.dealers[j].user)
+				{
+					var userText = "";
+					var user = "";
+				}
+				else if (dealersobj.dealers[j].userText && dealersobj.dealers[j].user)
+				{
+					var userText = dealersobj.dealers[j].userText;
+					var user = dealersobj.dealers[j].user;
+				}
+				else
+				{
+					var userText = dealer.userText ? dealer.userText : "";
+					var user = dealer.user ? dealer.user : "";
+				}
+				dealersobj.dealers[j].userText = userText;
+				dealersobj.dealers[j].user = user;
 			}
-			else if (dealersobj.dealers[j].userText && dealersobj.dealers[j].user)
-			{
-				var userText = dealersobj.dealers[j].userText;
-				var user = dealersobj.dealers[j].user;
-			}
-			else
-			{
-				var userText = dealer.userText ? dealer.userText : "";
-				var user = dealer.user ? dealer.user : "";
-			}
-			dealersobj.dealers[j].userText = userText;
-			dealersobj.dealers[j].user = user;
 		}
 
 
@@ -1116,6 +1299,27 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 		$('#hCommissionArray').val(storage);
 		buildDefaultCommTable(false);
+
+		// Clear Commission Form
+		$('#tbFlat_Amount').val("");
+		$('#tbPercentage').val("");
+		$('#dealerTable tbody tr').remove();
+		checkDealers();
+
+
+		if (HideCustomForm)
+		{
+			$('#divCustomCommissionMask').show();
+			$('#divCustomCommissions').hide();
+		}
+
+		return false;
+	}
+
+	function ShowCommissionForm()
+	{
+		$('#divCustomCommissionMask').hide();
+		$('#divCustomCommissions').show();
 		return false;
 	}
 
@@ -1149,17 +1353,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		$('#dealerTable tbody').append('<tr class="dealer"><td><a href="#" class="deleteDealer">' + deleteLinkContent() + '</a></td><td id="tdDealerText">' + DealerText + '</td><td class="amount">' + Amount + '</td></tr>');
 
 		checkDealers();
+		return 1;
 	}
 
-	function checkDealers()
-	{
-		if ($('#dealerTable tbody tr').length == 0)
-		{
-			$('#dealerTable tbody').append('<tr class="error"><td colspan="3">No Dealers added yet. At least one dealer must be added to complete this Template</td></tr>');
-		}
-		updateAmounts();
-	}
-	
 	function maybeDisplayDealers()
 	{
 		$dealerElements = $('#dealerSelectDiv, #dealerTable');
@@ -1181,7 +1377,24 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			$('#adjustmentDiv').hide();
 			$('#commissionAmountDiv').show();
 		}
+		checkDealers();
 	}
+
+
+	function checkDealers()
+	{
+		if ($('#dealerTable tbody tr.dealer').length == 0)
+		{
+			$('#dealerTable tbody').append('<tr class="error"><td colspan="3">No Dealers added yet. At least one dealer must be added to complete this Commission Element</td></tr>');
+			$('#dealerTable').hide();
+		}
+
+		else {
+			$('#dealerTable').show();
+		}
+		updateAmounts();
+	}
+	
 
 	function updateAmounts()
 	{
@@ -1190,11 +1403,18 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var dealers = $('#dealerTable tbody tr.dealer').length;
 		var amountEach = amount / dealers;
 		var percentEach = percentage / dealers;
+		var adjAmount = $('#tbtbAdjustmentAmount').val();
 		var paymentType = $('#ddlDealerPaymentType').val();
+		var commType = $('#ddlPayeeType').val();
 
-		if (paymentType == 'flat')
+		if (commType == 'adjustment')
 		{
-
+			$('#dealerTable tbody tr.dealer').each( function() {
+				$(this).children("td.amount").html(formatCurrency(adjAmount));
+			});
+		}
+		else if (paymentType == 'flat')
+		{
 			$('#dealerTable tbody tr.dealer').each( function() {
 				$(this).children("td.amount").html(formatCurrency(amountEach));
 			});
@@ -1209,7 +1429,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function addUserToComm(index, username, userid)
 	{
-	
 		var comm = JSON.parse($('#hCommissionArray').val());
 		var Commission = comm.elements;
 
@@ -1393,6 +1612,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				var SalePrice = parseFloat($('#tbSalePrice').val().replace("$", "").replace(",",""));
 				var reserve = parseFloat($('#tbReserve').val().replace("$", "").replace(",",""));
 				var remaining = SalePrice - reserve;
+				$('#hremaining').val(remaining);
+				var corpTotal = 0;
 				var price = remaining;
 
 				var defaultEditRow = '';
@@ -1401,21 +1622,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					defaultEditRow = edit;
 				}
 				
-				
 
 				for (var j=0; j<elements.length ; j++ )
 				{
 
 					data = elements[j];
 					var dealerText = "";
-					if (defaultEditRow == '')
-					{
-						if (data.payeeType != 'corporate')
-						{
-							defaultEditRow = data.Index;
-						}
-					}
-
 
 					var c1 = data.payeeType;					
 					if (data.payeeType == 'employee' || data.payeeType == 'adjustment')
@@ -1428,7 +1640,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 							{
 								if (data.payeeType == 'employee')
 								{
-									dealerText = dealerText + dealers[i].userText + " - " + dealers[i].role + "<br />";
+									dealerText = dealerText + dealers[i].userText + " - " + dealers[i].roleText + "<br />";
 								}
 								else
 								{
@@ -1469,7 +1681,16 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						var c4 = formatCurrency(remaining);
 					}
 
-					remaining = remaining - rowAmount;
+					if ( data.payeeType != 'adjustment' )
+					{
+						remaining = remaining - rowAmount;
+					}
+
+					if ( data.payeeType == 'corporate' )
+					{
+						corpTotal = (corpTotal-0) + (rowAmount-0);
+					}
+					
 
 
 					text = text + "<tr class='row"+row+" clickable' id=\"row"+data.Index+"\">";
@@ -1492,15 +1713,17 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 					row = 1-row;
 				}
-				text = text + "</tbody><tfoot><tr class='row"+row+"'>";
-				text = text + "<td colspan='5'><span style='float:right'>TOTAL REMAINING:</span></td><td><b>" + formatCurrency(remaining) + "</b></td>";
+				text = text + "</tbody><tfoot><tr class='row"+row+"' style=>";
+				text = text + "<td colspan='5' style='border-top:1px solid #C1DAD7'><span style='float:right'>AVAILABLE FOR COMMISSION:</span></td><td style='border-top:1px solid #C1DAD7'><b>" + formatCurrency(remaining) + "</b></td>";
+				text = text + "</tr><tr class='row"+row+"'>";
+				text = text + "<td colspan='5'><span style='float:right'>CORPORATE TOTAL:</span></td><td><b>" + formatCurrency(corpTotal + remaining) + "</b></td>";
 				text = text + "</tr></tfoot>";
 				text = text + "</table>";
 
 				//text = text + "<a href='#' id='lbAddItem'>Add</a>";
 
 				div.html(text);
-
+				$('#hremaining').val(remaining);
 
 				if (defaultEditRow != '')
 				{
@@ -1604,6 +1827,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			$('#dealerBullet').addClass('navBulletSelected');
 			$('#dealerFormDiv').css('display', 'block');
 			updateForm();
+			ShowCommissionForm();
 		}
 		fixHeight();
 	}
@@ -1612,7 +1836,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function saveOrder()
 	{
 		var orderId = $('#hOrderId').val();
-		var customerID = $('#h_contact_id').val();
+		var cobuyer_id = $('#h_cobuyer_contact_id').val();
 		var orderStatus = $('#ddlOrderStatuses').val();
 		var customer_id = $('#h_contact_id').val();
 		var amount = $('#tbSalePrice').val();
@@ -1624,6 +1848,27 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var dealerArray = $('#hRolesArray').val();
 		var user_id = "<?= $_SESSION["user_id"] ?>";
 		var tax = $('#tbSalesTax').val().replace("$", "");
+		var remaining = $('#hremaining').val();
+
+
+		// Validation for completed orders:
+		
+		if (!customer_id || customer_id == 0 || !isNumeric(customer_id) )
+		{
+			alert("No Customer has been specified for this Sale.\n\n A customer must be assigned before the order can be saved.");
+			return false;
+		}
+
+		if (orderStatus == 5)
+		{
+			if ((remaining-0) > 0)
+			{
+				if (!confirm("Not all funds have been assigned.\n\n Unassigned Funds will go to Corporate until this is resolved. Do you wish to continue saving this order?"))
+				{
+					return false;
+				}
+			}
+		}
 
 
 		if (!IsNumeric(customer_id))
@@ -1636,6 +1881,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				order_id: orderId,
 				orderStatus: orderStatus,
 				customer_id: customer_id,
+				cobuyer_id: cobuyer_id,
 				amount: amount,
 				CommStructureString: CommStructureString,
 				ProductsString: ProductsString,
@@ -1659,17 +1905,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					var order_id = null;
 				}
 				$('#hOrderId').val(order_id);
-				//alert("Order #" + order_id + " was successfully saved to the Database");
 				updateForm();
 			}
 		});			
 
-
-		//var query2 = 'insert into 
-
-
-
-
+		return 1;
 	}
 
 
@@ -1690,7 +1930,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					}
 					$('a[id^=selectCustomer_]').click( function() {
 						var contact_id = this.id.replace('selectCustomer_', '');
-						$('#h_contact_id').val(contact_id);
+						$('#' + $('#hContactDestination').val()).val(contact_id);
 						updateForm();
 					});
 				}
@@ -1848,6 +2088,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	// Equipment Panel Scripts
 	function deleteProduct (index)
 	{
+		SetDirty();
 		var $prodArrayHiddenField = $('#hProductArray');
 
 		// See if we already have a value in the field
@@ -2026,6 +2267,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		//
 		// Add Stuff to the JSON element in the hidden field
 		//
+		SetDirty();
 		var $roleStorage = $('#hRolesArray');
 		// See if we already have a value in the field
 		if ($roleStorage.val() != '')
@@ -2038,6 +2280,13 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			// Create a new JSON object
 			var theObject = {roles: []};	
 		}
+
+		if (!theObject)
+		{
+			// Create a new JSON object
+			var theObject = {roles: []};	
+		}
+
 		var i = theObject.roles.length;
 
 		// Create new object for role
@@ -2099,6 +2348,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function deleteRole(index)
 	{
+		SetDirty();
 		// Clone dealerroles to dealerroles2
 		$('#ddlDealerRoles2').html( $('#ddlDealerRole').html() );
 
@@ -2164,8 +2414,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function saveAndContinue()
 	{
-		saveOrder();
-		nextPage();
+		if (saveOrder())
+			nextPage();
 	}
 
 	function nextPage() // Advances to next page.
@@ -2264,29 +2514,39 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	
 
 	// Events, assigned to Listeners or Elements
-	function displayAddContactForm()
+	function displayAddContactForm(mode)
 	{
 		$('.formBoxDialog').css('display', 'none');
 		$('#fBoxCreateNewCustomer').css('display', 'block');
+
+		if (mode == "cobuyer")
+		{
+			$('#insertCustomerAction').val("insertCobuyer");
+		}
 	}
 
-	function displaySelectContactForm()
+	function displaySelectContactForm(mode)
 	{
 		$('.formBoxDialog').css('display', 'none');
 		$('#fBoxSelectExistingCustomer').css('display', 'block');
+
+		$('#hContactDestination').val( (mode == "cobuyer") ? "h_cobuyer_contact_id" :  "h_contact_id" );
 	}
 
 	// Goodbye function - Offers to save Data to database
 	function goodbye(e) {
-		if(!e) e = window.event;
-		//e.cancelBubble is supported by IE - this will kill the bubbling process.
-		e.cancelBubble = true;
-		e.returnValue = 'You have not yet saved your data. I am not yet smart enough to save your data. Do you still wish to leave the page?'; //This is displayed on the dialog
+		if ($('#dirty').val() == "1")
+		{
+			if(!e) e = window.event;
+			//e.cancelBubble is supported by IE - this will kill the bubbling process.
+			e.cancelBubble = true;
+			e.returnValue = 'You have unsaved Data on this page. If you leave the page now, this data will be lost. Clicking ok will destroy any changes you have made since the last time you saved.'; //This is displayed on the dialog
 
-		//e.stopPropagation works in Firefox.
-		if (e.stopPropagation) {
-			e.stopPropagation();
-			e.preventDefault();
+			//e.stopPropagation works in Firefox.
+			if (e.stopPropagation) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
 		}
 	}
 	window.onbeforeunload=goodbye;

@@ -52,7 +52,12 @@ $DB = new conn();
 					$products = $DB->getInventoryStatuses();
 					foreach ($products as $prod)
 					{
-						?><OPTION value="<?= $prod["status_id"] ?>"><? echo $prod["status_name"]; ?></option><?
+						$selected = "";
+						if ($prod["status_name"] == "Checked In")
+						{
+							$selected = "selected";
+						}
+						?><OPTION value="<?= $prod["status_id"] ?>" <?= $selected ?>><? echo $prod["status_name"]; ?></option><?
 					}
 					?>
 				</SELECT>
@@ -155,7 +160,12 @@ SQLEND;
 							$products = $DB->getInventoryStatuses();
 							foreach ($products as $prod)
 							{
-								?><OPTION value="<?= $prod["status_id"] ?>"><? echo $prod["status_name"]; ?></option><?
+								$selected = "";
+								if ($prod["status_name"] == "Checked In")
+								{
+									$selected = "selected";
+								}
+								?><OPTION value="<?= $prod["status_id"] ?>" <?= $selected ?>><? echo $prod["status_name"]; ?></option><?
 							}
 							?>
 						</SELECT>
@@ -409,7 +419,12 @@ SQLEND;
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+_r.status_data_text +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+						var rowdata = _r.status_data;
+						if (_r.status_name == "Sale Pending" || _r.status_name == "Sold")
+						{
+							rowdata = "<a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">" + _r.status_data + "</a>";
+						}
+						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{
@@ -420,7 +435,7 @@ SQLEND;
 					}
 					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
-					$(".datepicker").datepicker( {duration: 'fast'} );
+					//$(".datepicker").datepicker( {duration: 'fast'} );
 
 					if ($('.sorted').size() == 0)
 					{
@@ -440,6 +455,7 @@ SQLEND;
 					$('.editLink').live("click", function() {
 
 						var inventory_id = this.id.replace("editLink_", "");
+						$("#row_" + inventory_id).find(".datepicker").datepicker( {duration: 'fast'} );
 
 						$('#ddlStatus_' + inventory_id + ' option').each( function() {
 							var inv = $(this).val();

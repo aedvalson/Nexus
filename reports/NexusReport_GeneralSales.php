@@ -144,13 +144,16 @@ foreach ($users as $user)
 // Build Dealers Array
 $AllDealers = array();
 $financeTypes = array();
+$firephp->log("dealers:");
 foreach ($orders as $order)
 {
+	$firephp->log("dealer");
 	$dealersArray = json_decode($order["dealerArray"], true);
 	$roles = $dealersArray["roles"];
 	foreach ($roles as $role)
 	{
-		if ($role["roleText"] == "Dealer")
+		$firephp->log($role);
+		if (preg_match("/dealer/i", $role["roleText"]) )
 		{
 			if (!$AllDealers[$role["user"]])
 			{
@@ -164,6 +167,7 @@ foreach ($orders as $order)
 		}
 	}
 }
+$firephp->log($AllDealers);
 usort($AllDealers, "CompareQuantities");
 usort($teams, "CompareQuantities");
 $firephp->log($teams);
@@ -186,18 +190,21 @@ foreach ($orders as $order)
 
 	// Check for Reserves and watch for largest finance method for finance types hash
 	$financeArray = json_decode($order["PaymentArray"], true);
-	foreach ($financeArray["paymentMethods"] as $financeMethod)
+	if ($financeArray)
 	{
-		if ($financeMethod["amount"] > $largestFinanceAmount)
+		foreach ($financeArray["paymentMethods"] as $financeMethod)
 		{
-			$largestFinanceType = $financeMethod["paymentType"];
-			$largestFinanceAmount = $financeMethod["amount"];
-		}
-		if ($financeMethod["paymentType"] == "finance")
-		{
-			$adj_amount = $adj_amount - ($financeMethod["amount"] * $financeMethod["reserveRate"] / 100);
-		}
-	}	
+			if ($financeMethod["amount"] > $largestFinanceAmount)
+			{
+				$largestFinanceType = $financeMethod["paymentType"];
+				$largestFinanceAmount = $financeMethod["amount"];
+			}
+			if ($financeMethod["paymentType"] == "finance")
+			{
+				$adj_amount = $adj_amount - ($financeMethod["amount"] * $financeMethod["reserveRate"] / 100);
+			}
+		}	
+	}
 
 	if ($largestFinanceAmount > 0)
 	{
@@ -216,31 +223,34 @@ foreach ($orders as $order)
 	$emptotal = 0;
 
 	$commArray = json_decode($order["CommStructure"], true);
-	foreach ($commArray["elements"] as $comm)
+	if ($commArray)
 	{
-		$commission = 0;
+		foreach ($commArray["elements"] as $comm)
+		{
+			$commission = 0;
 
 
-		if ($comm["paymentType"] == "flat")
-		{
-			$commission = $commission + $comm["flatAmount"];
-		}
-		if ($comm["paymentType"] == "percentage")
-		{
-			$commission = $commission + ($adj_amount * $comm["percentage"] / 100);
-		}
-		if ($comm["paymentType"] == "remaining")
-		{
-			$commission = $adj_amount - $corptotal - $emptotal;
-		}
+			if ($comm["paymentType"] == "flat")
+			{
+				$commission = $commission + $comm["flatAmount"];
+			}
+			if ($comm["paymentType"] == "percentage")
+			{
+				$commission = $commission + ($adj_amount * $comm["percentage"] / 100);
+			}
+			if ($comm["paymentType"] == "remaining")
+			{
+				$commission = $adj_amount - $corptotal - $emptotal;
+			}
 
-		if ($comm["payeeType"] == "corporate")
-		{
-			$corptotal = $corptotal + $commission;
-		}
-		if ($comm["payeeType"] == "employee")
-		{
-			$emptotal = $emptotal + $commission;
+			if ($comm["payeeType"] == "corporate")
+			{
+				$corptotal = $corptotal + $commission;
+			}
+			if ($comm["payeeType"] == "employee")
+			{
+				$emptotal = $emptotal + $commission;
+			}
 		}
 	}
 

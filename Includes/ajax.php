@@ -53,6 +53,46 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 	}
 
 
+	if ($id == "createCustomer")
+	{
+		$DB = new conn();
+		$DB->connect();
+		
+		$firephp->log($_REQUEST);
+		$firstname = $DB->sanitize($_REQUEST["FirstName"]);
+		$lastname = $DB->sanitize($_REQUEST["LastName"]);
+		$displayname = $firstname . " " . $lastname;
+		$email = $DB->sanitize($_REQUEST["Email"]);
+		$address = $DB->sanitize($_REQUEST["Address"]);
+		$address2 = $DB->sanitize($_REQUEST["Address2"]);
+		$city = $DB->sanitize($_REQUEST["City"]);
+		$state = $DB->sanitize($_REQUEST["State"]);
+		$zipcode = $DB->sanitize($_REQUEST["ZipCode"]);
+		$country = $DB->sanitize($_REQUEST["Country"]);
+		$phone = $DB->sanitize($_REQUEST["Phone"]);
+		$phonedetails = $DB->sanitize($_REQUEST["PhoneDetails"]);
+		$notes = $DB->sanitize($_REQUEST["Notes"]);
+		$contacttype = $DB->sanitize($_REQUEST["ContactType"]);
+		$county = $DB->sanitize($_REQUEST["County"]);
+		$home_status = $DB->sanitize($_REQUEST["HomeStatus"]);
+		$home_type = $DB->sanitize($_REQUEST["HomeType"]);
+		$license = $DB->sanitize($_REQUEST["license"]);
+		$licensestate = $DB->sanitize($_REQUEST["licenseState"]);
+		$social = $DB->sanitize($_REQUEST["social"]);
+		$contact_alternate_address = $DB->sanitize($_REQUEST["contact_alternate_address"]);
+		$contact_alternate_address2 = $DB->sanitize($_REQUEST["contact_alternate_address2"]);
+		$contact_alternate_city = $DB->sanitize($_REQUEST["contact_alternate_city"]);
+		$contact_alternate_state = $DB->sanitize($_REQUEST["contact_alternate_state"]);
+		$contact_alternate_zipcode = $DB->sanitize($_REQUEST["contact_alternate_zipcode"]);
+		$contact_alternate_country = $DB->sanitize($_REQUEST["contact_alternate_country"]);
+
+
+		$newCustomer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $contact_alternate_address, $contact_alternate_address2, $contact_alternate_city, $contact_alternate_state, 		$contact_alternate_zipcode, $contact_alternate_country);
+
+		$output = $newCustomer;
+	}
+
+
 	if ($id == "submitOrder")
 	{
 		$DB = new conn();
@@ -61,6 +101,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$orderStatus		= $DB->sanitize($_REQUEST["orderStatus"]);
 		$customer_id		= $DB->sanitize($_REQUEST["customer_id"]);
 		$cobuyer_id			= $DB->sanitize($_REQUEST["cobuyer_id"]);
+		if ($cobuyer_id == "Not Yet Set") { $cobuyer_id = 0; }
 		$amount				= $DB->sanitize($_REQUEST["amount"]);
 		$CommStructureString= $_REQUEST["CommStructureString"];
 		$ProductsString		= $_REQUEST["ProductsString"];

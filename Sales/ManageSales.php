@@ -146,7 +146,7 @@ SQLEND;
 				$(this).click(function() {
 					var id = this.id;
 					var inventory_id = id.replace("expand_", "");
-					$("#td_" + inventory_id).html("<img src='/<?= $ROOTPATH ?>/Images/Loading.gif'>");
+					$("#td_" + inventory_id).html("<img src='/<?= $ROOTPATH ?>/images/loading.gif'>");
 					$("#tr_" +  inventory_id).toggle();
 		        	$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getInventoryDetails",  value: inventory_id }, function(json) {
 	                  	eval("var args = " + json);		
@@ -318,7 +318,7 @@ SQLEND;
 				$(this).remove(); // Remove all existing rows
 			}
 		});
-		$('#theTable').append('<tr id="loadingRow"><td style="padding:25px"><center><img src="/<?= $ROOTPATH ?>/Images/Loading.gif"><br>Filtering Results</center></td></tr>');
+		$('#theTable').append('<tr id="loadingRow"><td style="padding:25px"><center><img src="/<?= $ROOTPATH ?>/images/loading.gif"><br>Filtering Results</center></td></tr>');
 
        	$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', filters, function(json) {
 			eval("var args = " + json);		

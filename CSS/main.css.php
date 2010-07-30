@@ -462,6 +462,7 @@ label {display:block;margin:2px;}
 #login_table .pad {padding:15px;}
 .form input.login {padding:2px 7px;width:auto;}
 .form input {width:180px;}
+.form select { width: 180px; }
 
 
 

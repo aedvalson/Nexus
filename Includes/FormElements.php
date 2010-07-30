@@ -1,14 +1,14 @@
 <?
 class FormElements
 {
-	function tbVal($id, $text="", $value="")
+	function tbVal($id, $text="", $value="", $css="")
 	{
 		if ($text == "")
 		{
 			$text = $id;
 		}
 		?>
-		 <li class="validated" id="tb<?= $id ?>_li">
+		 <li class="validated" style="<?= $css ?>" id="tb<?= $id ?>_li">
 			 <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
 						<div class="imgDiv" id="tb<?= $id ?>_img"></div>
 					    
@@ -20,7 +20,7 @@ class FormElements
 		<?
 	}
 
-	function tbNotVal($id, $text="", $inputclass="")
+	function tbNotVal($id, $text="", $inputclass="", $css="")
 	{
 		if ($text == "")
 		{
@@ -34,7 +34,7 @@ class FormElements
 		}
 
 		?>
-		 <li class="validated" id="tb<?= $id ?>_li">
+		 <li class="validated" style="<?=$css?>" id="tb<?= $id ?>_li">
 					  <div class="imgDiv" id="tb<?= $id ?>_img"></div>
 					  <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
 
@@ -60,10 +60,10 @@ class FormElements
 		  <?
 	}
 
-	function ddlHomeType()
+	function ddlHomeType($css="")
 	{
 		?>
-	 <li class="validated" id="tbHomeType_li">
+	 <li class="validated" style="<?=$css?>" id="tbHomeType_li">
                   <label for="r_tbHomeType">Home Type:</label>
                   <div id="tbHomeType_img"></div>
 					<select class="validated" name="HomeType" id="ddlHomeType" >
@@ -77,10 +77,10 @@ class FormElements
 		  <?
 	}
 
-	function ddlHomeStatus()
+	function ddlHomeStatus($css="")
 	{
 		?>
-	 <li class="validated" id="tbHomeStatus_li">
+	 <li class="validated" style="<?=$css?>" id="tbHomeStatus_li">
                   <label for="r_tbHomeStatus">Home Status:</label>
                   <div id="tbHomeStatus_img"></div>
 					<select class="validated" name="HomeStatus" id="ddlHomeStatus" >
@@ -142,10 +142,10 @@ class FormElements
 		<?
 	}
 
-	function tbContactNotes()
+	function tbContactNotes($css="")
 	{
 		?>	
-	 <li class="validated" id="tbNotes_li">
+	 <li class="validated" style="<?=$css?>" id="tbNotes_li">
                   <label for="r_tbNotes">Notes:</label>
                   <div id="tbNotes_img"></div>
 					<textarea name="Notes" id="tbNotes"></textarea>
@@ -206,10 +206,10 @@ class FormElements
 	}
 
 
-	function ddlGeneric( $name, $labeltext )
+	function ddlGeneric( $name, $labeltext, $css="" )
 	{
 		?>
-		 <li class="validated" id="ddl<?= $name ?>_li">
+		 <li class="validated" style="<?=$css?>" id="ddl<?= $name ?>_li">
 			  <label for="r_ddl<?= $name ?>"><?= $labeltext ?>:</label>
 			  <div id="ddl<?= $name ?>_img"></div>
 				<select class="validated" name="<?= $name ?>" id="ddl<?= $name ?>" >
@@ -267,27 +267,27 @@ class FormElements
 		  <?
 	}
 
-	function ddlCountries()
+	function ddlCountries($id="Country", $text="Country", $css="")
 	{
 		?>
-	 <li class="validated" id="tbCountry_li">
-                  <label for="r_tbCountry">Country:</label>
-                  <div id="tbCountry_img"></div>
-					<select class="validated" name="Country" id="ddlCountry" >
+	 <li class="validated" style="<?=$css?>" id="tb<?= $id ?>_li">
+                  <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
+                  <div id="tb<?= $id ?>_img"></div>
+					<select class="validated" name="<?= $id ?>" id="ddl<?= $id ?>" >
 						<? echoCountryOptions(); ?>
 					</select>	
-                  <div id="tbCountry_msg"></div>
+                  <div id="tb<?= $id ?>_msg"></div>
           </li>
 		  <?
 	}
 
-	function ddlStates($state = "AL", $id = "State", $text="State")
+	function ddlStates($state = "AL", $id = "State", $text="State", $css="")
 	{
 		?>
-	 <li class="validated" id="tb<?=$id?>_li">
+	 <li class="validated" style="<?= $css ?>" id="tb<?=$id?>_li">
                   <label for="r_tb<?=$id?>"><?=$text?>:</label>
                   <div id="tb<?=$id?>_img"></div>
-					<select class="validated" name="<?=$id?>" id="ddl<?=$id?>" >
+					<select style="width: 180px" class="validated" name="<?=$id?>" id="ddl<?=$id?>" >
 						<? echoUsStateOptions(); ?>
 					</select>	
                   <div id="tb<?=$id?>_msg"></div>
@@ -374,10 +374,10 @@ class FormElements
 	}
 
 
-	function submitButton($ButtonText, $id="btnSubmit")
+	function submitButton($ButtonText, $id="btnSubmit", $css="")
 	{
 		?>
-		 <li class="validated" id="btnSubmit_li">
+		 <li class="validated" style="<?=$css?>" id="btnSubmit_li">
 					  <label for="r_btnSubmit"></label>
 					  <div id="btnSubmit_img"></div>
 					  <input id="<?= $id ?>" type="Submit" maxlength="20" value="<?= $ButtonText ?>"  />

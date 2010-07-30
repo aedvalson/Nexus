@@ -24,43 +24,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			}
 		}
 
-		if (isset($_REQUEST["Action"]))
-		{
-			if ($_REQUEST["Action"] == "insertCustomer" || $_REQUEST["Action"] == "insertCobuyer")
-			{
-				$firstname = $DB->sanitize($_REQUEST["FirstName"]);
-				$lastname = $DB->sanitize($_REQUEST["LastName"]);
-				$displayname = $firstname . " " . $lastname;
-				$email = $DB->sanitize($_REQUEST["Email"]);
-				$address = $DB->sanitize($_REQUEST["Address"]);
-				$address2 = $DB->sanitize($_REQUEST["Address2"]);
-				$city = $DB->sanitize($_REQUEST["City"]);
-				$state = $DB->sanitize($_REQUEST["State"]);
-				$zipcode = $DB->sanitize($_REQUEST["ZipCode"]);
-				$country = $DB->sanitize($_REQUEST["Country"]);
-				$phone = $DB->sanitize($_REQUEST["Phone"]);
-				$phonedetails = $DB->sanitize($_REQUEST["PhoneDetails"]);
-				$notes = $DB->sanitize($_REQUEST["Notes"]);
-				$contacttype = $DB->sanitize($_REQUEST["ContactType"]);
-				$county = $DB->sanitize($_REQUEST["County"]);
-				$home_status = $DB->sanitize($_REQUEST["HomeStatus"]);
-				$home_type = $DB->sanitize($_REQUEST["HomeType"]);
-				$license = $DB->sanitize($_REQUEST["license"]);
-				$licensestate = $DB->sanitize($_REQUEST["licenseState"]);
-				$social = $DB->sanitize($_REQUEST["social"]);
-
-
-
-				if ($_REQUEST["Action"] == "insertCustomer")
-				{
-					$newCustomer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $social);
-				}
-				if ($_REQUEST["Action"] == "insertCobuyer")
-				{
-					$newCobuyer = $DB->addContact($firstname, $lastname, $displayname, $email, $address, $city, $state, $zipcode, $country, $phone, $phonedetails, $notes, $contacttype, $county, $address2, $home_status, $home_type, $license, $licensestate, $social);
-				}
-			}
-		}
 	}
 
 ?>
@@ -146,35 +109,62 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			<div class="formBoxDialog" id="fBoxCreateNewCustomer" style="background-color: #EDECDC">
 				<h1>Create New Customer Form</h1>
 				<? $F = new FormElements(); ?>
+				<h1 style="background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">General Information</h1>
 				<form id="formCreateNew" method="post" action="">
-				
-					<div style="float:left; width:260px; padding:15px">
+						
+						<ul class="form">
+							<? $F->ddlContactType(); ?>
 
-					<ul class="form">
-						<? $F->ddlContactType(); ?>
-						<? $F->tbVal("FirstName"); ?>
-						<? $F->tbVal("LastName"); ?>
-						<? $F->tbNotVal("Email"); ?>
-						<? $F->tbNotVal("Phone"); ?>
-						<? $F->tbNotVal("PhoneDetails"); ?>
-						<? $F->ddlHomeType(); ?>
-						<? $F->ddlHomeStatus(); ?>
-						<? $F->tbContactNotes(); ?>
-					</ul>
-					</div>
-					<div style="float:left; width:260px; padding:15px">
-					<ul class="form">
-						<? $F->tbNotVal("Address"); ?>
-						<? $F->tbNotVal("Address2", "Address Line 2"); ?>
-						<? $F->tbNotVal("City"); ?>
-						<? $F->ddlStates(); ?>
-						<? $F->tbNotVal("ZipCode"); ?>
-						<? $F->ddlGeneric("County", "County"); ?>
-						<? $F->ddlCountries(); ?>
-						<? $F->tbNotVal("license", "Driver's License"); ?>
-						<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State"); ?>
-						<? $F->tbNotVal("social", "Social Security #"); ?>
-						<? $F->submitButton("Create Customer"); ?>						
+							<? $F->tbVal("FirstName", "First Name", "", "float:left;"); ?>
+							<? $F->tbVal("LastName", "Last Name", "", "float:left; padding-left:0"); ?>			
+
+							<? $F->tbNotVal("Email", "Email", "",  "float:left; clear:both;"); ?>
+							<? $F->tbNotVal("Phone", "Phone", "",  "float:left; padding-left:0"); ?>
+							<? $F->tbNotVal("PhoneDetails", "Phone Details", "",  "float:left; padding-left:0"); ?>
+
+							<? $F->tbNotVal("license", "Driver's License", "", "float:left;  clear:both;"); ?>
+							<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State", "float:left; padding-left:0"); ?>
+						</ul>
+						<div style="clear:both"></div>
+
+
+						<h1 style="clear:both; background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">Address</h1>
+
+						<ul class="form" >
+
+						<? $F->ddlHomeType("float:left;"); ?>
+						<? $F->ddlHomeStatus("float: left; padding-left:0;"); ?>
+						<? $F->tbContactNotes("float: left; padding-left:0;"); ?>
+
+						
+						<? $F->tbNotVal("Address", "Address", "", "float:left; clear:both;"); ?>
+						<? $F->tbNotVal("Address2", "Address Line 2", "", "float:left; padding-left:0"); ?>
+
+						<? $F->tbNotVal("City", "City", "", "float:left; clear:both; "); ?>
+						<? $F->ddlStates("FL", "State", "State", "float:left; padding-left:0"); ?>
+						<? $F->tbNotVal("ZipCode", "Zip Code", "", "float:left; padding-left:0"); ?>
+
+						<? $F->ddlGeneric("County", "County", "float:left; clear:both;"); ?>
+						<? $F->ddlCountries("Country", "Country", "float:left; padding-left:0"); ?>
+
+						</ul>
+
+						<br />
+						<a href="#" style="display: block; clear:both; margin-left:30px" onclick="$('#buyerAlternateDiv').show(); return false;">Add Alternate Address</a>
+
+						<div id="buyerAlternateDiv" style="display: none">
+						<h1 style="clear:both; background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">Alternate Address</h1>
+						<ul class="form" style="clear:both">
+						<? $F->tbNotVal("AlternateAddress", "Alternate Address", "", "float:left; clear:both;"); ?>
+						<? $F->tbNotVal("AlternateAddress2", "Alternate Address Line 2", "", "float:left; padding-left:0;"); ?>
+
+						<? $F->tbNotVal("AlternateCity", "Alternate City", "", "float:left; clear:both;"); ?>
+						<? $F->ddlStates("FL", "AlternateState", "Alternate State", "float:left; padding-left:0;"); ?>
+						<? $F->tbNotVal("AlternateZipCode", "Alternate Zip Code", "", "float:left; padding-left:0;"); ?>
+
+						<? $F->ddlCountries("AlternateCountry", "Alternate Country", "float:left; clear:both;"); ?>
+
+						<? $F->submitButton("Create Customer", "btnSubmit", "clear:both"); ?>						
 					</ul>
 					</div>
 					<div style="clear:both"></div>
@@ -218,7 +208,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 				<div class="formOptionSet" id="orderCompleteOptions">
 					<span class="label">Date Completed:</span>
-					<input type="text" id="tbDateCompleted" class="datepicker value"></input>
+					<input type="text" id="tbDateCompleted" class="datepicker value" />
 				</div>
 
 				<div style="clear:both"></div>
@@ -379,7 +369,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				</div>
 
 				<span class="label">Amount</span>
-				<input class="value" id="tbAmount" name="tbAmount"></input>
+				<input class="value" id="tbAmount" name="tbAmount" />
 
 				<div class="spacer"></div>
 				</li>
@@ -547,12 +537,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 <input type="hidden" name="hRolesArray" id="hRolesArray" value="">
 <input type="hidden" name="hContactDestination" id="hContactDestination" value="h_contact_id" />
 <input type="hidden" name="contact_id" id="h_contact_id" value="<? 
-	$firephp->log($order["contact_id"]);
 	if (isset($newCustomer)) echo $newCustomer;
 	elseif (isset($order["contact_id"]) && $order["contact_id"] > 0) echo $order["contact_id"];
 	else echo "Not Yet Set"
 	?>">
-<input type="hidden" name="cobuyer_contact_id" id="h_cobuyer_contact_id" value="<? 
+<input type="hidden" name="cobuyer_contact_id" id="h_cobuyer_contact_id" value="<?
+	$firephp->log($newCobuyer);
 	if (isset($newCobuyer)) echo $newCobuyer;
 	elseif (isset($order["cobuyer_id"])) echo $order["cobuyer_id"];
 	else echo "Not Yet Set"
@@ -631,7 +621,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						if ($('#h_contact_id').val() == "Not Yet Set" && contact_id != "0")
 							$('#h_contact_id').val(contact_id);
 
-						$('#h_cobuyer_contact_id').val(cobuyer_id);
+						if ($('#h_cobuyer_contact_id').val() == "Not Yet Set" && cobuyer_id != "0")						
+							$('#h_cobuyer_contact_id').val(cobuyer_id);
 						$('#tbSalePrice').val(amount);
 						$('#hCommissionArray').val(commStructure);
 						$('#hProductArray').val(ProductsArray);
@@ -1833,7 +1824,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	}
 
 	// Ajax function to save Order to DB
-	function saveOrder()
+	function saveOrder(then_exit)
 	{
 		var orderId = $('#hOrderId').val();
 		var cobuyer_id = $('#h_cobuyer_contact_id').val();
@@ -1849,7 +1840,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var user_id = "<?= $_SESSION["user_id"] ?>";
 		var tax = $('#tbSalesTax').val().replace("$", "");
 		var remaining = $('#hremaining').val();
-
 
 		// Validation for completed orders:
 		
@@ -1899,6 +1889,10 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				if (args.output)
 				{
 					var order_id = args.output;
+					if (then_exit)
+					{
+						window.location = "ManageSales.php";
+					}
 				}
 				else
 				{
@@ -1906,6 +1900,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				}
 				$('#hOrderId').val(order_id);
 				updateForm();
+				$('#dirty').val("0");
 			}
 		});			
 
@@ -1914,6 +1909,60 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 
 	// Customer Panel Scripts
+	$('#formCreateNew').submit( function() {
+		if (validateForm(this) != true)
+		{
+			return false;
+		}
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "createCustomer",
+				FirstName: $('#tbFirstName').val(),
+				LastName: $('#tbLastName').val(),
+				Email: $('#tbEmail').val(),
+				Address: $('#tbAddress').val(),
+				Address2: $('#tbAddress2').val(),
+				City: $('#tbCity').val(),
+				State: $('#ddlState').val(),
+				ZipCode: $('#tbZipCode').val(),
+				Country: $('#ddlCountry').val(),
+				Phone: $('#tbPhone').val(),
+				PhoneDetails: $('#tbPhoneDetails').val(),
+				Notes: $('#tbNotes').val(),
+				ContactType: $('#ddlContactType').val(),
+				County: $('#ddlCounty').val(),
+				HomeStatus: $('#ddlHomeStatus').val(),
+				HomeType: $('#ddlHomeType').val(),
+				contact_alternate_address: $('#tbAlternateAddress').val(),
+				contact_alternate_address2: $('#tbAlternateAddress2').val(),
+				contact_alternate_city: $('#tbAlternateCity').val(),
+				contact_alternate_state: $('#ddlAlternateState').val(),
+				contact_alternate_zipcode: $('#tbAlternateZipCode').val(),
+				contact_alternate_country: $('#ddlAlternateCountry').val(),
+				License: $('#tblicense').val(),
+				licenseState: $('#ddllicenseState').val()
+			}, function(json)
+				{
+					eval("var args = " + json);
+					if (args.success == "success")
+					{
+						if (args.output)
+						{
+							var newCustomer = args.output;
+							if ($('#insertCustomerAction').val() == "insertCustomer")
+							{
+								$('#h_contact_id').val(newCustomer);
+							}
+							else if ($('#insertCustomerAction').val() == "insertCobuyer")
+							{
+								$('#h_cobuyer_contact_id').val(newCustomer);
+							}
+							clearCustomerForm();
+							updateForm();
+						}
+					}
+			});
+			return false;
+	});
+
 	$('#formFindExisting').submit( function() {
 		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "searchContacts", value: $('#tbSearch_For').val() }, function(json)
 		{
@@ -1939,6 +1988,10 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		return false;
 	});
 
+	function clearCustomerForm()
+	{
+		$('#formCreateNew').each( function() { this.reset(); });
+	}
 
 	// Finance Panel Scripts
 	var $PaymentTypeDDL = $('#ddlPaymentType');
@@ -2403,8 +2456,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	function saveAndQuit()
 	{
-		saveOrder();
-		window.location = "ManageSales.php";
+		var then_exit = 1;
+		saveOrder(then_exit);
 	}
 
 	function continueLink()

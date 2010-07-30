@@ -1,10 +1,14 @@
-<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Top.php" ?>
+<? 
+include "./findconfig.php";
+include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
+?>
+
 
 
 <?
 	session_destroy();
-	header("Location: /php/Login.php");
+	header("Location: /$ROOTPATH/Login.php");
 	exit();
 ?>
 
-<? include $_SERVER['DOCUMENT_ROOT']."/php/Includes/Bottom.php" ?>
+<? include $_SERVER['DOCUMENT_ROOT']."/$ROOTPATH/Includes/Bottom.php" ?>

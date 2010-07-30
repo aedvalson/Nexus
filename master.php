@@ -190,7 +190,7 @@
 		<?
 			if (isset($_SESSION["firstname"]))
 			{
-				?><span style="padding:2px; color: white; float:right;">Logged in as <?= $_SESSION["firstname"] ?> <?= $_SESSION["lastname"] ?> (<a href="/<?= $ROOTPATH ?>/logout.php">Log Out</a>)</span><?
+				?><span style="padding:2px; color: white; float:right;">Logged in as <?= $_SESSION["firstname"] ?> <?= $_SESSION["lastname"] ?> (<a href="/<?= $ROOTPATH ?>/LogOut.php">Log Out</a>)</span><?
 			} ?>
 		<div class="spacer"></div>
 	</div>

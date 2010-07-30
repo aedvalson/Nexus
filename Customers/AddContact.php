@@ -87,36 +87,62 @@ $DB->close();
 
 		<div class="formDiv" style="display: block; background-color: #EDECDC">
 			<h1>Add Contact</h1>
-					<div style="float:left; width:260px; padding:15px">
-					<? $F = new FormElements(); ?>
-					<ul class="form">
-						<? $F->ddlContactType(); ?>
-						<? $F->tbVal("FirstName"); ?>
-						<? $F->tbVal("LastName"); ?>
-						<? $F->tbNotVal("Email"); ?>
-						<? $F->tbNotVal("Phone"); ?>
-						<? $F->tbNotVal("PhoneDetails"); ?>
-						<? $F->ddlHomeType(); ?>
-						<? $F->ddlHomeStatus(); ?>
-						<? $F->tbContactNotes(); ?>
+				<? $F = new FormElements(); ?>
+				<h1 style="background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">General Information</h1>
+						<ul class="form">
+							<? $F->ddlContactType(); ?>
+
+							<? $F->tbVal("FirstName", "First Name", "", "float:left;"); ?>
+							<? $F->tbVal("LastName", "Last Name", "", "float:left; padding-left:0"); ?>			
+
+							<? $F->tbNotVal("Email", "Email", "",  "float:left; clear:both;"); ?>
+							<? $F->tbNotVal("Phone", "Phone", "",  "float:left; padding-left:0"); ?>
+							<? $F->tbNotVal("PhoneDetails", "Phone Details", "",  "float:left; padding-left:0"); ?>
+
+							<? $F->tbNotVal("license", "Driver's License", "", "float:left;  clear:both;"); ?>
+							<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State", "float:left; padding-left:0"); ?>
+						</ul>
+						<div style="clear:both"></div>
+
+
+						<h1 style="clear:both; background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">Address</h1>
+
+						<ul class="form" >
+
+						<? $F->ddlHomeType("float:left;"); ?>
+						<? $F->ddlHomeStatus("float: left; padding-left:0;"); ?>
+						<? $F->tbContactNotes("float: left; padding-left:0;"); ?>
+
+						
+						<? $F->tbNotVal("Address", "Address", "", "float:left; clear:both;"); ?>
+						<? $F->tbNotVal("Address2", "Address Line 2", "", "float:left; padding-left:0"); ?>
+
+						<? $F->tbNotVal("City", "City", "", "float:left; clear:both; "); ?>
+						<? $F->ddlStates("FL", "State", "State", "float:left; padding-left:0"); ?>
+						<? $F->tbNotVal("ZipCode", "Zip Code", "", "float:left; padding-left:0"); ?>
+
+						<? $F->ddlGeneric("County", "County", "float:left; clear:both;"); ?>
+						<? $F->ddlCountries("Country", "Country", "float:left; padding-left:0"); ?>
+
+						</ul>
+
+						<br />
+						<a href="#" style="display: block; clear:both; margin-left:30px" onclick="$('#buyerAlternateDiv').show(); return false;">Add Alternate Address</a>
+
+						<div id="buyerAlternateDiv" style="display: none">
+						<h1 style="clear:both; background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">Alternate Address</h1>
+						<ul class="form" style="clear:both">
+						<? $F->tbNotVal("AlternateAddress", "Alternate Address", "", "float:left; clear:both;"); ?>
+						<? $F->tbNotVal("AlternateAddress2", "Alternate Address Line 2", "", "float:left; padding-left:0;"); ?>
+
+						<? $F->tbNotVal("AlternateCity", "Alternate City", "", "float:left; clear:both;"); ?>
+						<? $F->ddlStates("FL", "AlternateState", "Alternate State", "float:left; padding-left:0;"); ?>
+						<? $F->tbNotVal("AlternateZipCode", "Alternate Zip Code", "", "float:left; padding-left:0;"); ?>
+
+						<? $F->ddlCountries("AlternateCountry", "Alternate Country", "float:left; clear:both;"); ?>
+
+						<? $F->submitButton("Create Customer", "btnSubmit", "clear:both"); ?>						
 					</ul>
-					</div>
-					<div style="float:left; width:260px; padding:15px">
-					<ul class="form">
-						<? $F->tbNotVal("Address"); ?>
-						<? $F->tbNotVal("Address2", "Address Line 2"); ?>
-						<? $F->tbNotVal("City"); ?>
-						<? $F->ddlStates(); ?>
-						<? $F->tbNotVal("ZipCode"); ?>
-						<? $F->ddlGeneric("County", "County"); ?>
-						<? $F->ddlCountries(); ?>
-						<? $F->tbNotVal("license", "Driver's License"); ?>
-						<? $F->ddlStates("AL", "licenseState", "Driver's License Issuing State"); ?>
-						<? $F->tbNotVal("social", "Social Security #"); ?>
-						<? $F->submitButton("Create Customer"); ?>						
-					</ul>
-					</div>
-					<div style="clear:both"></div>
 </div>
 </div>
 </div>

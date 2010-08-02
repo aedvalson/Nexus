@@ -11,6 +11,7 @@
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" ></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/<?= $ROOTPATH ?>/jquery.maskedinput-1.2.2.js"></script>
 	<script type="text/javascript" src="/<?= $ROOTPATH ?>/tablesorter.min.js"></script>
 	<script type="text/javascript" src="/<?= $ROOTPATH ?>/Validation.js.php"></script>
 	<script type="text/javascript" src="/<?= $ROOTPATH ?>/json2.js"></script>

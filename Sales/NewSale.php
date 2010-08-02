@@ -162,11 +162,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 						<? $F->tbNotVal("AlternateZipCode", "Alternate Zip Code", "", "float:left; padding-left:0;"); ?>
 
 						<? $F->ddlCountries("AlternateCountry", "Alternate Country", "float:left; clear:both;"); ?>
-
-						<? $F->submitButton("Create Customer", "btnSubmit", "clear:both"); ?>						
-					</ul>
+						</ul>
 					</div>
 					<div style="clear:both"></div>
+					<ul class="form">
+						<? $F->submitButton("Create Customer", "btnSubmit", "clear:both"); ?>
+					</ul>
 					<input type="hidden" value="insertCustomer" id="insertCustomerAction" name="Action" />
 				</form>
 			</div>

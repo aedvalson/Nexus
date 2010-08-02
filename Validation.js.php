@@ -1,4 +1,9 @@
 <? 
+header("Content-type: text/css");
+include "./findconfig.php";
+
+?>
+<? 
 header("Content-type: text/javascript");
 include "./findconfig.php";
 
@@ -118,16 +123,14 @@ function IsNumeric(sText)
 
 function validateForm(form)
 {
-	
 		valid = true;
 		if (form.id == "")
 		{
 			$(form).attr("id","assignedID");
 		}
-		
 		$("#" + form.id + " .validated:li>.validated:div").each(function() {
 
-			if($(this).is(':visible'))
+			if($(this).is(':visible') && !$(this).attr("disabled"))
 			{
 				
 				$(this).validate.init(this, false);
@@ -189,13 +192,18 @@ new function() {
 
 		if ($('#' + o.id).is(':visible'))
 		{
-			
 			// Regex Checks
 		   if(o.id == 'tbFirstName' || o.id == 'tbLastName') { this.limitedCheck(o, blink) }
 		   else if(o.id == 'tbFirstName2' || o.id == 'tbLastName2') { this.limitedCheck(o, blink) }
 		   else if(o.id == 'tbProductName') {this.limitedCheck(o, blink) }
 		   else if(o.id == 'tbProductModel') {this.limitedCheck(o, blink) }
 		   else if(o.id == 'ddlProductType') {this.limitedCheck(o, blink) }
+
+		   else if (o.id.match(/(phone|cell)/i))
+		   {
+			   var required = (o.id.match(/phone/i)) ? 1 : 0;
+			   this.minLengthCheck(o, blink, 14, "Invalid Phone Number", required);
+		   }
 
 
 		   else if(o.id == 'tbProductDescription') {this.requiredFieldCheck(o, blink) }
@@ -268,6 +276,24 @@ new function() {
 			$('#' + o.id + '_val').val('true');
          };
        },
+	 minLengthCheck: function(o, blink, length, errorText, required) {
+		 $('#', + o.id + '_img').html('<img src="/<?= $ROOTPATH ?>/images/loading.gif" />');
+
+		
+         if (o.value == "" && required)
+         {
+      	   doError(o, 'This field is Required.', blink);
+         }
+
+		 else if ($.trim($(o).val()).length < length && $(o).val())
+		 {
+		   errorText = errorText ? errorText : "Invalid Input";
+		   doError(o, errorText, blink);
+		 }
+		 else {
+			 doSuccess(o);
+		 }
+	   },
 	 requiredMultipleFieldCheck: function(o, blink) {
 		   if(typeof(o) == 'object') {
 			   z = o.id;
@@ -353,7 +379,7 @@ new function() {
 		 var user = /[(\*\(\)\[\]\+\.\,\/\?\:\;\'\"\`\~\\#\$\%\^\&\<\>)+]/;
 		 if (o.value == "")
 		 {
-		   doError(o, 'Null', blink);
+		   doError(o, 'This Field is Required', blink);
 		 }
 		 else {
 		    doValidation2(o, blink);
@@ -365,7 +391,7 @@ new function() {
 		 var user = /[(\*\(\)\[\]\+\.\,\/\?\:\;\'\"\`\~\\#\$\%\^\&\<\>)+]/;
 		 if (o.value == "")
 		 {
-		   doError(o, 'Null', blink);
+		   doError(o, 'This Field is Required', blink);
 		 }
 		 else if (!o.value.match(user)) {
 			 doValidation(o, blink);
@@ -416,7 +442,8 @@ new function() {
 		   if(typeof(o) == 'string') {
 			   z = o;
 		   }
-        $('#' + z + '_img').html('<img src="/<?= $ROOTPATH ?>/images/accept.gif" border="0" />');
+//       $('#' + z + '_img').html('<img src="/<?= $ROOTPATH ?>/images/accept.gif" border="0" />');
+		$('#' + z + '_img').html('');
         $('#' + z + '_li').removeClass("error");
         $('#' + z + '_msg').html("");
         $('#' + z + '_li').addClass("success");

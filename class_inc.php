@@ -107,6 +107,7 @@ class conn
 			'@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments
 		);
 	 
+		$input = trim($input); // Trim leading and trailing
 		$output = preg_replace($search, '', $input);
 		return $output;
 	}

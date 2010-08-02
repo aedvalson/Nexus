@@ -1,18 +1,20 @@
 <?
 class FormElements
 {
-	function tbVal($id, $text="", $value="", $css="")
+	function tbVal($id, $text="", $inputclass="", $css="", $value="", $disabled="")
 	{
 		if ($text == "")
 		{
 			$text = $id;
 		}
+		$attrText = "";
+		if ($disabled) { $attrText = " disabled=\"disabled\" "; }
 		?>
 		 <li class="validated" style="<?= $css ?>" id="tb<?= $id ?>_li">
 			 <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
 						<div class="imgDiv" id="tb<?= $id ?>_img"></div>
 					    
-					  	<input class="validated" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value="<?= $value ?>"  />		
+					  	<input class="validated" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value="<?= $value ?>" <?=$attrText?>  />		
 						<input type="hidden" id="tb<?= $id ?>_val" value="waiting" />
 					  
 					  <div class="msgDiv" id="tb<?= $id ?>_msg"></div>
@@ -20,12 +22,14 @@ class FormElements
 		<?
 	}
 
-	function tbNotVal($id, $text="", $inputclass="", $css="")
+	function tbNotVal($id, $text="", $inputclass="", $css="", $value="", $disabled="")
 	{
 		if ($text == "")
 		{
 			$text = $id;
 		}
+		$attrText = "";
+		if ($disabled) { $attrText = " disabled=\"disabled\" "; }
 
 		$class = "notvalidated";
 		if ($inputclass)
@@ -38,12 +42,28 @@ class FormElements
 					  <div class="imgDiv" id="tb<?= $id ?>_img"></div>
 					  <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
 
-						<input class="<?= $class ?>" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value=""  />		
+						<input class="<?= $class ?>" name="<?= $id ?>" id="tb<?= $id ?>" type="text" value="<?=$value?>" <?=$attrText?>  />		
 						<input type="hidden" id="tb<?= $id ?>_val" value="waiting" />
 					  <div id="tb<?= $id ?>_msg"></div>
 			  </li>    
 		<?
 	}
+
+
+	function tbPassword($id="Password", $text="Password", $css="", $dummytext)
+	{
+		if ($text == "") { $text = $id; }	
+		?>
+		 <li class="validated" style="<?= $css ?>" id="tb<?= $id ?>_li">
+					  <label for="r_tb<?= $id ?>"><?= $text ?>:</label>
+					  <div id="tb<?= $id ?>_img"></div>
+					  <input class="validated" name="tb<?= $id ?>" id="tb<?= $id ?>" type="password" maxlength="20" value="<?=$dummytext?>"  />
+					  <input type="hidden" id="tb<?= $id ?>_val" value="waiting">
+					  <div id="tb<?= $id ?>_msg"></div>
+			  </li> 
+		<?
+	}
+
 
 	function ddlContactType()
 	{
@@ -60,7 +80,7 @@ class FormElements
 		  <?
 	}
 
-	function ddlHomeType($css="")
+	function ddlHomeType($css="", $selected="")
 	{
 		?>
 	 <li class="validated" style="<?=$css?>" id="tbHomeType_li">
@@ -74,6 +94,9 @@ class FormElements
 					</select>	
                   <div id="tbHomeType_msg"></div>
           </li>
+		  <SCRIPT type="text/javascript">
+			$('#ddl<?=$id?>').val("<?= $selected ?>");
+		  </SCRIPT>
 		  <?
 	}
 
@@ -299,10 +322,10 @@ class FormElements
 	}
 
 		  
-	function ddlPermissionRoles()
+	function ddlPermissionRoles($selected="", $css="")
 	{
 		?>
-	 <li class="validated" id="tbPermissionRole_li">
+	 <li class="validated" style="<?=$css?>" id="tbPermissionRole_li">
                   <label for="r_tbPermissionRole">PermissionRole:</label>
                   <div id="tbPermissionRole_img"></div>
 					<select class="validated" name="PermissionRole" id="ddlPermissionRole" >
@@ -319,6 +342,11 @@ class FormElements
 					</SELECT>
                   <div id="tbPermissionRole_msg"></div>
           </li>
+			<?  if ($selected) { ?>
+		  <SCRIPT type="text/javascript">
+			$('#ddl<?=$id?>').val("<?= $selected ?>");
+		  </SCRIPT>
+			<? } ?>
 		<?
 
 	}
@@ -349,10 +377,10 @@ class FormElements
 
 
 
-	function ddlTeams()
+	function ddlTeams($selected="", $css="")
 	{
 		?>
-	 <li class="validated" id="tbTeams_li">
+	 <li class="validated" style="<?= $css ?>" id="tbTeams_li">
                   <label for="r_tbTeams">Team:</label>
                   <div id="tbTeams_img"></div>
 					<select class="validated" name="Teams" id="ddlTeams" >
@@ -369,6 +397,11 @@ class FormElements
 					</SELECT>
                   <div id="tbTeams_msg"></div>
           </li>
+			<?  if ($selected) { ?>
+		  <SCRIPT type="text/javascript">
+			$('#ddl<?=$id?>').val("<?= $selected ?>");
+		  </SCRIPT>
+			<? } ?>
 		<?
 
 	}

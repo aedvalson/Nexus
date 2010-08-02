@@ -456,13 +456,15 @@ label {display:block;margin:2px;}
 .form li {width:190px;margin:3px;padding:5px 5px 5px 30px;list-style:none;position:relative;}
 *html .form li {left:-15px;}
 .form li img {position:absolute;left:5px;}
-.form .error {border:1px solid #A90000;padding:4px 4px 4px 29px;background-color:#F8E5E5;}
-.form .success {border:1px solid #74F019;padding:4px 4px 4px 29px;background-color:#DEF8CA;}
+/*.form .error {border:1px solid #A90000;padding:4px 4px 4px 29px;background-color:#F8E5E5;}*/
+/*.form .success {border:1px solid #74F019;padding:4px 4px 4px 29px;background-color:#DEF8CA;}*/
+.form .msgDiv { color: red; font-size: 80% }
 .form .selected {border:1px solid #1AA8E1;padding:4px 4px 4px 29px;background-color:#8DD8F7;}
 #login_table .pad {padding:15px;}
 .form input.login {padding:2px 7px;width:auto;}
 .form input {width:180px;}
 .form select { width: 180px; }
+.form h1 { clear: both; background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px; }
 
 
 

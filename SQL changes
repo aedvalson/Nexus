@@ -1,0 +1,44 @@
+ALTER TABLE `orders` ADD `cobuyer_contact_id` INT( 32 ) NOT NULL AFTER `contact_id` 
+ALTER TABLE `contacts` ADD `contact_address2` VARCHAR( 4096 ) NOT NULL AFTER `contact_address` 
+ALTER TABLE `contacts` ADD `contact_home_type` VARCHAR( 32 ) NOT NULL ,
+ADD `contact_home_status` VARCHAR( 32 ) NOT NULL ,
+ADD `contact_social` INT( 8 ) NOT NULL ,
+ADD `contact_license` VARCHAR( 200 ) NOT NULL ,
+ADD `contact_license_state` VARCHAR( 32 ) NOT NULL 
+
+ALTER TABLE `contacts` ADD `contact_alternate_address1` VARCHAR( 255 ) NOT NULL AFTER `contact_country` ,
+ADD `contact_alternate_address2` VARCHAR( 255 ) NOT NULL AFTER `contact_alternate_address1` ,
+ADD `contact_alternate_city` VARCHAR( 255 ) NOT NULL AFTER `contact_alternate_address2` ,
+ADD `contact_alternate_state` VARCHAR( 255 ) NOT NULL AFTER `contact_alternate_city` ,
+ADD `contact_alternate_zipcode` VARCHAR( 32 ) NOT NULL AFTER `contact_alternate_state` ,
+ADD `contact_alternate_country` VARCHAR( 255 ) NOT NULL AFTER `contact_alternate_zipcode` ,
+ADD `contact_alternate_phone` VARCHAR( 64 ) NOT NULL AFTER `contact_alternate_country` 
+
+
+-- All updated to here
+
+
+8/2/2010
+
+ALTER TABLE `users` ADD `License` VARCHAR( 32 ) NOT NULL ,
+ADD `Social` VARCHAR( 32 ) NOT NULL ,
+ADD `BirthDate` DATE NOT NULL ,
+ADD `Address` VARCHAR( 255 ) NOT NULL ,
+ADD `Address2` VARCHAR( 255 ) NOT NULL ,
+ADD `HomeType` VARCHAR( 32 ) NOT NULL ,
+ADD `City` VARCHAR( 64 ) NOT NULL ,
+ADD `State` VARCHAR( 8 ) NOT NULL ,
+ADD `ZipCode` VARCHAR( 32 ) NOT NULL ,
+ADD `Phone` VARCHAR( 64 ) NOT NULL ,
+ADD `Cell` VARCHAR( 64 ) NOT NULL ,
+ADD `ContactFirstName` VARCHAR( 64 ) NOT NULL ,
+ADD `ContactLastName` VARCHAR( 64 ) NOT NULL ,
+ADD `ContactAddress` VARCHAR( 255 ) NOT NULL ,
+ADD `ContactAddress2` VARCHAR( 255 ) NOT NULL ,
+ADD `ContactCity` VARCHAR( 64 ) NOT NULL ,
+ADD `ContactState` VARCHAR( 8 ) NOT NULL ,
+ADD `ContactZipCode` VARCHAR( 32 ) NOT NULL ,
+ADD `ContactPhone` VARCHAR( 64 ) NOT NULL ,
+ADD `ContactCell` VARCHAR( 64 ) NOT NULL 
+
+-- All Updated to Here

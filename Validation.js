@@ -202,6 +202,12 @@ new function() {
 		   else if(o.id == 'tbProductModel') {this.limitedCheck(o, blink) }
 		   else if(o.id == 'ddlProductType') {this.limitedCheck(o, blink) }
 
+		   else if (o.id.match(/phone/i) || o.id.match(/cell/i))
+		   {
+			   alert('phone');
+			   this.minLengthCheck(o, blink, 14, "Invalid Phone Number");
+		   }
+
 
 		   else if(o.id == 'tbProductDescription') {this.requiredFieldCheck(o, blink) }
 		   else if(o.id == 'tbInvoice') {this.requiredFieldCheck(o, blink) }
@@ -273,6 +279,21 @@ new function() {
 			$('#' + o.id + '_val').val('true');
          };
        },
+	 minLengthCheck: function(o, blink, length, errorText) {
+		 $('#', + o.id + '_img').html('<img src="/<?= $ROOTPATH ?>/images/loading.gif" />');
+         if (o.value == "")
+         {
+      	   doError(o, 'This field is Required.', blink);
+         }
+		 else if ($(o).val().length < length)
+		 {
+		   errorText = errorText ? errorText : "Invalid Input";
+		   doError(o, errorText, blink);
+		 }
+		 else {
+			 doSuccess();
+		 }
+	   }
 	 requiredMultipleFieldCheck: function(o, blink) {
 		   if(typeof(o) == 'object') {
 			   z = o.id;

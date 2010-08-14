@@ -13,85 +13,109 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'users' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$users_username = $row["Username"];
-		$users_firstname = $row["FirstName"];
-		$users_lastname = $row["LastName"];
-		$users_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$users_username = $row["Username"];
+			$users_firstname = $row["FirstName"];
+			$users_lastname = $row["LastName"];
+			$users_date = $row["datetime"];
+		}
 	}
-
 
 	$sql = "select count(*) from teams where status = 'Active'";
 	$teamcount = $DB->query_scalar($sql, 0);
 
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'teams' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$teams_username = $row["Username"];
-		$teams_firstname = $row["FirstName"];
-		$teams_lastname = $row["LastName"];
-		$teams_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$teams_username = $row["Username"];
+			$teams_firstname = $row["FirstName"];
+			$teams_lastname = $row["LastName"];
+			$teams_date = $row["datetime"];
+		}
 	}
 
 	$sql = "select count(*) from products where status = 'Active'";
 	$productcount = $DB->query_scalar($sql, 0);
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'products' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$products_username = $row["Username"];
-		$products_firstname = $row["FirstName"];
-		$products_lastname = $row["LastName"];
-		$products_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$products_username = $row["Username"];
+			$products_firstname = $row["FirstName"];
+			$products_lastname = $row["LastName"];
+			$products_date = $row["datetime"];
+		}
 	}
-
 
 	$sql = "select count(*) from storagelocations";
 	$storagecount = $DB->query_scalar($sql, 0);
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'storagelocations' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$storagelocations_username = $row["Username"];
-		$storagelocations_firstname = $row["FirstName"];
-		$storagelocations_lastname = $row["LastName"];
-		$storagelocations_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$storagelocations_username = $row["Username"];
+			$storagelocations_firstname = $row["FirstName"];
+			$storagelocations_lastname = $row["LastName"];
+			$storagelocations_date = $row["datetime"];
+		}
 	}
 
 	$sql = "select count(*) from finance_options";
 	$financecount = $DB->query_scalar($sql, 0);
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'finance_options' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$finance_options_username = $row["Username"];
-		$finance_options_firstname = $row["FirstName"];
-		$finance_options_lastname = $row["LastName"];
-		$finance_options_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$finance_options_username = $row["Username"];
+			$finance_options_firstname = $row["FirstName"];
+			$finance_options_lastname = $row["LastName"];
+			$finance_options_date = $row["datetime"];
+		}
 	}
+
+
 	$sql = "select count(*) from commission_templates";
 	$templatecount = $DB->query_scalar($sql, 0);
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'commission_templates' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+
+	if ($result)
 	{
-		$commission_templates_username = $row["Username"];
-		$commission_templates_firstname = $row["FirstName"];
-		$commission_templates_lastname = $row["LastName"];
-		$commission_templates_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$commission_templates_username = $row["Username"];
+			$commission_templates_firstname = $row["FirstName"];
+			$commission_templates_lastname = $row["LastName"];
+			$commission_templates_date = $row["datetime"];
+		}
 	}
+
+
 	$sql = "select count(*) from TaxRates";
 	$taxratecount = $DB->query_scalar($sql, 0);
 	$sql = "select * from admin_history join users on admin_history.user_id = users.user_id WHERE table_name = 'TaxRAtes' ORDER BY datetime DESC LIMIT 1";
 	$result = $DB->query($sql);
-	while ($row = mysql_fetch_assoc($result))
+	if ($result)
 	{
-		$taxrates_username = $row["Username"];
-		$taxrates_firstname = $row["FirstName"];
-		$taxrates_lastname = $row["LastName"];
-		$taxrates_date = $row["datetime"];
+		while ($row = mysql_fetch_assoc($result))
+		{
+			$taxrates_username = $row["Username"];
+			$taxrates_firstname = $row["FirstName"];
+			$taxrates_lastname = $row["LastName"];
+			$taxrates_date = $row["datetime"];
+		}
 	}
 	$DB->close();
 

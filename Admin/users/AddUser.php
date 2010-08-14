@@ -14,6 +14,7 @@ $dummytext = "";
 	$Action = "addNew";
 	if ($_REQUEST)
 	{
+		$firephp->log($_REQUEST);
 		if ( isset($_REQUEST["id"]) )
 		{
 			$user_id = $DB->sanitize($_REQUEST["id"]);
@@ -70,10 +71,11 @@ $dummytext = "";
 			$ContactPhone = $DB->sanitize($_REQUEST["ContactPhone"]);
 			$ContactCell = $DB->sanitize($_REQUEST["ContactCell"]);
 
-			if ($action == "addNew" && $user_id)
+			if ($action == "addNew" && !$user_id)
 			{
 				$sql = "INSERT INTO users (Username, user_password, FirstName, LastName, permission_role, team_id, License, Social, BirthDate, Address, Address2, HomeType, City, State, ZipCode, Phone, Cell, ContactFirstName, ContactLastName, ContactAddress, ContactAddress2, ContactCity, ContactState, ContactZipCode, ContactPhone, ContactCell) VALUES ('".$Username."', MD5('".$Password."'), '".$FirstName."', '".$LastName."', '".$Role."', ".$Team.", '".$License."', '".$Social."', '".$BirthDate."', '".$Address1."', '".$Address2."', '".$HomeType."', '".$City."', '".$State."', '".$ZipCode."', '".$Phone."', '".$Cell."', '".$ContactFirstName."', '".$ContactLastName."', '".$ContactAddress1."', '".$ContactAddress2."', '".$ContactCity."', '".$ContactState."', '".$ContactZipCode."', '".$ContactPhone."', '".$ContactCell."')";
-
+				
+				$firephp->log($sql);
 				$DB->execute_nonquery($sql);
 				$DB->addHistory( 'users', $_SESSION["user_id"],  "insert", "" );
 				header("Location: ManageUsers.php");

@@ -70,7 +70,10 @@ $DB = new conn();
 			join inventory_status on inventory.status = inventory_status.status_id
 SQLEND;
 	$result = $DB->query($sql);
-
+	if (!$result)
+	{
+		echo "Inventory must be added before sales can be entered.";
+	}
 	?>
 
 	<div class="divTable"><?

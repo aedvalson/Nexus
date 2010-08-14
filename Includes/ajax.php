@@ -1470,13 +1470,16 @@ SQLEND;
 
 		$result = mysql_query($sql);
 	
-
-		while ($row = mysql_fetch_assoc($result))
-		{
-			$retArray[] = $row;
-			$output = $retArray;
+		$firephp->log($sql);
+		if ($result) {
+			while ($row = mysql_fetch_assoc($result))
+			{
+				$retArray[] = $row;
+				
+			}
 		}
-		$retArray[] = $sql;
+
+		$output = $retArray;
 		
 		
 		//$output = $sql;

@@ -125,7 +125,7 @@ while ($userRow = mysql_fetch_assoc($result))
 {
 	$users[$userRow["user_id"]] = $userRow;
 }
-$firephp->log($users);
+//$firephp->log($users);
 
 
 // Build Team Hash
@@ -144,15 +144,16 @@ foreach ($users as $user)
 // Build Dealers Array
 $AllDealers = array();
 $financeTypes = array();
-$firephp->log("dealers:");
+//$firephp->log("dealers:");
 foreach ($orders as $order)
 {
-	$firephp->log("dealer");
+//	$firephp->log("dealer");
 	$dealersArray = json_decode($order["dealerArray"], true);
 	$roles = $dealersArray["roles"];
+	if (!$roles) { $firephp->error("NO ROLES ON ORDER " . $order["order_id"]); }
 	foreach ($roles as $role)
 	{
-		$firephp->log($role);
+//		$firephp->log($role);
 		if (preg_match("/dealer/i", $role["roleText"]) )
 		{
 			if (!$AllDealers[$role["user"]])
@@ -167,10 +168,10 @@ foreach ($orders as $order)
 		}
 	}
 }
-$firephp->log($AllDealers);
+//$firephp->log($AllDealers);
 usort($AllDealers, "CompareQuantities");
 usort($teams, "CompareQuantities");
-$firephp->log($teams);
+//$firephp->log($teams);
 
 
 
@@ -402,7 +403,7 @@ foreach ($days as $_day)
 	<div class="reportHeader">
 		<h1>General Sales Report Report</h1>
 		<h2><?= date("m/d/Y", strtotime ( $params["startDate"] )) ?> to <?= date("m/d/Y", strtotime ( $params["endDate"] )) ?></h2>
-		<h2>American Eagle Corp.</h2>
+		<h2><?= $AgencyParams["AgencyName"] ?></h2>
 	</div>
 
 	<table class="report" CELLSPACING="0" style="width: 1000px;"

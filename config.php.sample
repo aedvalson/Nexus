@@ -1,6 +1,7 @@
 <?
 $AgencyParams = array();
 $AgencyParams["DistributorNumber"] = "12345678";
+$AgencyParams["AgencyName"]	   = "My Agency Name";
 
 $dbuser = "NexusDevAccount";
 $dbpass = "abc123^";

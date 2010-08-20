@@ -7,8 +7,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 <? 
 
 $DB = new conn();
-
+$DB->connect();
+$locations = getStorageLocationsHash($DB);
 ?>
+<SCRIPT TYPE="text/javascript">	
+	var locations = <?= json_encode($locations) ?>;
+</SCRIPT>
 
 
 
@@ -32,7 +36,7 @@ $DB = new conn();
 						$prods = $DB->getProducts($type["product_type"]);
 						foreach ($prods as $prod)
 						{
-							?><div class="divProd_<?= $type["product_type"] ?>" style="display: block"><label style="margin-left: 8px; font-size: 80%"><input type="checkbox" id="cb<?= $prod["product_id"] ?>" name="cb<?= $prod["product_id"] ?>" class="cbProd_<?= $type["product_type"] ?>" onchange="createFilters()" checked="checked"> </input><?= $prod["product_name"] ?></label></div><?
+							?><div class="divProd_<?= $type["product_type"] ?>" style="display: block"><label style="margin-left: 8px; font-size: 80%"><input type="checkbox" id="cb<?= $prod["product_id"] ?>" name="cb<?= $prod["product_id"] ?>" class="cbProd_<?= $type["product_type"] ?>" onchange="createFilters()" checked="checked"> </input><?= $prod["product_name"] ?> - <?= $prod["product_model"] ?></label></div><?
 						}
 							?>
 					</div>
@@ -144,7 +148,7 @@ SQLEND;
 							$products = $DB->getProducts();
 							foreach ($products as $prod)
 							{
-								?><OPTION value="<?= $prod["product_id"] ?>"><? echo $prod["product_name"]; ?></option><?
+								?><OPTION value="<?= $prod["product_id"] ?>"><? echo $prod["product_name"]; ?> - <? echo $prod["product_model"]; ?></option><?
 							}
 							?>
 						</SELECT>
@@ -424,7 +428,11 @@ SQLEND;
 						{
 							rowdata = "<a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">" + _r.status_data + "</a>";
 						}
-						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+						else if (_r.status_name == "Checked In")
+						{
+							rowdata = locations[_r.status_data].storagelocation_name;
+						}
+						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+" - "+_r.product_model+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{
@@ -537,6 +545,7 @@ SQLEND;
 								if (args.success == "success")
 								{
 									createFilters();
+									fixHeight();
 								}
 								else alert("Ajax failed.");
 							});

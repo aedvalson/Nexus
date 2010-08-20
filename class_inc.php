@@ -64,19 +64,156 @@ function prettyDate( $dateString )
 
 
 
-	function getClass($name)
+function getClass($name)
+{
+	$currentUrl = $_SERVER["REQUEST_URI"];
+	if (strpos($currentUrl, $name))
 	{
-		$currentUrl = $_SERVER["REQUEST_URI"];
-		if (strpos($currentUrl, $name))
+		return "navBulletSelected";
+	}
+	else
+	{
+		return "";
+	}
+}
+
+
+function buildOrdersByUsersHash($DB, $users, $orders)
+{
+	$orderHash = array();
+	foreach ($users as $user)
+	{
+		$user_id = $user["user_id"];
+		foreach ($orders as $order)
 		{
-			return "navBulletSelected";
-		}
-		else
-		{
-			return "";
+			// Check for Reserves and watch for largest finance method for finance types hash
+			$order["reserveAmount"] = 0;
+			$financeArray = json_decode($order["PaymentArray"], true);
+			if ($financeArray)
+			{
+				foreach ($financeArray["paymentMethods"] as $financeMethod)
+				{
+					$order["reserveAmount"] = $order["reserveAmount"] + ($financeMethod["amount"] & $financeMethod["reserveRate"] / 100);
+				}	
+			}
+
+			$order["adjAmount"] = $order["amount"] - $order["reserveAmount"];
+
+
+			$remaining = $order["adjAmount"];
+			$commissions	= json_decode($order["CommStructure"], true);
+			$commissions	= $commissions["elements"];
+			foreach ($commissions as $comm)
+			{
+				
+				// Recalc comm amt
+				if ($comm["paymentType"] == "flat")
+				{
+					$commAmount = $comm["flatAmount"];
+				}
+				else if ($comm["paymentType"] == "remaining")
+				{
+					$commAmount = $remaining;
+				}
+				else if ($comm["paymentType"] == "percentage")
+				{
+					$commAmount = $order["adjAmount"] * $comm["percentage"] / 100;
+				}
+				$remaining -= $commAmount;
+
+				if ($comm["payeeType"] == "employee")
+				{
+					foreach($comm["dealers"] as $dealer)
+					{
+						if ($dealer["user"] == $user_id)
+						{
+							$length = count($comm["dealers"]);
+							if ($length > 1)
+							{
+								$adjCommAmount = $commAmount / $length;
+							}
+							else
+							{
+								$adjCommAmount = $commAmount;
+							}
+
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["commission"] += $adjCommAmount;
+							$orderHash[$user_id]["user_id"] = $user_id;
+
+						}
+					}
+				}
+
+				if ($comm["payeeType"] == "adjustment")
+				{
+					$commAmount = $comm["amount"];
+					foreach($comm["dealers"] as $dealer)
+					{
+						if ($dealer["user"] == $user_id)
+						{
+							$length = count($comm["dealers"]);
+							if ($length > 1)
+							{
+								$adjCommAmount = $commAmount / $length;
+							}
+							else
+							{
+								$adjCommAmount = $commAmount;
+							}
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] += $adjCommAmount;
+							$orderHash[$user_id]["user_id"] = $user_id;
+						}
+					}
+				}
+			}
 		}
 	}
+	return $orderHash;
+}
 
+
+function getUserHash($DB)
+{
+	$sql = "select * from users join teams on users.team_id = teams.team_id";
+	$result = $DB->query($sql);
+	$users = array();
+	while ($userRow = mysql_fetch_assoc($result))
+	{
+		$users[$userRow["user_id"]] = $userRow;
+	}
+	return $users;
+}
+
+
+function getProductHash($DB)
+{
+	$sql = "select * from products";
+	$result = $DB->query($sql);
+	$products = array();
+	while ($userRow = mysql_fetch_assoc($result))
+	{
+		$products[$prodRow["product_id"]] = $prodRow;
+	}
+	return $products;
+}
+
+function getStorageLocationsHash($DB)
+{
+	$sql = "select * from storagelocations";
+	$result = $DB->query($sql);
+	$locations = array();
+	while ($locationRow = mysql_fetch_assoc($result))
+	{
+		$locations[$locationRow["storagelocation_id"]] = $locationRow;
+	}
+	return $locations;
+}
 
 
 class conn

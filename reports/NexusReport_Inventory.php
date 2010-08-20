@@ -114,7 +114,7 @@ function getLocation ($status, $data)
 	<div class="reportHeader">
 		<h1>Inventory Report <?= $ProductHeader ?></h1>
 		<h2><?= date("m/d/Y", strtotime($startDate)) ?> - <?= date("m/d/Y", strtotime($endDate)) ?></h2>
-		<h2>American Eagle Corp.</h2>
+		<h2><?= $AgencyParams["AgencyName"] ?></h2>
 	</div>
 
 	<TABLE style="page-break-inside: avoid" class="report" BORDER="1" CELLSPACING="1">

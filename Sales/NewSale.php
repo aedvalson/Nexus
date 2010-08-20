@@ -27,8 +27,10 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	}
 
 ?>
-
-
+<? $F = new FormElements(); ?>
+<div style="display: none">
+<?= $F->ddlDealerRoles(false, "baseDealers"); ?>
+</div>
 
 
 <div class="navMenu" id="navMenu">
@@ -108,7 +110,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 			<div class="formBoxDialog" id="fBoxCreateNewCustomer" style="background-color: #EDECDC">
 				<h1>Create New Customer Form</h1>
-				<? $F = new FormElements(); ?>
 				<form id="formCreateNew" method="post" action="">
 				<h1 style="background-color:silver; color:#365181; font-size:1.1em;margin:2em 0 0.5em 1.25em; padding:2px 0 2px 5px; width:350px;">General Information</h1>
 						<ul class="form">
@@ -2402,8 +2403,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function deleteRole(index)
 	{
 		SetDirty();
-		// Clone dealerroles to dealerroles2
-		$('#ddlDealerRoles2').html( $('#ddlDealerRole').html() );
+		// Clone ddlbaseDealers to dealerroles2
+		$('#ddlDealerRoles2').html( $('#ddlbaseDealers').html() );
 
 		var $roleStorage = $('#hRolesArray');
 		// See if we already have a value in the field

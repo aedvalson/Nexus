@@ -1218,12 +1218,12 @@ SQLEND;
 			}
 		}
 
-
 		$error = $sql;
 		$result = mysql_query($sql);
 
 		while ($row = mysql_fetch_assoc($result))
 		{
+			$row["sql"] = $sql;
 			$retArray[] = $row;
 			$output = $retArray;
 		}
@@ -1557,7 +1557,7 @@ SQLEND;
 			}
 		}
 
-		$sql = $sql . " ORDER BY serial ";
+		$sql = $sql . " ORDER BY inventory.DateAdded DESC ";
 
 		$result = mysql_query($sql);
 

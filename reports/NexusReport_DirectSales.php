@@ -38,14 +38,18 @@ foreach ($orders as $order)
 		$DealerName="";
 		$dealersArray = json_decode($order["dealerArray"], true);
 		$roles = $dealersArray["roles"];
-		foreach ($roles as $role)
+		if ($roles)
 		{
-			if ( preg_match("/dealer/i", $role["roleText"]) )
+			foreach ($roles as $role)
 			{
-				$DealerName = $role["displayName"];
+				$firephp->log($role);
+				if ( preg_match("/dealer/i", $role["roleText"]) )
+				{
+					$DealerName = $role["displayName"];
+					$firephp->log($DealerName);
+				}
 			}
 		}
-
 		$productsArray = json_decode($order["ProductsArray"], true);
 		$products = $productsArray["products"];
 		if ($products)

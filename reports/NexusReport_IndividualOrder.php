@@ -90,7 +90,7 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 	<div class="reportHeader">
 		<h1>Individual Sale Report</h1>
 		<h2 style="font-size: 100%"><?= $saleText ?></h2>
-		<h2 style="font-size: 100%">American Eagle Corp.</h2>
+		<h2 style="font-size: 100%"><?= $AgencyParams["AgencyName"] ?></h2>
 	</div>
 	<center>
 	<TABLE style="width: 90%" class="report" BORDER="1" CELLSPACING="1">
@@ -158,11 +158,14 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 //					$firephp->log($payment); // Financing Second
 					if ($payment["paymentType"] == "finance")
 					{
+						$payment["amount"] = str_replace(",","",$payment["amount"]);
+						$payment["amount"] = str_replace("$","",$payment["amount"]);
 						?>
+						
 						Financed: $<?= money_format("%i", $payment["amount"]) ?><br/><br />
 						Financier: <?= $payment["financeCompany"] ?><br />
 						Loan Type: <?= $payment["loanOption"] ?><br />
-						Reserve: <?= $payment["reserveRate"] ?> ($<?= money_format("%i", $payment["amount"] / $payment["reserveRate"]) ?>) <br />
+						Reserve: <?= $payment["reserveRate"] ?>% ($<?= money_format("%i", $payment["amount"] / $payment["reserveRate"]) ?>) <br />
 						<?
 						$reserveTotal = $reserveTotal + ($payment["amount"] / $payment["reserveRate"]);
 					}

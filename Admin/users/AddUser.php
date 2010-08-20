@@ -167,18 +167,18 @@ $F = new FormElements();
 				<div style="clear: both"></div>
 				<h1>Emergency Contact:</h1>
 				<?
-				$F->tbVal("ContactFirstName", "Contact First Name", "", "float: left;", $user["ContactFirstName"]);
-				$F->tbVal("ContactLastName", "Contact Last Name", "", "float: left;", $user["ContactLastName"]);
+				$F->tbNotVal("ContactFirstName", "Contact First Name", "", "float: left;", $user["ContactFirstName"]);
+				$F->tbNotVal("ContactLastName", "Contact Last Name", "", "float: left;", $user["ContactLastName"]);
 
-				$F->tbVal("ContactAddress1", "Contact Address 1", "", "clear: both; float: left;", $user["ContactAddress"]);
+				$F->tbNotVal("ContactAddress1", "Contact Address 1", "", "clear: both; float: left;", $user["ContactAddress"]);
 				$F->tbNotVal("ContactAddress2", "Contact Address 2", "", "float: left;", $user["ContactAddress2"]);
 
-				$F->tbVal("ContactCity", "Contact City", "", "clear: both; float: left", $user["ContactCity"]);
+				$F->tbNotVal("ContactCity", "Contact City", "", "clear: both; float: left", $user["ContactCity"]);
 				$F->ddlStates($user["ContactState"], "ContactState", "Contact State", "float:left;");
-				$F->tbVal("ContactZipCode", "Contact Zip", "", "float: left", $user["ContactZipCode"]);
+				$F->tbNotVal("ContactZipCode", "Contact Zip", "", "float: left", $user["ContactZipCode"]);
 
-				$F->tbVal("ContactPhone", "Contact Phone", "", "clear: both; float: left", $user["ContactPhone"]);
-				$F->tbVal("ContactCell", "Contact Cell", "", "float: left", $user["ContactCell"]);
+				$F->tbNotVal("ContactPhone", "Contact Phone", "", "clear: both; float: left", $user["ContactPhone"]);
+				$F->tbNotVal("ContactCell", "Contact Cell", "", "float: left", $user["ContactCell"]);
 
 				$firephp->log($Action);
 				?>

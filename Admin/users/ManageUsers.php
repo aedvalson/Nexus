@@ -292,7 +292,7 @@ $DB = new conn();
 							$teams = $DB->getTeams();
 							foreach ($teams as $team)
 							{
-								?><OPTION value="<?= $team["team_id"] ?>"><? echo $team["team_name"]; ?></option><?
+								?><OPTION value="<?= $team["team_id"] ?>"><? echo str_replace("'", "\'", $team["team_name"]); ?></option><?
 							}
 							?></SELECT></div></td><td><div class="view"><span id="spnRoleName_'+_r.user_id+'">'+ _r.permname + '</span></div><div class="editCell"><SELECT id="ddlPerm_' + _r.user_id + '" style="width:100%"><?
 							$perms = $DB->getPermissionRoles();
@@ -331,8 +331,8 @@ $DB = new conn();
 						  filterCaseSensitive: false});
 					}
 
-
-					$('.deleteLink').click( function() {
+					$('.deleteLink').unbind();
+					$('.deleteLink').live("click", function() {
 						if (confirm("Are you sure you wish to permanently delete this User?"))
 						{
 							var user_id = this.id.replace("deleteLink_", "");
@@ -354,8 +354,8 @@ $DB = new conn();
 					});
 
 
-
-					$('.editLink').click( function() {
+					$('.editLink').unbind();
+					$('.editLink').live("click", function() {
 
 						var user_id = this.id.replace("editLink_", "");
 

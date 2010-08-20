@@ -192,6 +192,7 @@ $DB->close();
 </form>
 
 <script type="text/javascript">
+	$('document').ready( function() { fixHeight(); });
 	$('#tbAmtToAdd').change(function() {
 		updateSerialBoxes();
 	});
@@ -213,7 +214,6 @@ $DB->close();
 		{
 			j = newTotal - oldTotal;
 			var i = $('#tbSerial input.validated[id^=tbSerial]').length + 1;
-			alert(i);
 
 
 			while (i <= newTotal)
@@ -234,6 +234,7 @@ $DB->close();
 				i++;
 			});
 		}
+		fixheight();
 
 	}
 </script>

@@ -72,8 +72,8 @@ class FormElements
                   <label for="r_tbContactType">ContactType:</label>
                   <div id="tbContactType_img"></div>
 					<select class="validated" name="ContactType" id="ddlContactType" >
-						<OPTION Value="2">Lead</OPTION>
-						<OPTION Value="3">Customer</OPTION>
+						<OPTION Value="3">Lead</OPTION>
+						<OPTION Value="2">Customer</OPTION>
 					</select>	
                   <div id="tbContactType_msg"></div>
           </li>

@@ -32,118 +32,12 @@ while ($orderRow = mysql_fetch_assoc($result))
 
 
 // Get All Users
-$sql = "select * from users join teams on users.team_id = teams.team_id";
-$result = $DB->query($sql);
-$users = array();
-while ($userRow = mysql_fetch_assoc($result))
-{
-	$users[$userRow["user_id"]] = $userRow;
-}
-$firephp->log($users);
+$users = getUserHash($DB);
+$orderHash = buildOrdersByUsersHash($DB, $users, $orders);
 
 $user_id = $params["user_id"];
 // Build Order Hash by User
-$orderHash = array();
-foreach ($users as $user)
-{
-	$user_id = $user["user_id"];
-	foreach ($orders as $order)
-	{
-		// Check for Reserves and watch for largest finance method for finance types hash
-		$order["reserveAmount"] = 0;
-		$financeArray = json_decode($order["PaymentArray"], true);
-		if ($financeArray)
-		{
-			foreach ($financeArray["paymentMethods"] as $financeMethod)
-			{
-				$order["resereAmount"] = $order["resereAmount"] + ($financeMethod["amount"] & $financeMethod["reserveRate"] / 100);
-			}	
-		}
 
-		$order["adjAmount"] = $order["amount"] - $order["reserveAmount"];
-
-
-		$remaining = $order["adjAmount"];
-		$commissions	= json_decode($order["CommStructure"], true);
-		$commissions	= $commissions["elements"];
-		foreach ($commissions as $comm)
-		{
-			
-			// Recalc comm amt
-			if ($comm["paymentType"] == "flat")
-			{
-				$commAmount = $comm["flatAmount"];
-			}
-			else if ($comm["paymentType"] == "remaining")
-			{
-				$commAmount = $remaining;
-			}
-			else if ($comm["paymentType"] == "percentage")
-			{
-				$commAmount = $order["adjAmount"] * $comm["percentage"] / 100;
-			}
-			$remaining -= $commAmount;
-
-			if ($comm["payeeType"] == "employee")
-			{
-				foreach($comm["dealers"] as $dealer)
-				{
-					if ($dealer["user"] == $user_id)
-					{
-						$length = count($comm["dealers"]);
-						if ($length > 1)
-						{
-							$adjCommAmount = $commAmount / $length;
-						}
-						else
-						{
-							$adjCommAmount = $commAmount;
-						}
-
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["commission"] += $adjCommAmount;
-						$orderHash[$user_id]["user_id"] = $user_id;
-
-					}
-				}
-			}
-
-			if ($comm["payeeType"] == "adjustment")
-			{
-				$commAmount = $comm["amount"];
-				foreach($comm["dealers"] as $dealer)
-				{
-					if ($dealer["user"] == $user_id)
-					{
-						$length = count($comm["dealers"]);
-						if ($length > 1)
-						{
-							$adjCommAmount = $commAmount / $length;
-						}
-						else
-						{
-							$adjCommAmount = $commAmount;
-						}
-						$firephp->log("adj: " . $commAmount . " " . $adjCommAmount);
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] += $adjCommAmount;
-						$orderHash[$user_id]["user_id"] = $user_id;
-						if ($order["order_id"] == 57)
-						{
-							$firephp->log("adj total: " . $orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"]);
-							$firephp->log("orderHash");
-							$firephp->log($orderHash);
-						}
-					}
-				}
-			}
-		}
-	}
-}
 
 	$highestEarned = 0;
 	foreach ($orderHash as $userHash)

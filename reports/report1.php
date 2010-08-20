@@ -59,7 +59,7 @@ $DB->close();
 		<center>
 		<h1>General Sales Report</h1>
 		<h2>Monday November 30, 2009</h2>
-		<h3>American Eagle Corp.</h3>
+		<h3><?= $AgencyParams["AgencyName"] ?></h3>
 
 		<br><br><br>
 

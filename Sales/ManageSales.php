@@ -21,7 +21,7 @@ $DB = new conn();
 			<div>
 				<b>Date Range:</b><br>
 				<label>Start:</label>
-				<INPUT style="width:90%" id="tbStartDateV" class="datepicker" value="<?= thirtydaysago() ?>"></input>
+				<INPUT style="width:90%" id="tbStartDateV" class="datepicker" value="<?= thirtydaysago() ?>">
 
 				<label>End:</label>
 				<INPUT style="width:90%" id="tbEndDateV" class="datepicker" value="<?= today() ?>">
@@ -143,6 +143,26 @@ SQLEND;
 
 <SCRIPT TYPE="TEXT/JAVASCRIPT">
 	$(document).ready(function() {
+
+		$('#theTable tbody tr').live("click",  function() {
+			window.location = 'NewSale.php?order_id=' + this.id.replace('row', '');
+		});
+
+		$("a[id^=lbDelete]").each( function() {
+			$(this).click(function() {
+				var id = this.id;
+				var user_id = id.replace("lbDelete", "");
+				$("#hv_user_id").val(user_id);
+				$("#hv_Action").val("Delete");
+				if (confirm("Are you sure you wish to delete User #"+user_id+"?"))
+				{
+					$("#theForm").submit();	
+				}
+				return false;
+			});
+		});
+
+
 		createFilters();
 		$("a[id^=expand_]").each(
 			function() {
@@ -200,6 +220,7 @@ SQLEND;
 	$('input[id^=tbDate]').change(function() {
 		var newVal = $(this).val();
 		$('input[id^=tbDate], #tbStartDateV, #tbEndDateV').each( function () {
+			alert(this.id);
 			$(this).val(newVal);
 		});
 		createFilters();
@@ -399,7 +420,7 @@ SQLEND;
 							{
 								for (i in dealerArray.roles)
 								{
-									var thisRoleText = dealerArray.roles[i].roleText;
+									var thisRoleText = dealerArray.roles[i].roleText ? dealerArray.roles[i].roleText : "";
 									if (!roles[thisRoleText])
 									{
 										roles[thisRoleText] = dealerArray.roles[i].roleText.replace(" ", "&nbsp;") + ":";
@@ -464,31 +485,6 @@ SQLEND;
 
 
 <SCRIPT TYPE="TEXT/JAVASCRIPT">
-	$(document).ready(function() {
-
-
-
-
-		$('#theTable tbody tr').live("click",  function() {
-			window.location = 'NewSale.php?order_id=' + this.id.replace('row', '');
-		});
-
-
-		$("a[id^=lbDelete]").each( function() {
-			$(this).click(function() {
-				var id = this.id;
-				var user_id = id.replace("lbDelete", "");
-				$("#hv_user_id").val(user_id);
-				$("#hv_Action").val("Delete");
-				if (confirm("Are you sure you wish to delete User #"+user_id+"?"))
-				{
-					$("#theForm").submit();	
-				}
-				return false;
-			});
-		});
-	});
-
 	function sortTable()
 	{
 		$('#theTable').addClass('sorted');

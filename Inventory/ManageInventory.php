@@ -426,7 +426,7 @@ SQLEND;
 						var rowdata = _r.status_data;
 						if (_r.status_name == "Sale Pending" || _r.status_name == "Sold")
 						{
-							rowdata = "<a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">" + _r.status_data + "</a>";
+							rowdata = "Order <a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">#" + _r.status_data + "</a>";
 						}
 						else if (_r.status_name == "Checked In")
 						{

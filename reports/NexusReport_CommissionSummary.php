@@ -66,77 +66,80 @@ foreach ($users as $user)
 		$remaining = $order["adjAmount"];
 		$commissions	= json_decode($order["CommStructure"], true);
 		$commissions	= $commissions["elements"];
-		foreach ($commissions as $comm)
+		if ($commissions)
 		{
+			foreach ($commissions as $comm)
+			{
 			
-			// Recalc comm amt
-			if ($comm["paymentType"] == "flat")
-			{
-				$commAmount = $comm["flatAmount"];
-			}
-			else if ($comm["paymentType"] == "remaining")
-			{
-				$commAmount = $remaining;
-			}
-			else if ($comm["paymentType"] == "percentage")
-			{
-				$commAmount = $order["adjAmount"] * $comm["percentage"] / 100;
-			}
-			$remaining -= $commAmount;
-
-			if ($comm["payeeType"] == "employee")
-			{
-				foreach($comm["dealers"] as $dealer)
+				// Recalc comm amt
+				if ($comm["paymentType"] == "flat")
 				{
-					if ($dealer["user"] == $user_id)
+					$commAmount = $comm["flatAmount"];
+				}
+				else if ($comm["paymentType"] == "remaining")
+				{
+					$commAmount = $remaining;
+				}
+				else if ($comm["paymentType"] == "percentage")
+				{
+					$commAmount = $order["adjAmount"] * $comm["percentage"] / 100;
+				}
+				$remaining -= $commAmount;
+
+				if ($comm["payeeType"] == "employee")
+				{
+					foreach($comm["dealers"] as $dealer)
 					{
-						$length = count($comm["dealers"]);
-						if ($length > 1)
+						if ($dealer["user"] == $user_id)
 						{
-							$adjCommAmount = $commAmount / $length;
-						}
-						else
-						{
-							$adjCommAmount = $commAmount;
-						}
+							$length = count($comm["dealers"]);
+							if ($length > 1)
+							{
+								$adjCommAmount = $commAmount / $length;
+							}
+							else
+							{
+								$adjCommAmount = $commAmount;
+							}
 
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["commission"] += $adjCommAmount;
-						$orderHash[$user_id]["user_id"] = $user_id;
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["commission"] += $adjCommAmount;
+							$orderHash[$user_id]["user_id"] = $user_id;
 
+						}
 					}
 				}
-			}
 
-			if ($comm["payeeType"] == "adjustment")
-			{
-				$commAmount = $comm["amount"];
-				foreach($comm["dealers"] as $dealer)
+				if ($comm["payeeType"] == "adjustment")
 				{
-					if ($dealer["user"] == $user_id)
+					$commAmount = $comm["amount"];
+					foreach($comm["dealers"] as $dealer)
 					{
-						$length = count($comm["dealers"]);
-						if ($length > 1)
+						if ($dealer["user"] == $user_id)
 						{
-							$adjCommAmount = $commAmount / $length;
-						}
-						else
-						{
-							$adjCommAmount = $commAmount;
-						}
-						$firephp->log("adj: " . $commAmount . " " . $adjCommAmount);
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
-						$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] += $adjCommAmount;
-						$orderHash[$user_id]["user_id"] = $user_id;
-						if ($order["order_id"] == 57)
-						{
-							$firephp->log("adj total: " . $orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"]);
-							$firephp->log("orderHash");
-							$firephp->log($orderHash);
+							$length = count($comm["dealers"]);
+							if ($length > 1)
+							{
+								$adjCommAmount = $commAmount / $length;
+							}
+							else
+							{
+								$adjCommAmount = $commAmount;
+							}
+							$firephp->log("adj: " . $commAmount . " " . $adjCommAmount);
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["order_id"] = $order["order_id"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] += $adjCommAmount;
+							$orderHash[$user_id]["user_id"] = $user_id;
+							if ($order["order_id"] == 57)
+							{
+								$firephp->log("adj total: " . $orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"]);
+								$firephp->log("orderHash");
+								$firephp->log($orderHash);
+							}
 						}
 					}
 				}

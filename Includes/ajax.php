@@ -122,6 +122,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		}
 		else $date = "";
 
+		$firephp->log("ORDERSTATUS: " . $orderStatus);
+
 		if ($orderStatus < 5 || $orderStatus == 7)		$newStatus = 4;
 		if ($orderStatus == 5 || $orderStatus == 6)		$newStatus = 5;
 		if ($orderStatus == 8)							$newStatus = 1;
@@ -173,19 +175,28 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$storagelocation_id = $row["storagelocation_id"];
 		$storagelocation_name = $row["storagelocation_name"];
 
-		// Reset all inventory that is contained in this product to default locationa
-		$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE (status = 4 or status = 5) AND status_data = " . $order_id;
-		$firephp->log($sql);
-		$DB->execute_nonquery($sql);
+		$firephp->log("NEWSTATUS: " . $newStatus);
 
 		// Update inventory status for items in order.
 		if ($prodArray)
 		{
-			foreach ($prodArray as $product)
+			if ($newStatus == 1)  // Free up inventory - sale is cancelled
 			{
-					$serial = $product['Serial'];
-					$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
-					$DB->execute_nonquery($sql);
+				// Reset all inventory that is contained in this product to default locationa
+				$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE (status = 4 or status = 5) AND status_data = " . $order_id;
+				$firephp->log("RESETTING INVENTORY");
+				$firephp->log($sql);
+				$DB->execute_nonquery($sql);
+			}
+
+			else  // Inventory stays in sale. update it.
+			{
+				foreach ($prodArray as $product)
+				{
+						$serial = $product['Serial'];
+						$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
+						$DB->execute_nonquery($sql);
+				}
 			}
 		}
 

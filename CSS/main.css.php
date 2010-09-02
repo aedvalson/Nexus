@@ -299,6 +299,10 @@ width:50px;
 text-align: center;
 }
 
+table.data tbody tr td select, table.data tbody tr td input
+{
+font-size: 80%;
+}
 
 
 h3.tableHeadline

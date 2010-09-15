@@ -140,6 +140,21 @@ table.report tbody tr td.shaded
 	background-color: #ddd;
 }
 
+table.noborders, table.noborders td
+{
+	border:0;
+}
+
+table.nowrap td
+{
+	whitespace: nowrap;
+}
+
+table.report td.money
+{
+	text-align: right;
+}
+
 div.reportContainer
 {
 	width: 1020px;

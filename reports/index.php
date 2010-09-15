@@ -54,19 +54,35 @@ if ($_REQUEST["report"] )
 		}
 	}
 
-	// CommissionSummary Report
+	// Payroll Report
 	if ($_REQUEST["report"] == "payroll")
 	{
 			$firephp->log("comm");
-		if ($_REQUEST["payrollStartDate"] && $_REQUEST["payrollEndDate"] && $_REQUEST["Staff"])
+		if ($_REQUEST["payrollStartDate"] && $_REQUEST["payrollEndDate"] && $_REQUEST["payrollStaff"])
 		{
 			$firephp->log("redirecting");
 			$db->connect();
 			$startDate = $db->Sanitize($_REQUEST["payrollStartDate"]);
 			$endDate = $db->Sanitize($_REQUEST["payrollEndDate"]);
-			$user_id = $db->Sanitize($_REQUEST["Staff"]);
+			$user_id = $db->Sanitize($_REQUEST["payrollStaff"]);
 			$db->close();
 			header("Location: NexusReport_Payroll.php?startDate=".$startDate."&endDate=".$endDate."&user_id=".$user_id);
+		}
+	}
+
+	// Individual Commission Report
+	if ($_REQUEST["report"] == "indcomm")
+	{
+			$firephp->log("comm");
+		if ($_REQUEST["indcommStartDate"] && $_REQUEST["indcommEndDate"] && $_REQUEST["indcommStaff"])
+		{
+			$firephp->log("redirecting");
+			$db->connect();
+			$startDate = $db->Sanitize($_REQUEST["indcommStartDate"]);
+			$endDate = $db->Sanitize($_REQUEST["indcommEndDate"]);
+			$user_id = $db->Sanitize($_REQUEST["indcommStaff"]);
+			$db->close();
+			header("Location: NexusReport_IndividualCommission.php?startDate=".$startDate."&endDate=".$endDate."&user_id=".$user_id);
 		}
 	}
 
@@ -114,6 +130,7 @@ if ($_REQUEST["report"] )
 		<div class="navBullet" id="directSalesBullet"><a href="#" class="pagetab" id="directSalesLink">Direct Sales</a></div>
 		<div class="navBullet" id="commissionSummaryBullet"><a href="#" class="pagetab" id="commissionSummaryLink">Comm. Summary</a></div>
 		<div class="navBullet" id="payrollBullet"><a href="#" class="pagetab" id="payrollLink">Payroll</a></div>
+		<div class="navBullet" id="indcommBullet"><a href="#" class="pagetab" id="indcommLink">Individual Comm.</a></div>		
 		<div class="navBulletBorderBottom"></div>
 	</div>
 	<div class="navPageSpacing"></div>
@@ -191,10 +208,23 @@ if ($_REQUEST["report"] )
 			<ul class="form">
 				<? $F->tbNotVal("payrollStartDate", "Start Date", "datepicker"); ?>
 				<? $F->tbNotVal("payrollEndDate", "End Date", "datepicker"); ?>
-				<? $F->ddlStaff($db, "payrollStaff") ?>
+				<? $F->ddlStaff($db, "payrollStaff", "User", "payrollStaff") ?>
 				<? $F->SubmitButton("Open Report"); ?>
 			</ul>
 			<input type="hidden" name="report" value="payroll">
+			</form>
+		</div>
+
+		<div class="formDiv" id="indcommDiv" style="display: none; background-color: #EDECDC">
+			<h1>Individual Commission Report</h1>
+			<form autocomplete="off" name="indcommForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
+			<ul class="form">
+				<? $F->tbNotVal("indcommStartDate", "Start Date", "datepicker"); ?>
+				<? $F->tbNotVal("indcommEndDate", "End Date", "datepicker"); ?>
+				<? $F->ddlStaff($db, "indcommStaff", "User", "indcommStaff") ?>
+				<? $F->SubmitButton("Open Report"); ?>
+			</ul>
+			<input type="hidden" name="report" value="indcomm">
 			</form>
 		</div>
 
@@ -218,7 +248,7 @@ if ($_REQUEST["report"] )
 
 <SCRIPT>
 
-$('#reportInventoryLink, #individualSaleLink, #generalSalesLink, #directSalesLink, #commissionSummaryLink, #payrollLink').click( function() {
+$('#reportInventoryLink, #individualSaleLink, #generalSalesLink, #directSalesLink, #commissionSummaryLink, #payrollLink, #indcommLink').click( function() {
 	$('.navBullet').removeClass("navBulletSelected");
 	$(this).parent('.navBullet').addClass("navBulletSelected");
 	var formDivName = $(this).attr("id").replace("Link", "Div");

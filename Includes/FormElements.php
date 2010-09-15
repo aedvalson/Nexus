@@ -196,7 +196,7 @@ class FormElements
 		  <?
 	}
 
-	function ddlStaff($conn, $id="Staff", $text="User")
+	function ddlStaff($conn, $id="Staff", $text="User", $name="Staff")
 	{
 
 		$staff = $conn->getUsers();
@@ -204,7 +204,7 @@ class FormElements
 		 <li class="validated" id="ddlStaff_li">
 					  <label for="r_ddlStaff"><?= $text ?>:</label>
 					  <div id="tbStaff_img"></div>
-						<select class="validated" name="Staff" id="ddl<?= $id ?>" >
+						<select class="validated" name="<?= $name ?>" id="ddl<?= $id ?>" >
 							<? foreach ($staff as $user) 
 								{?>
 									<option value="<?= $user["user_id"] ?>"><?= $user["Username"] ?></option>

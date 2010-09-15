@@ -63,7 +63,6 @@ function prettyDate( $dateString )
 }
 
 
-
 function getClass($name)
 {
 	$currentUrl = $_SERVER["REQUEST_URI"];
@@ -86,6 +85,13 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 		$user_id = $user["user_id"];
 		foreach ($orders as $order)
 		{
+
+			$remaining = $order["adjAmount"];
+			$commissions	= json_decode($order["CommStructure"], true);
+			$commissions	= $commissions["elements"];
+
+			if (!$commissions) { continue; }
+
 			// Check for Reserves and watch for largest finance method for finance types hash
 			$order["reserveAmount"] = 0;
 			$financeArray = json_decode($order["PaymentArray"], true);
@@ -93,22 +99,63 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 			{
 				foreach ($financeArray["paymentMethods"] as $financeMethod)
 				{
-					$order["reserveAmount"] = $order["reserveAmount"] + ($financeMethod["amount"] & $financeMethod["reserveRate"] / 100);
+					$order["reserveAmount"] = $order["reserveAmount"] + ($financeMethod["amount"] * $financeMethod["reserveRate"] / 100);
 				}	
 			}
 
-			$order["adjAmount"] = $order["amount"] - $order["reserveAmount"];
+			$order["adjAmount"] = $order["amount"] - $order["reserveAmount"] - $order["tax"];
 
 
-			$remaining = $order["adjAmount"];
-//			$firephp->log($order);
-			$commissions	= json_decode($order["CommStructure"], true);
-			$commissions	= $commissions["elements"];
+
 			if ($commissions)
 			{
+				$methods = json_decode($order["PaymentArray"], true);
+				$methods = $methods["paymentMethods"];
+
+				$orderHash[$user_id]["commissions"][$order["order_id"]]["financeTotal"] = 0;
+				$orderHash[$user_id]["commissions"][$order["order_id"]]["cashTotal"] = 0;
+				$orderHash[$user_id]["commissions"][$order["order_id"]]["checkTotal"] = 0;
+				$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] = 0;
+
+				if ($methods)
+				{
+					$i = 0;
+					foreach ($methods as $method)
+					{
+						$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["paymentType"] = $method["paymentType"];
+						$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["amount"] = $method["amount"];
+
+						if ($method["paymentType"] == "finance")
+						{
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["companies"][$i]["company"] = $method["financeCompany"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["companies"][$i]["option"] = $method["loanOption"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["companies"][$i]["reserve"] = $method["reserveRate"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["companies"][$i]["amount"] = $method["amount"];
+
+							$reserve = $method["reserveRate"] * $method["amount"] / 100;
+
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["PaymentMethods"][$method["paymentType"]]["companies"][$i]["reserveTotal"] = $reserve;
+
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["financeTotal"] += $method["amount"];
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["reserveTotal"] += $reserve;
+						}
+
+						if ($method["paymentType"] == "cash")
+						{
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["cashTotal"] += $method["amount"];
+						}
+
+						if ($method["paymentType"] == "check")
+						{
+							$orderHash[$user_id]["commissions"][$order["order_id"]]["checkTotal"] += $method["amount"];
+						}
+					}
+				}
+
+				$order_remaining = $order["adjAmount"];
+
 				foreach ($commissions as $comm)
 				{
-					
 					// Recalc comm amt
 					if ($comm["paymentType"] == "flat")
 					{
@@ -122,7 +169,16 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 					{
 						$commAmount = $order["adjAmount"] * $comm["percentage"] / 100;
 					}
+
 					$remaining -= $commAmount;
+					if ($comm["payeeType"] != "adjustment") { $order_remaining -= $commAmount; }
+
+					$orderHash[$user_id]["commissions"][$order["order_id"]]["details"] = $order;
+
+					if ($comm["payeeType"] == "corporate")
+					{
+						$orderHash[$user_id]["commissions"][$order["order_id"]]["corp_commission"] += $commAmount;
+					}
 
 					if ($comm["payeeType"] == "employee")
 					{
@@ -147,6 +203,19 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 								$orderHash[$user_id]["user_id"] = $user_id;
 
 							}
+							else
+							{
+								$length = count($comm["dealers"]);
+								if ($length > 1)
+								{
+									$adjCommAmount = $commAmount / $length;
+								}
+								else
+								{
+									$adjCommAmount = $commAmount;
+								}
+								$orderHash[$user_id]["commissions"][$order["order_id"]]["othercomms"] += $adjCommAmount;
+							}
 						}
 					}
 
@@ -170,10 +239,23 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 								$orderHash[$user_id]["commissions"][$order["order_id"]]["date"]		= $order["DateCompleted"];
 								$orderHash[$user_id]["commissions"][$order["order_id"]]["customer"] = $order["contact_DisplayName"];
 								$orderHash[$user_id]["commissions"][$order["order_id"]]["adjustment"] += $adjCommAmount;
+
+								if ($adjCommAmount > 0)
+								{
+									$orderHash[$user_id]["commissions"][$order["order_id"]]["bonusTotal"] += $adjCommAmount;
+								}
+								else
+								{
+									$orderHash[$user_id]["commissions"][$order["order_id"]]["deductionTotal"] += $adjCommAmount;
+								}
 								$orderHash[$user_id]["user_id"] = $user_id;
 							}
 						}
 					}
+				}
+				if ($order_remaining)
+				{
+					$orderHash[$user_id]["commissions"][$order["order_id"]]["corp_commission"] += $order_remaining;
 				}
 			}
 		}

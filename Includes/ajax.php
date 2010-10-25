@@ -5,6 +5,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 	$firephp = FirePHP::getInstance(true);
   
   ob_start();
+  session_start();
    if (isset($_POST["id"]))
    {
    }
@@ -419,6 +420,7 @@ SQLEND;
 
 	if ($id == "updateUser")
 	{
+		if (!UserMay("Admin_EditUsers")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 		
@@ -454,6 +456,8 @@ SQLEND;
 
 	if ($id == "updateInventoryStatus")
 	{
+		if (!UserMay("EditInventory")) { AccessDenied(); }
+
 		$DB = new conn();
 		$DB->connect();
 
@@ -1556,14 +1560,14 @@ SQLEND;
 			$sql = $sql . "inventory.serial LIKE '".$serial."'";
 			$and = true;
 		}
-		if (isset($_POST["location"]))
+		if (isset($_POST["location"]) && $_POST["location"] != "null")
 		{
 			if ($_POST["location"] != "%")
 			{
 				$location = $DB->sanitize($_POST["location"]);
 				if ($and) $sql = $sql . " AND ";
 				else $sql = $sql . " WHERE ";
-				$sql = $sql . "inventory.status_data LIKE  '".$location."' AND inventory.status = 1 ";
+				$sql = $sql . "inventory.status_data LIKE  '".$location."'";
 				$and = true;
 			}
 		}
@@ -1573,6 +1577,7 @@ SQLEND;
 		$result = mysql_query($sql);
 
 		$error = $sql;
+		
 		while ($row = mysql_fetch_assoc($result))
 		{
 			$retArray[] = $row;

@@ -12,6 +12,13 @@ $locations = getStorageLocationsHash($DB);
 ?>
 <SCRIPT TYPE="text/javascript">	
 	var locations = <?= json_encode($locations) ?>;
+	<?
+		if ($AgencyParams["EnableDTOffices"])
+		{
+		?> var DTOffices = <?= json_encode($AgencyParams["DTOffices"]); ?>; <?
+		}
+	?>
+
 </SCRIPT>
 
 
@@ -168,6 +175,15 @@ SQLEND;
 								if ($prod["status_name"] == "Checked In")
 								{
 									$selected = "selected";
+								}
+								if ($prod["status_name"] == "Transferred")
+								{
+									$firephp->log("TRANSFERRED");
+									$firephp->log($AgencyParams["EnableDTOffices"]);
+									if ($AgencyParams["EnableDTOffices"] != 1) 
+										{
+										$firephp->log("CONTINUE");
+										continue; }
 								}
 								?><OPTION value="<?= $prod["status_id"] ?>" <?= $selected ?>><? echo $prod["status_name"]; ?></option><?
 							}
@@ -331,6 +347,9 @@ SQLEND;
 	});
 	$('select[id^=ddlStatus]').change(function() {
 		var newVal = $(this).val();
+
+		populateDataOptions($(this).val(), "H", "ddlLocation");
+		populateDataOptions($(this).val(), "V", "ddlLocation");
 		$('select[id^=ddlStatus]').each( function () {
 			$(this).val(newVal);
 		});
@@ -428,14 +447,26 @@ SQLEND;
 						{
 							rowdata = "Order <a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">#" + _r.status_data + "</a>";
 						}
+						else if (_r.status_name == "Transferred")
+						{
+							rowdata = DTOffices[_r.status_data];
+						}
 						else if (_r.status_name == "Checked In")
 						{
 							rowdata = locations[_r.status_data].storagelocation_name;
 						}
-						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+" - "+_r.product_model+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + prettyDate(_r.DateReceived) + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + prettyDate(_r.DateReceived) + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+
+
+						_r.DateReceived = (_r.DateReceived.match(/^0000/g)) ? "" : prettyDate(_r.DateReceived);
+
+						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+" - "+_r.product_model+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + _r.DateReceived + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + _r.DateReceived + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{
+							if ($prod["status_name"] == "Transferred")
+							{
+								if ($AgencyParams["EnableDTOffices"] != 1 ) { continue; }
+							}
 							?><OPTION value="<?= $prod["status_id"] ?>"><? echo $prod["status_name"]; ?></option><?
 						}
 						?></SELECT><br> ' +  _r.preposition + ': <select style="width:70%" id="ddlStatusData_' + _r.inventory_id + '"></select><br>date:&nbsp;<input type="text" style="width:70%" class="datepicker" id="tbDate_' + _r.inventory_id + '"></input></div></td></tr>');
@@ -506,7 +537,7 @@ SQLEND;
 						var $ddlStatusData = $('#ddlStatusData_' + inventory_id);
 
 						$('#tbDate_' + inventory_id).val($('#current_date_' + inventory_id).html());
-						populateDataOptions($ddlStatus.val(), inventory_id);
+						populateDataOptions($ddlStatus.val(), inventory_id,"ddlStatusData_");
 
 						if ($('#currentStatus_' + inventory_id).html() == '4' || $('#currentStatus_' + inventory_id).html() == '5')
 						{
@@ -523,7 +554,7 @@ SQLEND;
 
 						$ddlStatus.unbind();
 						$ddlStatus.change( function() {
-							populateDataOptions($(this).val(), inventory_id);
+							populateDataOptions($(this).val(), inventory_id, "ddlStatusData_");
 						});
 
 						$('.btnSave').unbind();
@@ -577,53 +608,6 @@ SQLEND;
 						
 					});
 
-					function populateDataOptions(datatype, inventory_id)
-					{
-						if (datatype == 1)
-						{
-							$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getStorageLocations" }, function(json) {
-								eval("var args = " + json);		
-								if (args.success == "success")
-								{
-									$('#ddlStatusData_' + inventory_id + ' option').remove();
-									if (args.output)
-									{
-
-										for (i in args.output)
-										{
-											$('#ddlStatusData_' + inventory_id).append('<option value="' + args.output[i].storagelocation_id + '">' + args.output[i].storagelocation_name + '</option>');
-										}
-										$('#ddlStatusData_' + inventory_id).val($('#currentStatusData_' + inventory_id).html());
-									}
-								}
-								else alert("Ajax failed.");
-							});
-						}
-						if (datatype == 2 || datatype == 3)
-						{
-							$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getUsers" }, function(json) {
-								eval("var args = " + json);		
-								if (args.success == "success")
-								{
-									$('#ddlStatusData_' + inventory_id + ' option').remove();
-									if (args.output)
-									{
-
-										for (i in args.output)
-										{
-											$('#ddlStatusData_' + inventory_id).append('<option value="' + args.output[i].user_id + '">' + args.output[i].Username + '</option>');
-										}
-										$('#ddlStatusData_' + inventory_id).val($('#currentStatusData_' + inventory_id).html());
-									}
-								}
-								else alert("Ajax failed.");
-							});
-						}
-
-
-
-
-					}
 
 				}
 				else
@@ -637,6 +621,66 @@ SQLEND;
 			}
 		  });
 	}
+
+function populateDataOptions(datatype, inventory_id, prefix)
+{
+	if (datatype == 1)
+	{
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getStorageLocations" }, function(json) {
+			eval("var args = " + json);		
+			if (args.success == "success")
+			{
+				$('#' + prefix + inventory_id + ' option').remove();
+				if (args.output)
+				{
+
+					for (i in args.output)
+					{
+						$('#' + prefix + inventory_id).append('<option value="' + args.output[i].storagelocation_id + '">' + args.output[i].storagelocation_name + '</option>');
+					}
+					$('#' + prefix + inventory_id).val($('#currentStatusData_' + inventory_id).html());
+				}
+			}
+			else alert("Ajax failed.");
+		});
+	}
+	if (datatype == 2)
+	{
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getUsers" }, function(json) {
+			eval("var args = " + json);		
+			if (args.success == "success")
+			{
+				$('#' + prefix + inventory_id + ' option').remove();
+				if (args.output)
+				{
+
+					for (i in args.output)
+					{
+						$('#' + prefix + inventory_id).append('<option value="' + args.output[i].user_id + '">' + args.output[i].Username + '</option>');
+					}
+					$('#ddlStatusData_' + inventory_id).val($('#currentStatusData_' + inventory_id).html());
+				}
+			}
+			else alert("Ajax failed.");
+		});
+	}
+	if (datatype == 3)
+	{
+		$('#' + prefix + inventory_id + ' option').remove();
+		for (i in DTOffices)
+		{
+			$('#' + prefix + inventory_id).append('<option value="' + i + '">' + DTOffices[i] + '</option>');
+		}
+	}
+	else
+	{
+		$('#' + prefix + inventory_id + ' option').remove();
+	}
+}
+
+
+
+
 </SCRIPT>
 
 

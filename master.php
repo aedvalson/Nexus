@@ -175,6 +175,7 @@
 	  jQuery.unbindall()
 	});
 
+	var perms = <?= json_encode($_SESSION["perms"]) ?>;
 
 	-->
 	</script>

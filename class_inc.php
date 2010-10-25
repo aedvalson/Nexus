@@ -2,9 +2,6 @@
 
 include( $_SERVER['DOCUMENT_ROOT']."/$ROOTPATH/Includes/FormElements.php");
 
-
-
-
 // Disable Magic Quotes, otherwise JSON posts get trashed.
 if (get_magic_quotes_gpc()) {
     function stripslashes_deep($value)
@@ -21,6 +18,39 @@ if (get_magic_quotes_gpc()) {
     $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
     $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 }
+
+function UserMay ($perm) {
+	return $_SESSION["perms"][$perm];
+}
+
+function AccessDenied ($message="") {
+	header('HTTP/1.1 403 Forbidden');
+
+	include "findconfig.php";
+	if (!$message) { $message = "Access Denied"; }
+	echo "<div style=\"padding: 2em 1em\"><h1 class=\"header\">Access Denied</h1><p class=\"indented\">$message</p></div>";
+	  //Assign all Page Specific variables
+	  $pagemaincontent = ob_get_contents();
+	  ob_end_clean();
+	  $pagetitle = "Page Specific Title Text";
+  include( $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/master.php");
+	  //Apply the template
+	exit();
+}
+
+function AppError ($message="") {
+	include "findconfig.php";
+	if (!$message) { $message = "An Error has occured or this action is not permitted."; }
+	echo "<div style=\"padding: 2em 1em\"><h1 class=\"header\">Application Error</h1><p class=\"indented\">$message</p></div>";
+	  //Assign all Page Specific variables
+	  $pagemaincontent = ob_get_contents();
+	  ob_end_clean();
+	  $pagetitle = "Page Specific Title Text";
+  include( $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/master.php");
+	  //Apply the template
+	exit();
+}
+
 
 function plural( $singular ) {
 	if ($singular == "Product") return "Products";
@@ -140,7 +170,7 @@ function buildOrdersByUsersHash($DB, $users, $orders)
 							$orderHash[$user_id]["commissions"][$order["order_id"]]["reserveTotal"] += $reserve;
 						}
 
-						if ($method["paymentType"] == "cash")
+						if ($method["paymentType"] == "cash" ||  $method["paymentType"] == "credit")
 						{
 							$orderHash[$user_id]["commissions"][$order["order_id"]]["cashTotal"] += $method["amount"];
 						}

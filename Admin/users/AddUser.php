@@ -1,7 +1,7 @@
 <? 
 include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
-
+	if (!UserMay("Admin_EditUsers")) { AccessDenied(); }
 
 $DB = new conn();
 $DB->connect();
@@ -70,10 +70,14 @@ $dummytext = "";
 			$ContactZipCode = $DB->sanitize($_REQUEST["ContactZipCode"]);
 			$ContactPhone = $DB->sanitize($_REQUEST["ContactPhone"]);
 			$ContactCell = $DB->sanitize($_REQUEST["ContactCell"]);
+			$dtoffice = "";
+			if ($_REQUEST["dtoffice"]) {
+				$dtoffice = $DB->sanitize($_REQUEST["dtoffice"]);
+			}
 
 			if ($action == "addNew" && !$user_id)
 			{
-				$sql = "INSERT INTO users (Username, user_password, FirstName, LastName, permission_role, team_id, License, Social, BirthDate, Address, Address2, HomeType, City, State, ZipCode, Phone, Cell, ContactFirstName, ContactLastName, ContactAddress, ContactAddress2, ContactCity, ContactState, ContactZipCode, ContactPhone, ContactCell) VALUES ('".$Username."', MD5('".$Password."'), '".$FirstName."', '".$LastName."', '".$Role."', ".$Team.", '".$License."', '".$Social."', '".$BirthDate."', '".$Address1."', '".$Address2."', '".$HomeType."', '".$City."', '".$State."', '".$ZipCode."', '".$Phone."', '".$Cell."', '".$ContactFirstName."', '".$ContactLastName."', '".$ContactAddress1."', '".$ContactAddress2."', '".$ContactCity."', '".$ContactState."', '".$ContactZipCode."', '".$ContactPhone."', '".$ContactCell."')";
+				$sql = "INSERT INTO users (Username, user_password, FirstName, LastName, permission_role, team_id, License, Social, BirthDate, Address, Address2, HomeType, City, State, ZipCode, Phone, Cell, ContactFirstName, ContactLastName, ContactAddress, ContactAddress2, ContactCity, ContactState, ContactZipCode, ContactPhone, ContactCell, dtoffice) VALUES ('".$Username."', MD5('".$Password."'), '".$FirstName."', '".$LastName."', '".$Role."', ".$Team.", '".$License."', '".$Social."', '".$BirthDate."', '".$Address1."', '".$Address2."', '".$HomeType."', '".$City."', '".$State."', '".$ZipCode."', '".$Phone."', '".$Cell."', '".$ContactFirstName."', '".$ContactLastName."', '".$ContactAddress1."', '".$ContactAddress2."', '".$ContactCity."', '".$ContactState."', '".$ContactZipCode."', '".$ContactPhone."', '".$ContactCell."', '".$dtoffice."')";
 				
 				$firephp->log($sql);
 				$DB->execute_nonquery($sql);
@@ -86,8 +90,9 @@ $dummytext = "";
 			{
 				$Action = "update";
 
-				$sql = "UPDATE users SET FirstName = '" . $FirstName . "', LastName = '" . $LastName . "', permission_role = '" . $Role . "', team_id = '" . $Team . "', License = '" . $License . "', Social = '" . $Social . "', BirthDate = '" . $BirthDate . "', Address = '" . $Address1 . "', Address2 = '" . $Address2 . "', HomeType = '" . $HomeType . "', City = '" . $City . "', State = '" . $State . "', ZipCode = '" . $ZipCode . "', Phone = '" . $Phone . "', Cell = '" . $Cell . "', ContactFirstName = '" . $ContactFirstName . "', ContactLastName = '" . $ContactLastName . "', ContactAddress = '" . $ContactAddress1 . "', ContactAddress2 = '" . $ContactAddress2 . "', ContactCity = '" . $ContactCity . "', ContactState = '" . $ContactState . "', ContactZipCode = '" . $ContactZipCode . "', ContactPhone = '" . $ContactPhone . "', ContactCell = '" . $ContactCell . "' WHERE user_id = " . $user_id;
+				$sql = "UPDATE users SET FirstName = '" . $FirstName . "', LastName = '" . $LastName . "', permission_role = '" . $Role . "', team_id = '" . $Team . "', License = '" . $License . "', Social = '" . $Social . "', BirthDate = '" . $BirthDate . "', Address = '" . $Address1 . "', Address2 = '" . $Address2 . "', HomeType = '" . $HomeType . "', City = '" . $City . "', State = '" . $State . "', ZipCode = '" . $ZipCode . "', Phone = '" . $Phone . "', Cell = '" . $Cell . "', ContactFirstName = '" . $ContactFirstName . "', ContactLastName = '" . $ContactLastName . "', ContactAddress = '" . $ContactAddress1 . "', ContactAddress2 = '" . $ContactAddress2 . "', ContactCity = '" . $ContactCity . "', ContactState = '" . $ContactState . "', ContactZipCode = '" . $ContactZipCode . "', ContactPhone = '" . $ContactPhone . "', ContactCell = '" . $ContactCell . "', dtoffice = '" . $dtoffice . "' WHERE user_id = " . $user_id;
 
+				$firephp->log($sql);
 				$DB->execute_nonquery($sql);
 				$DB->addHistory( 'users', $_SESSION["user_id"],  "update", "" );
 
@@ -132,8 +137,12 @@ $F = new FormElements();
 				<ul id="theUL" class="form">
 				<h1>User Information</h1>
 				<?= 
-				$F->tbVal("Username", "Username","", "", $user["Username"], $UsernameDisabled);
-				$F->tbPassword("Password", "Password", "float:left;", $dummytext);
+				$F->tbVal("Username", "Username","", "float:left", $user["Username"], $UsernameDisabled);
+				$firephp->log($AgencyParams);
+				if (count($AgencyParams["DTOffices"]) > 0) {
+					$F->ddlDTOffices( "dtoffice", "DT Office", $css="float: left", $AgencyParams["DTOffices"], $user);
+				}
+				$F->tbPassword("Password", "Password", "clear: both; float:left;", $dummytext);
 				$F->tbPassword("ConfirmPassword", "Confirm Password", "float:left;", $dummytext);
 				$F->ddlTeams($user["team_id"], "clear: both; float: left;");
 				$F->ddlPermissionRoles($user["permission_role"], "float:left");
@@ -152,6 +161,7 @@ $F = new FormElements();
 				<div style="clear: both"></div>
 				<h1>Contact Info:</h1>
 				<?
+				$firephp->log($AgencyParams);
 				$F->tbVal("Address1", "Address 1", "", "float: left;", $user["Address"]);
 				$F->tbNotVal("Address2", "Address 2", "", "float: left;", $user["Address2"]);
 				$F->ddlHomeType("float:left;", $user["HomeType"]);

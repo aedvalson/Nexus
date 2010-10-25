@@ -242,6 +242,30 @@ class FormElements
 		  <?
 	}
 
+	function ddlDTOffices( $name="dtoffice", $labeltext="DT Office", $css="", $DTOffices, $user )
+	{
+		?>
+		 <li class="validated" style="<?=$css?>" id="ddl<?= $name ?>_li">
+			  <label for="r_ddl<?= $name ?>"><?= $labeltext ?>:</label>
+			  <div id="ddl<?= $name ?>_img"></div>
+				<select class="validated" name="<?= $name ?>" id="ddl<?= $name ?>" >
+					<?
+					foreach ($DTOffices as $DTOffice)
+						{
+						$selected = "";
+						if ($DTOffice == $user["dtoffice"])
+							{
+							$selected = "selected='selected'";
+							}
+						print "<option value='" . $DTOffice . "' " . $selected . ">" . $DTOffice . "</option>";
+						}
+						?>
+				</select>	
+			  <div id="ddl<?= $name ?>_msg"></div>
+			</li>
+		  <?
+	}
+
 	function ddlCommissionTemplates($conn, $price)
 	{
 

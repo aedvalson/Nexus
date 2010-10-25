@@ -3,7 +3,7 @@ include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" 
 ?>
 <? 
-
+if (!UserMay("Admin_ViewUsers")) { AccessDenied(); }
 $DB = new conn();
 
 ?>
@@ -94,7 +94,7 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
-		<? if ($_SESSION["perm_level"] >= 100)
+		<? if (UserMay("Admin_EditUsers"))
 		{ ?>
 		<a href="AddUser.php">Add User</a>
 		<? } ?>
@@ -109,7 +109,9 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+				<? if (UserMay("Admin_EditUsers")) { ?>
 				<th style="width:40px"></th>
+				<? } ?>
 				<th style="width:80px">UserName</th>
 				<th style="width:80px">First</th>
 				<th style="width:80px">Last</th>
@@ -119,7 +121,9 @@ $DB = new conn();
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+					<? if (UserMay("Admin_EditUsers")) { ?>
 					<td></td>
+					<? } ?>
 					<TD>
 						<Input id="tbUsernameH" TYPE="TEXT">
 					</TD>
@@ -288,7 +292,10 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.user_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.user_id + '"><a href="#" id="btnSave_' + _r.user_id + '" class="btnSave">' + saveLinkContent() +'</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.user_id + '">		<? if ($_SESSION["perm_level"] >= 100) { ?><a href="#" id="editLink_' + _r.user_id + '" class="editLink" >' + editLinkContent() + '</a><? } ?><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.user_id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></td><td><div class="view"><a href="AddUser.php?id='+_r.user_id+'"><span id="spnUsername_' + _r.user_id + '">'+_r.Username+'</span></a></div><div class="editCell"><input id="tbUsername_'+_r.user_id+'" value="'+_r.Username+'"></div></td><td><div class="view"><span id="spnFirstName_' + _r.user_id + '">'+_r.FirstName+'</span></div><div class="editCell"><input id="tbFirstName_'+_r.user_id+'" value="'+_r.FirstName+'"></div></td><td><div class="view"><span id="spnLastName_' + _r.user_id + '">'+_r.LastName+'</span></div><div class="editCell"><input id="tbLastName_'+_r.user_id+'" value="'+_r.LastName+'"></div></td><td><div class="view"><span style="display:none;" id="spanTeamId_' + _r.user_id +'">'+_r.team_id+'</span><span id="spnTeam_' + _r.user_id + '">'+_r.team_name+'</span></div><div class="editCell"><SELECT id="ddlTeam_'+_r.user_id+'"><?
+
+						var editCellContent = perms.Admin_EditUsers ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.user_id + '"><a href="#" id="btnSave_' + _r.user_id + '" class="btnSave">' + saveLinkContent() +'</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.user_id + '">		<? if ($_SESSION["perm_level"] >= 100) { ?><a href="#" id="editLink_' + _r.user_id + '" class="editLink" >' + editLinkContent() + '</a><? } ?><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.user_id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></td>' : "";
+						
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.user_id + '">' + editCellContent + '<td><div class="view"><a href="AddUser.php?id='+_r.user_id+'"><span id="spnUsername_' + _r.user_id + '">'+_r.Username+'</span></a></div><div class="editCell"><input id="tbUsername_'+_r.user_id+'" value="'+_r.Username+'"></div></td><td><div class="view"><span id="spnFirstName_' + _r.user_id + '">'+_r.FirstName+'</span></div><div class="editCell"><input id="tbFirstName_'+_r.user_id+'" value="'+_r.FirstName+'"></div></td><td><div class="view"><span id="spnLastName_' + _r.user_id + '">'+_r.LastName+'</span></div><div class="editCell"><input id="tbLastName_'+_r.user_id+'" value="'+_r.LastName+'"></div></td><td><div class="view"><span style="display:none;" id="spanTeamId_' + _r.user_id +'">'+_r.team_id+'</span><span id="spnTeam_' + _r.user_id + '">'+_r.team_name+'</span></div><div class="editCell"><SELECT id="ddlTeam_'+_r.user_id+'"><?
 							$teams = $DB->getTeams();
 							foreach ($teams as $team)
 							{

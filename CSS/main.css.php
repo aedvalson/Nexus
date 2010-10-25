@@ -14,6 +14,10 @@ font-size: smaller;
 text-transform: uppercase;
 }
 
+.indented
+{
+margin: 1em 1.5em;
+}
 
 .truecaps
 {

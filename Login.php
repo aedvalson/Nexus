@@ -26,7 +26,7 @@ if ($_REQUEST)
 		if ($DB->validateUser($username, md5($password)))
 		{
 
-			$sql = "select users.*, permission_roles.permission from users join permission_roles on users.permission_role = permission_roles.id where username = '".$username."' and user_password = '".md5($password)."'";
+			$sql = "select users.*, permission_roles.permission, permission_roles.roleid from users join permission_roles on users.permission_role = permission_roles.id where username = '".$username."' and user_password = '".md5($password)."'";
 			$DB->connect();
 			$result = $DB->query($sql);
 
@@ -36,6 +36,7 @@ if ($_REQUEST)
 				$lastname = $userInfo["LastName"];
 				$user_id = $userInfo["user_id"];
 				$permLevel = $userInfo["permission"];
+				$roleid = $userInfo["roleid"];
 
 
 				$_SESSION["username"] = $username;
@@ -44,6 +45,9 @@ if ($_REQUEST)
 				$_SESSION["lastname"] = $lastname;
 				$_SESSION["user_id"] = $user_id;
 				$_SESSION["perm_level"] = $permLevel;
+				$_SESSION["roleid"] = $roleid;
+
+				$_SESSION["perms"] = ReadPerms($roleid);
 
 				header("Location: ".$url);
 			}
@@ -52,8 +56,29 @@ if ($_REQUEST)
 			?> <font color="red">Your username and password were not recognized. Please try again.</font> <?
 		}
 	}
+}
 
-
+function ReadPerms ($roleid) {
+	$filecontents = file("app.rights");
+	$perms = array();
+	foreach ($filecontents as $line) {
+		if ($line[0] == "#") { continue; } # Skip commented lines
+		$line_words = preg_split("/\s/", $line);
+		$allowed = 0;
+		$role = "";
+		
+		foreach ($line_words as $word) {
+			if ($word) {
+				if (!$role) {
+					$role = $word;
+					$perms[$role] = 0;
+					continue;
+				}
+				if ($word == $roleid) { $perms[$role] = 1; }
+			}
+		}
+	}
+	return $perms;
 }
 
 

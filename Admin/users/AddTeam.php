@@ -2,7 +2,7 @@
 include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 
-
+if (!UserMay("Admin_EditTeams")) { AccessDenied(); }
 $DB = new conn();
 $DB->connect();
 

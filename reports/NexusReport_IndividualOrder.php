@@ -246,7 +246,7 @@ if ($row["DateCompleted"] && $row["order_status_id"] == 5)  // Order is Complete
 				if ($comm["paymentType"] == "adjustment")
 				{
 					$firephp->log($comm);
-					echo $allUsers[$comm["dealers"][0]["user"]]["FirstName"] . " " . $allUsers[$comm["dealers"][0]["user"]]["LastName"] . ": -$" . money_format("%i", 0-$comm["amount"]);
+					echo $allUsers[$comm["dealers"][0]["user"]]["FirstName"] . " " . $allUsers[$comm["dealers"][0]["user"]]["LastName"] . ": $" . money_format("%i", 0-$comm["amount"]) . "<br />";
 				}
 			}
 			?>

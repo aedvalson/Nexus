@@ -3,7 +3,7 @@ include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" 
 ?>
 <? 
-
+if (!UserMay("Admin_ViewTeams")) { AccessDenied(); }
 $DB = new conn();
 
 ?>
@@ -63,7 +63,10 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
+		<? if (UserMay("Admin_EditTeams"))
+		{ ?>
 		<a href="AddTeam.php">Add Team</a>
+		<? } ?>
 	</div>
 	<div class="contentDiv">
 
@@ -75,7 +78,10 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+				<? if (UserMay("Admin_EditTeams"))
+					{ ?>
 					<th style="width:40px"></th>
+					<? } ?>
 					<th>Team_id</th>
 					<th>Leader</th>
 					<th style="width:100px">Team Name</th>
@@ -84,7 +90,11 @@ $DB = new conn();
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+				<? if (UserMay("Admin_EditTeams"))
+					{ ?>
 					<td></td>
+					<? } ?>
+					
 					<td>
 						<input id="tbTeamIdH" Type="TEXT">
 					</td>
@@ -238,7 +248,11 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.team_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.team_id + '"><a href="#" id="btnSave_' + _r.team_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.team_id + '"><a href="#" id="editLink_' + _r.team_id + '" class="editLink" >' + editLinkContent() + '</a><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.team_id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></div> </td><td><div class="view"><span id="spnTeamId_' + _r.team_id + '">'+_r.team_id+'</span></div><div class="editCell">'+_r.team_id+'</div></td><td><div class="view"><span id="spnTeamLeader">'+_r.firstname+' '+_r.lastname+'</span><input id="spnLeaderID_' + _r.team_id+'" style="display:none" value="'+ _r.team_leader + '"></input></div><div class="editCell"><SELECT id="ddlTeam_'+_r.team_id+'"><?
+
+						var editCellText = perms.Admin_EditTeams ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.team_id + '"><a href="#" id="btnSave_' + _r.team_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.team_id + '"><a href="#" id="editLink_' + _r.team_id + '" class="editLink" >' + editLinkContent() + '</a><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.team_id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></div></td>' : "";
+
+
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.team_id + '">' + editCellText + '<td><div class="view"><span id="spnTeamId_' + _r.team_id + '">'+_r.team_id+'</span></div><div class="editCell">'+_r.team_id+'</div></td><td><div class="view"><span id="spnTeamLeader">'+_r.firstname+' '+_r.lastname+'</span><input id="spnLeaderID_' + _r.team_id+'" style="display:none" value="'+ _r.team_leader + '"></input></div><div class="editCell"><SELECT id="ddlTeam_'+_r.team_id+'"><?
 							$users = $DB->getUsers();
 							foreach ($users as $user)
 							{

@@ -57,6 +57,11 @@ select
 	margin-left:15px;
 	}
 
+.indented
+{
+	margin-left: 1em;
+	}
+
 table.report
 {
 	text-align: center;

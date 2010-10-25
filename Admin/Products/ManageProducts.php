@@ -3,7 +3,7 @@ include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 ?>
 <? 
-
+if (!UserMay("Admin_ViewProducts")) { AccessDenied(); }
 $DB = new conn();
 
 ?>
@@ -38,7 +38,9 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
+		<? if (UserMay("Admin_EditProducts")) { ?>
 		<a href="AddProduct.php">Add Product</a>
+		<? } ?>
 	</div>
 	<div class="contentDiv">
 
@@ -50,7 +52,9 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+					<? if (UserMay("Admin_EditProducts")) { ?>
 					<th style="width:40px"></th>
+					<? } ?>
 					<th>Product Name</th>
 					<th>Type</th>
 					<th>Model</th>
@@ -59,7 +63,9 @@ $DB = new conn();
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+					<? if (UserMay("Admin_EditProducts")) { ?>
 					<td></td>
+					<? } ?>
 					<td>
 						<input id="tbProductNameH" Type="TEXT">
 					</td>
@@ -231,7 +237,10 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.product_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.product_id + '"><a href="#" id="btnSave_' + _r.product_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.product_id + '"><a href="#" id="editLink_' + _r.product_id + '" class="editLink" >' + editLinkContent() + '</a></div></td><td><div class="view"><span id="spnProductName_' + _r.product_id + '">'+_r.product_name+'</span></div><div class="editCell"><input id="tbProductName_' + _r.product_id+'"  value="'+ _r.product_name + '"></input></div></td><td><div class="view"><span id="spnProductType_'+_r.product_id+'">'+ _r.product_type + '</span></div><div class="editCell"><SELECT id="ddlProductType_'+_r.product_id+'"><OPTION VALUE="Product">Product</OPTION><OPTION VALUE="Accessory">Accessory</OPTION></SELECT></div></td><td><div class="view"><span id="spnProductModel">'+_r.product_model+'</span></div><div class="editCell"><input type="text" id="tbProductModel_'+_r.product_id+'" value="'+_r.product_model+'" /></td><td><div class="view"><span id="spnProductDescription">'+_r.product_description+'</span></div><div class="editCell"><input type="text" id="tbProductDescription_'+_r.product_id+'" value="'+_r.product_description+'" /></td><td><div class="view"><span id="spnProductStatus_'+_r.product_id+'">'+_r.status+'</span></div><div class="editCell"><select id="ddlProductStatus_'+_r.product_id+'"><OPTION VALUE="Active" selected>Active</OPTION><OPTION VALUE="Old">Old</OPTION></select></td></tr>');
+
+						var editCellContent = perms.Admin_EditProducts ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.product_id + '"><a href="#" id="btnSave_' + _r.product_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.product_id + '"><a href="#" id="editLink_' + _r.product_id + '" class="editLink" >' + editLinkContent() + '</a></div></td>' : "";
+
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.product_id + '">' + editCellContent + '<td><div class="view"><span id="spnProductName_' + _r.product_id + '">'+_r.product_name+'</span></div><div class="editCell"><input id="tbProductName_' + _r.product_id+'"  value="'+ _r.product_name + '"></input></div></td><td><div class="view"><span id="spnProductType_'+_r.product_id+'">'+ _r.product_type + '</span></div><div class="editCell"><SELECT id="ddlProductType_'+_r.product_id+'"><OPTION VALUE="Product">Product</OPTION><OPTION VALUE="Accessory">Accessory</OPTION></SELECT></div></td><td><div class="view"><span id="spnProductModel">'+_r.product_model+'</span></div><div class="editCell"><input type="text" id="tbProductModel_'+_r.product_id+'" value="'+_r.product_model+'" /></td><td><div class="view"><span id="spnProductDescription">'+_r.product_description+'</span></div><div class="editCell"><input type="text" id="tbProductDescription_'+_r.product_id+'" value="'+_r.product_description+'" /></td><td><div class="view"><span id="spnProductStatus_'+_r.product_id+'">'+_r.status+'</span></div><div class="editCell"><select id="ddlProductStatus_'+_r.product_id+'"><OPTION VALUE="Active" selected>Active</OPTION><OPTION VALUE="Old">Old</OPTION></select></td></tr>');
 						row = 1 - row;
 					}
 

@@ -4,7 +4,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 ?>
 
 <? 
-
+if (!UserMay("Admin_ViewStorage")) { AccessDenied(); }
 $DB = new conn();
 
 ?>
@@ -39,7 +39,9 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
+		<? if (UserMay("Admin_EditStorage")) { ?>
 		<a href="AddLocation.php">Add Location</a>
+		<? } ?>
 	</div>
 	<div class="contentDiv">
 
@@ -51,13 +53,18 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+					<? if (UserMay("Admin_EditStorage")) { ?>
 					<th style="width:40px"></th>
+					<? } ?>
 					<th>Name</th>
 					<th>Description</th>
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+					<? if (UserMay("Admin_EditStorage")) { ?>
 					<td></td>
+					<? } ?>
+
 					<td>
 						<input id="tbNameH" Type="TEXT">
 					</td>
@@ -213,11 +220,14 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.storagelocation_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.storagelocation_id + '"><a href="#" id="btnSave_' + _r.storagelocation_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.storagelocation_id + '"><a href="#" id="editLink_' + _r.storagelocation_id + '" class="editLink" >' + editLinkContent() + '</a></div></td><td><div class="view"><span id="spnName_' + _r.storagelocation_id + '">'+_r.storagelocation_name+'</span></div><div class="editCell"><input id="tbName_' + _r.storagelocation_id+'"  value="'+ _r.storagelocation_name + '"></input></div></td><td><div class="view"><span id="spnDescription_'+_r.storagelocation_id+'">'+ _r.description + '</span></div><div class="editCell"><input type="text" id="tbDescription_'+_r.storagelocation_id+'" value="'+_r.description+'" /></div></td></tr>');
+
+						var editCellContent = perms.Admin_EditStorage ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.storagelocation_id + '"><a href="#" id="btnSave_' + _r.storagelocation_id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.storagelocation_id + '"><a href="#" id="editLink_' + _r.storagelocation_id + '" class="editLink" >' + editLinkContent() + '</a></div></td>' : "";
+
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.storagelocation_id + '">' + editCellContent + '<td><div class="view"><span id="spnName_' + _r.storagelocation_id + '">'+_r.storagelocation_name+'</span></div><div class="editCell"><input id="tbName_' + _r.storagelocation_id+'"  value="'+ _r.storagelocation_name + '"></input></div></td><td><div class="view"><span id="spnDescription_'+_r.storagelocation_id+'">'+ _r.description + '</span></div><div class="editCell"><input type="text" id="tbDescription_'+_r.storagelocation_id+'" value="'+_r.description+'" /></div></td></tr>');
 						row = 1 - row;
 					}
 
-					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay" autocomplete="off"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 
 					fixHeight();

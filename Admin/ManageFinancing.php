@@ -3,7 +3,7 @@ include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
 ?>
 <? 
-
+if (!UserMay("Admin_ViewFinance")) { AccessDenied(); }
 $DB = new conn();
 
 ?>
@@ -56,7 +56,9 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
+		<? if (UserMay("Admin_EditFinance")) { ?>
 		<a href="AddFinancing.php">Add Financing</a>
+		<? } ?>
 	</div>
 	<div class="contentDiv">
 
@@ -68,7 +70,9 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+					<? if (UserMay("Admin_EditFinance")) { ?>
 					<th style="width:40px"></th>
+					<? } ?>
 					<th style="width: 150px">Company</th>
 					<th style="width: 150px">Contact</th>
 					<th>Email</th>
@@ -77,7 +81,10 @@ $DB = new conn();
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+					<? if (UserMay("Admin_EditFinance")) { ?>
 					<td></td>
+					<? } ?>
+
 					<td>
 						<input id="tbFilterCompanyH" Type="TEXT">
 					</td>
@@ -237,11 +244,14 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.id + '"><a href="#" id="btnSave_' + _r.id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.id + '"><a href="#" id="editLink_' + _r.id + '" class="editLink" >' + editLinkContent() + '</a><a href="AddFinancing.php?id='+_r.id+'">Open</a><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></div> </td><td><div class="view"><span id="spnCompany_' + _r.id + '">'+_r.CompanyName+'</span></div><div class="editCell"><input type="text" id="tbCompany_' + _r.id + '" value="'+_r.CompanyName+'" /></div></td><td><div class="view"><span id="spnContactName">'+_r.ContactName+'</span></div><div class="editCell"><input id="tbContactName_' + _r.id+'" value="'+ _r.ContactName + '"></input></div></td><td><div class="view"><span id="spnEmail">'+_r.Email+'</span></div><div class="editCell"><input id="tbEmail_'+_r.id+'" type="text" value="'+_r.Email+'" /></div><td><div class="view"><span id="spnAddress_' + _r.id + '">'+_r.Address+'<br>' + _r.City + ', ' + _r.State + ' ' + _r.ZipCode + '</span></div><div class="editCell"><span id="spnAddress_' + _r.id + '">'+_r.Address+'<br>' + _r.City + ', ' + _r.State + ' ' + _r.ZipCode + '</span></div></td><td><div class="view"><span id="spnLoanOptions_' + _r.id + '">'+readOptions(_r.LoanOptions)+'</span></div><div class="editCell"><span id="spnLoanOptions_' + _r.id + '">'+readOptions(_r.LoanOptions)+'</span></div></td></tr>');
+
+						var editCellContent = perms.Admin_EditFinance ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.id + '"><a href="#" id="btnSave_' + _r.id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.id + '"><a href="#" id="editLink_' + _r.id + '" class="editLink" >' + editLinkContent() + '</a><a href="AddFinancing.php?id='+_r.id+'">Open</a><? if ($_SESSION["perm_level"] >= 1000) { ?><a href="#" id="deleteLink_' + _r.id + '" class="deleteLink" >' + deleteLinkContent() + '</a></div><? } ?></div> </td>' : "";
+
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.id + '">' + editCellContent + '<td><div class="view"><span id="spnCompany_' + _r.id + '">'+_r.CompanyName+'</span></div><div class="editCell"><input type="text" id="tbCompany_' + _r.id + '" value="'+_r.CompanyName+'" /></div></td><td><div class="view"><span id="spnContactName">'+_r.ContactName+'</span></div><div class="editCell"><input id="tbContactName_' + _r.id+'" value="'+ _r.ContactName + '"></input></div></td><td><div class="view"><span id="spnEmail">'+_r.Email+'</span></div><div class="editCell"><input id="tbEmail_'+_r.id+'" type="text" value="'+_r.Email+'" /></div><td><div class="view"><span id="spnAddress_' + _r.id + '">'+_r.Address+'<br>' + _r.City + ', ' + _r.State + ' ' + _r.ZipCode + '</span></div><div class="editCell"><span id="spnAddress_' + _r.id + '">'+_r.Address+'<br>' + _r.City + ', ' + _r.State + ' ' + _r.ZipCode + '</span></div></td><td><div class="view"><span id="spnLoanOptions_' + _r.id + '">'+readOptions(_r.LoanOptions)+'</span></div><div class="editCell"><span id="spnLoanOptions_' + _r.id + '">'+readOptions(_r.LoanOptions)+'</span></div></td></tr>');
 						row = 1 - row;
 					}
 
-					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="6" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="6" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay" autocomplete="off"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 
 					fixHeight();

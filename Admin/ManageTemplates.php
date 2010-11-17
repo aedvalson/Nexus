@@ -1,6 +1,7 @@
 <? 
 include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
+if (!UserMay("Admin_ViewComm")) { AccessDenied(); }
 ?>
 
 <? 
@@ -39,7 +40,9 @@ $DB = new conn();
 <div class="pageContent" id="pageContent">
 
 	<div class="contentHeaderDiv">
+		<? if (UserMay("Admin_EditComm")) { ?>
 		<a href="AddCommissionTemplate.php">Add Template</a>
+		<? } ?>
 	</div>
 	<div class="contentDiv">
 
@@ -51,7 +54,9 @@ $DB = new conn();
 		 <TABLE id="theTable" class="data" >
 			<thead>
 				<TR id="headerRow">
+					<? if (UserMay("Admin_EditComm")) { ?>
 					<th style="width:40px"></th>
+					<? } ?>
 					<th>Template Name</th>
 					<th>Amount</th>
 					<th>Min Price</th>
@@ -60,7 +65,10 @@ $DB = new conn();
 				</TR>
 
 				<TR id="filterRow" class="filterRow">
+					<? if (UserMay("Admin_EditComm")) { ?>
 					<td></td>
+					<? } ?>
+
 					<td><input id="tbTemplateNameH" Type="TEXT"></td>
 					<td><input id="tbAmountH" Type="TEXT"></td>
 					<td><Input id="tbMinPriceH" TYPE="TEXT"></TD>
@@ -237,11 +245,14 @@ $DB = new conn();
 					for (r in args.output)
 					{
 						_r = args.output[r];
-						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.id + '"><a href="#" id="btnSave_' + _r.id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.id + '"><a href="#" id="editLink_' + _r.id + '" class="editLink" >' + editLinkContent() + '</a><? if ($_SESSION["perm_level"] >= 100) { ?><a href="#" id="deleteLink_' + _r.id + '" class="deleteLink" >' + deleteLinkContent() + '</a> <? } ?></div></td><td><div class="view"><span id="spnTemplateName_' + _r.id + '">'+_r.template_name+'</span></div><div class="editCell"><input id="tbTemplateName_' + _r.id+'"  value="'+ _r.template_name + '"></input></div></td><td><div class="view">'+formatAmount(_r.amount, _r.payment_type)+'</div><div class="editCell">'+formatAmount(_r.amount, _r.payment_type)+'</div></td><td><div class="view"><span id="spnMinPrice_' + _r.id + '">'+formatCurrency(_r.min_price)+'</span></div><div class="editCell"><input type="text" id="tbMinPrice_'+ _r.id + '" value="'+ _r.min_price + '"></input></div></td><td><div class="view"><span id="spnMaxPrice_' + _r.id + '">'+formatCurrency(_r.max_price)+'</span></div><div class="editCell"><input type="text" id="tbMaxPrice_'+ _r.id + '" value="'+ _r.max_price + '"></input></div></td><td><div class="view"><span id="spnRawData_' + _r.id + '">'+displayJSON(_r.dealers)+'</span></div><div class="editCell">'+displayJSON(_r.dealers)+'</div></td></tr>');
+
+						var editCellContent = perms.Admin_EditComm ? '<td><div class="selected" style="display:none" id="commandDivSelected_' + _r.id + '"><a href="#" id="btnSave_' + _r.id + '" class="btnSave">' + saveLinkContent() + '</a><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.id + '"><a href="#" id="editLink_' + _r.id + '" class="editLink" >' + editLinkContent() + '</a><? if ($_SESSION["perm_level"] >= 100) { ?><a href="#" id="deleteLink_' + _r.id + '" class="deleteLink" >' + deleteLinkContent() + '</a> <? } ?></div></td>' : "";
+
+						$('#theTable').append('<tr class="row'+row+'" id="row_' + _r.id + '">' + editCellContent + '<td><div class="view"><span id="spnTemplateName_' + _r.id + '">'+_r.template_name+'</span></div><div class="editCell"><input id="tbTemplateName_' + _r.id+'"  value="'+ _r.template_name + '"></input></div></td><td><div class="view">'+formatAmount(_r.amount, _r.payment_type)+'</div><div class="editCell">'+formatAmount(_r.amount, _r.payment_type)+'</div></td><td><div class="view"><span id="spnMinPrice_' + _r.id + '">'+formatCurrency(_r.min_price)+'</span></div><div class="editCell"><input type="text" id="tbMinPrice_'+ _r.id + '" value="'+ _r.min_price + '"></input></div></td><td><div class="view"><span id="spnMaxPrice_' + _r.id + '">'+formatCurrency(_r.max_price)+'</span></div><div class="editCell"><input type="text" id="tbMaxPrice_'+ _r.id + '" value="'+ _r.max_price + '"></input></div></td><td><div class="view"><span id="spnRawData_' + _r.id + '">'+displayJSON(_r.dealers)+'</span></div><div class="editCell">'+displayJSON(_r.dealers)+'</div></td></tr>');
 						row = 1 - row;
 					}
 
-					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" class="button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay" autocomplete="off"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 
 					fixHeight();

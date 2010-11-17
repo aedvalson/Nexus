@@ -1,6 +1,8 @@
 <? 
 include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" 
+
+if (!UserMay("Admin_EditComm")) { AccessDenied(); }
 ?>
 <? $F = new FormElements(); ?>
 <div class="navMenu" id="navMenu">

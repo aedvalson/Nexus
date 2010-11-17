@@ -43,7 +43,7 @@ ADD `ContactCell` VARCHAR( 64 ) NOT NULL
 
 -- All Updated to Here
 
-ALTER TABLE  `permission_roles` ADD  `roleid` VARCHAR( 8 ) CHARACTER SET ucs2 COLLATE ucs2_general_ci NOT NULL
+ALTER TABLE  `permission_roles` ADD  `roleid` VARCHAR( 8 ) CHARACTER SET ucs2 COLLATE ucs2_general_ci NOT NULL;
 UPDATE  `permission_roles` SET  `roleid` =  'RO' WHERE  `permission_roles`.`id` =1;
 UPDATE  `permission_roles` SET  `roleid` =  'U' WHERE  `permission_roles`.`id` =2;
 UPDATE  `permission_roles` SET  `roleid` =  'SU' WHERE  `permission_roles`.`id` =3;

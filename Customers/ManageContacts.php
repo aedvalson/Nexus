@@ -13,58 +13,59 @@ $DB = new conn();
 
 
 <div class="navMenu">
-	<div class="navHeaderdiv"><h1>Manage Contacts</h1></div>
+	<div id="bullets">
+		<div class="navHeaderdiv"><h1>Manage Contacts</h1></div>
 
-	<div id="bulletManageInventory" style="height:auto;" class="navContent">
-		<div class="divFilters">
-			<div>
-				<label>Type:</label>
-				<SELECT id="ddlContactTypeV" style="width:90%;">
-					<?
-					$ContactTypes = $DB->getContactTypes();
-						?><OPTION VALUE="%">Any Type</OPTION><?
-					foreach ($ContactTypes as $ct)
-					{
-						?><OPTION value="<?= $ct["contact_type_id"] ?>"><? echo $ct["contact_type_name"]; ?></option><?
-					}
-					?>
-				</SELECT>
+		<div id="bulletManageInventory" style="height:auto;" class="navContent">
+			<div class="divFilters">
+				<div>
+					<label>Type:</label>
+					<SELECT id="ddlContactTypeV" style="width:90%;">
+						<?
+						$ContactTypes = $DB->getContactTypes();
+							?><OPTION VALUE="%">Any Type</OPTION><?
+						foreach ($ContactTypes as $ct)
+						{
+							?><OPTION value="<?= $ct["contact_type_id"] ?>"><? echo $ct["contact_type_name"]; ?></option><?
+						}
+						?>
+					</SELECT>
+				</div>
+
+				<div>
+					<label>First Name:</label>
+					<INPUT style="width:90%" id="tbFirstV" autocomplete="off">
+				</div>
+
+				<div>
+					<label>Last Name:</label>
+					<INPUT style="width:90%" id="tbLastV" />
+				</div>
+
+				<div>
+					<label>Email:</label>
+					<INPUT style="width:90%" id="tbEmailV" />
+				</div>
+
+				<div>
+					<label>Phone:</label>
+					<INPUT style="width:90%" id="tbPhoneV" />
+				</div>
+
+				<div>
+					<label>Notes:</label>
+					<INPUT style="width:90%" id="tbNotesV" />
+				</div>
+
+
+				<input id="btnSubmit" type="submit" value="Submit" />
+				<input id="btnReset" type="submit" value="Reset" />
+
+
 			</div>
-
-			<div>
-				<label>First Name:</label>
-				<INPUT style="width:90%" id="tbFirstV">
-			</div>
-
-			<div>
-				<label>Last Name:</label>
-				<INPUT style="width:90%" id="tbLastV">
-			</div>
-
-			<div>
-				<label>Email:</label>
-				<INPUT style="width:90%" id="tbEmailV">
-			</div>
-
-			<div>
-				<label>Phone:</label>
-				<INPUT style="width:90%" id="tbPhoneV">
-			</div>
-
-			<div>
-				<label>Notes:</label>
-				<INPUT style="width:90%" id="tbNotesV">
-			</div>
-
-
-			<input id="btnSubmit" type="submit" value="Submit">
-			<input id="btnReset" type="submit" value="Reset">
-
-
+			<div class="spacer"></div>
 		</div>
-		<div class="spacer"></div>
 	</div>
-	
 
 	<div class="navSpacer"></div>
 	<div class="spacer"></div>
@@ -83,7 +84,8 @@ $DB = new conn();
 
 
 	<div class="divTable">
-		 <TABLE id="theTable" class="data" ><thead>
+		 <TABLE id="theTable" class="data" >
+			<thead>
 				<TR id="headerRow">
 <!--				<th>Exp</th> -->
 				<th style="width:8em;">First Name</th>
@@ -93,14 +95,17 @@ $DB = new conn();
 				<th>Type</th>
 				<th>Notes</th>
 				</TR>
+			</thead>
+
+			<tbody>
 
 				<TR id="filterRow" class="filterRow">
-					<td><Input id="tbFirstH" TYPE="TEXT"></TD>
-					<TD><INPUT id="tbLastH" TYPE="TEXT"></TD>
-					<TD><INPUT id="tbEmailH" TYPE="TEXT"></TD>
-					<TD><INPUT id="tbPhoneH" TYPE="TEXT"></TD>
+					<td><Input id="tbFirstH" TYPE="TEXT" /></TD>
+					<TD><INPUT id="tbLastH" TYPE="TEXT" /></TD>
+					<TD><INPUT id="tbEmailH" TYPE="TEXT" /></TD>
+					<TD><INPUT id="tbPhoneH" TYPE="TEXT" /></TD>
 					<TD>
-						<SELECT id="ddlContactTypeV" style="width:90%;">
+						<SELECT id="ddlContactTypeH" style="width:90%;">
 							<?
 							$ContactTypes = $DB->getContactTypes();
 								?><OPTION VALUE="%">Any Type</OPTION><?
@@ -111,9 +116,9 @@ $DB = new conn();
 							?>
 						</SELECT>
 					</TD>
-					<TD><INPUT id="tbNotesH" TYPE="TEXT"></TD>
+					<TD><INPUT id="tbNotesH" TYPE="TEXT" /></TD>
 				</TR>
-			</thead>
+			</tbody>
 		</TABLE> 
 
 	</div>
@@ -124,8 +129,10 @@ $DB = new conn();
 
 
 <SCRIPT TYPE="TEXT/JAVASCRIPT">
+
 	$(document).ready(function() {
 		createFilters();
+
 		$("a[id^=expand_]").each(
 			function() {
 				$(this).click(function() {
@@ -169,14 +176,9 @@ $DB = new conn();
 			$(this).val(newVal);
 		});
 		createFilters();
+		fixHeight();
 	});
-	$('input[id^=tbFirst]').change(function() {
-		var newVal = $(this).val();
-		$('input[id^=tbFirst]').each( function () {
-			$(this).val(newVal);
-		});
-		createFilters();
-	});
+
 	$('input[id^=tbLast]').change(function() {
 		var newVal = $(this).val();
 		$('input[id^=tbLast]').each( function () {
@@ -280,7 +282,7 @@ $DB = new conn();
 				{
 					$('#theTable tbody').append('<tr id="errorRow" style="height:50px"><td><font color="red">No Records Found.</font></td></tr>');
 				}	
-				$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="6" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+				$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="6" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text" /><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay" autocomplete="off" /><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 				$(".datepicker").datepicker( {duration: 'fast'} );
 
@@ -297,7 +299,7 @@ $DB = new conn();
 					  filterColumns: [1, 2, 3, 4, 5],
 					  filterCaseSensitive: false});
 				}
-
+				fixHeight();
 			}
 			else
 			{
@@ -352,7 +354,9 @@ $DB = new conn();
 
 
 <FORM id="theForm"  action="" method="post">
+	<div>
 	<INPUT TYPE="HIDDEN" id="hv_Action" NAME="Action" Value="Nothing">
 	<INPUT TYPE="HIDDEN" id="hv_user_id" NAME="user_id" Value="0">
+	</div>
 </FORM>
 <? include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Bottom.php" ?>

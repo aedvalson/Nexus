@@ -8,6 +8,32 @@ include "./findconfig.php";
 	margin: 0;
 }
 
+
+.subheader
+	{
+	margin: 0.5em;
+	font-face: verdana;
+	font-size: 14pt;
+	}
+
+p.content
+	{
+	font-face: verdana;
+	line-height: 1.2em;
+	margin-left: 1em;
+	margin-top: 0.6em;
+	margin-bottom: 0.2em;
+	}
+
+li.content
+	{
+	font-face: verdana;
+	line-height: 1.2em;
+	margin-left: 1em;
+	margin-top: 0.3em;
+	margin-bottom: 0.2em;
+	}
+
 .fakecaps
 {
 font-size: smaller;

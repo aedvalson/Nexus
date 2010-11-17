@@ -160,10 +160,10 @@ SQLEND;
 							?>
 						</SELECT>
 					</TD>
-					<td><Input id="tbInvoiceH" TYPE="TEXT"></TD>
-					<TD><INPUT id="tbSerialH" TYPE="TEXT"></TD>
-					<TD><input id="tbDateH" Type="text" class="datepicker"></td>
-					<TD><input id="tbDateReceivedH" Type="text" class="datepicker"></td>
+					<td><Input id="tbInvoiceH" TYPE="TEXT" /></TD>
+					<TD><INPUT id="tbSerialH" TYPE="TEXT" /></TD>
+					<TD><input id="tbDateH" Type="text" class="datepicker" /></td>
+					<TD><input id="tbDateReceivedH" Type="text" class="datepicker" /></td>
 					<TD>
 						<SELECT id="ddlStatusH" style="width:90%;">
 							<OPTION value="%">Any Status</OPTION>
@@ -472,7 +472,7 @@ SQLEND;
 						?></SELECT><br> ' +  _r.preposition + ': <select style="width:70%" id="ddlStatusData_' + _r.inventory_id + '"></select><br>date:&nbsp;<input type="text" style="width:70%" class="datepicker" id="tbDate_' + _r.inventory_id + '"></input></div></td></tr>');
 						$('#theTable tbody').append(newTR);
 					}
-					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
+					$('#theTable').append('<tfoot><tr style="border-top:1px silver solid" id="pager"><td colspan="7" style="border:0px;"><p class="left">Rows Per Page: <br><a href="#" class="rowSelect" id="rows10">10</a> | <a href="#"  class="rowSelect" id="rows20">20</a> | <a href="#" class="rowSelect" id="rows30">30</a> | <a href="#" class="rowSelect" id="rows40">40</a><input style="display:none;" class="pagesize" value="10"></input></p><p class="right">Search: <input name="filter" id="filter-box" value="" maxlength="30" size="30" type="text"><input id="filter-clear-button" type="submit" value="Clear"/></p><p class="centered"><img src="/<?= $ROOTPATH ?>/images/first.png" class="first"/><img src="/<?= $ROOTPATH ?>/images/prev.png" class="prev"/><input onkeypress="return false;" type="text" class="pagedisplay" autocomplete="off"/><img src="/<?= $ROOTPATH ?>/images/next.png" class="next"/><img src="/<?= $ROOTPATH ?>/images/last.png" class="last"/></p></td></tr></tfoot>');
 
 					//$(".datepicker").datepicker( {duration: 'fast'} );
 
@@ -487,8 +487,7 @@ SQLEND;
 						$('#theTable').tablesorterPager({container: $("#pager"), positionFixed: false}).tablesorterFilter({filterContainer: $("#filter-box"),
 						  filterClearContainer: $("#filter-clear-button"),
 						  filterColumns: [1, 2, 3, 4, 5, 6],
-						  filterCaseSensitive: false,
-							debug: true});
+						  filterCaseSensitive: false});
 					}
 					fixHeight();
 					$('.editLink').live("click", function() {

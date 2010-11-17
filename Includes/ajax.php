@@ -215,6 +215,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateStorage")
 	{
+		if (!UserMay("Admin_EditStorage")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -231,6 +232,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateProduct")
 	{
+		if (!UserMay("Admin_EditProducts")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -251,6 +253,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateTemplate")
 	{
+		if (!UserMay("Admin_EditComm")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -278,6 +281,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "deleteTemplate")
 	{
+		if (!UserMay("Admin_EditComm")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -293,6 +297,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "deleteFinanceOption")
 	{
+		if (!UserMay("Admin_EditFinance")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -308,6 +313,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "deleteTaxRate")
 	{
+		if (!UserMay("Admin_EditTax")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -325,6 +331,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "deleteUser")
 	{
+		if (!UserMay("Admin_EditUsers")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -340,6 +347,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "deleteTeam")
 	{
+		if (!UserMay("Admin_EditTeams")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -355,6 +363,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateFinanceOption")
 	{
+		if (!UserMay("Admin_EditFinance")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -372,6 +381,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateTaxRate")
 	{
+		if (!UserMay("Admin_EditTax")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -389,6 +399,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 
 	if ($id == "updateTeam")
 	{
+		if (!UserMay("Admin_EditTeams")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -702,7 +713,7 @@ SQLEND;
 
 	if ($id == ("getTemplates"))
 	{
-		
+		if (!UserMay("Admin_ViewComm")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -723,6 +734,7 @@ SQLEND;
 
 	if ($id == ("getNewTaxRatesTable"))
 	{
+		if (!UserMay("Admin_ViewTax")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -742,6 +754,7 @@ SQLEND;
 
 	if ($id == ("addTaxRate"))
 	{
+		if (!UserMay("Admin_EditTax")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 
@@ -757,7 +770,7 @@ SQLEND;
 
 	if ($id == ("getNewFinanceOptionsTable"))
 	{
-		
+		if (!UserMay("Admin_ViewFinance")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -828,7 +841,7 @@ SQLEND;
 
 	if ($id == ("getNewContactTable"))
 	{
-		
+		if (!UserMay("ViewContacts")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -912,6 +925,7 @@ SQLEND;
 
 	if ($id == ("generateReport"))
 	{
+		if (!UserMay("PDFReports")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -953,6 +967,7 @@ SQLEND;
 
 	if ($id == "getNewProductTable")
 	{
+		if (!UserMay("Admin_ViewProducts")) { AccessDenied(); }
 		$DB=new conn();
 		$DB->connect();
 
@@ -1052,6 +1067,7 @@ SQLEND;
 
 	if ($id == "getNewTeamTable")
 	{
+		if (!UserMay("Admin_ViewTeams")) { AccessDenied(); }
 		$DB=new conn();
 		$DB->connect();
 
@@ -1158,7 +1174,7 @@ SQLEND;
 
 	if ($id == ("getNewUserTable"))
 	{
-		
+		if (!UserMay("Admin_ViewUsers")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -1249,7 +1265,7 @@ SQLEND;
 
 	if ($id == ("addTemplateToDatabase"))
 	{
-		
+		if (!UserMay("Admin_EditComm")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -1292,7 +1308,7 @@ SQLEND;
 
 	if ($id == ("addTemplateBlockToDatabase"))
 	{
-		
+		if (!UserMay("Admin_EditComm")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
 
@@ -1318,6 +1334,7 @@ SQLEND;
 
 	if ($id == "getSalesTable")
 	{
+		if (!UserMay("ViewOrder")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 		$sql = <<<SQLEND
@@ -1504,7 +1521,7 @@ SQLEND;
 
 	if ($id == ("getNewInventoryTable"))
 	{
-		
+		if (!UserMay("ViewInventory")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
 

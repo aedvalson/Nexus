@@ -156,7 +156,16 @@ $DB = new conn();
 	$('#btnReset').click(function() {
 
 		$('input:text').val('');
-		$('select').val('%');
+		$('select').each( function() {
+			if ($(this).find("option[value='%']").length > 0)
+			{
+				$(this).val('%');
+			}
+			else
+			{
+				$(this).val('');
+			}
+		});
 		createFilters();
 	});
 

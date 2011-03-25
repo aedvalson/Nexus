@@ -306,6 +306,19 @@ function getUserHash($DB)
 	return $users;
 }
 
+function getLoggedUser($DB)
+{
+	$userid = $_SESSION["user_id"];
+	$sql = "select * from users where user_id = " . $userid;
+	$result = $DB->query($sql);
+	$user = array();
+	while ($userRow = mysql_fetch_assoc($result))
+	{
+		$user = $userRow;
+	}
+	return $user;
+}
+
 
 function getProductHash($DB)
 {

@@ -485,7 +485,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 			<h1>Equipment</h1>
 			<div class="commandBox">
 				<h1>Current Equipment</h1>
-				<div id="equipmentDiv" style="padding:15px;">No Equipment Added</div>
+				<div id="equipmentDiv" style="padding:15px;">No Equipment has been Added</div>
 			</div>
 
 			<div class="commandBox">
@@ -582,67 +582,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		$('a').click(function() { fixHeight() });
 
 		// If Order_ID is specified, populate Form
-
-		var qs = new Querystring();
-		var order_id = qs.get("order_id", "");
-		if (order_id != "")
-		{
-			$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getOrderInfo",  value: order_id }, function(json) 
-			{
-				eval("var args = " + json);		
-				if (args.success == "success")
-				{
-					if (args.output)
-					{
-						var o = args.output[0];
-						var order_id = o.order_id;
-						var order_status = o.order_status_id;
-						var amount = o.amount;
-						var contact_id = o.contact_id;
-						var cobuyer_id = o.cobuyer_contact_id;
-						var commStructure = o.CommStructure;
-						var ProductsArray = o.ProductsArray;
-						var AccessoriesArray = o.AccessoriesArray;
-						var PaymentArray = o.PaymentArray;
-						var dateCompleted = o.DateCompleted;
-						var RolesArray = o.dealerArray;
-						if (dateCompleted != null)
-						{
-							var _date = dateCompleted.split(" ")[0];
-							_date = replaceAll(_date, "-", "/");
-							var myDate = new Date(_date);
-							var month = myDate.getMonth() + 1;
-							var prettyDate = month + '/' + myDate.getDate() + '/' + myDate.getFullYear();
-							$('#tbDateCompleted').val(prettyDate);
-						}
-
-						$('#hOrderId').val(order_id);
-						$('#ddlOrderStatuses').val(order_status);
-
-						if ($('#h_contact_id').val() == "Not Yet Set" && contact_id != "0")
-							$('#h_contact_id').val(contact_id);
-
-						if ($('#h_cobuyer_contact_id').val() == "Not Yet Set" && cobuyer_id != "0")						
-							$('#h_cobuyer_contact_id').val(cobuyer_id);
-						$('#tbSalePrice').val(amount);
-						$('#hCommissionArray').val(commStructure);
-						$('#hProductArray').val(ProductsArray);
-						$('#hAccessoryArray').val(AccessoriesArray);
-						$('#hPaymentArray').val(PaymentArray);
-						$('#hRolesArray').val(RolesArray);
-						
-//						updateSalesTax();
-						if ($('#hCommissionArray').val() != null)
-						{
-							updateForm();
-							updateSalesTax();
-							buildDefaultCommTable(false);
-						}
-					}
-				}
-			});
-		}
-
+		GetOrderInfoAndFillForm();
 		bindSerialBox();
 		bindCountyBox();
 		bindFinanceBox();
@@ -1010,22 +950,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 
 		if ($('#hProductArray').val() != "")
 		{
-			var theObject = JSON.parse($('#hProductArray').val());
-			var text = "<h3 class=\"tableHeadline\">Products</h3><table class=\"data\"><tr><th>Product_ID</th><th>Product Name</th><th>Serial</th><th>Commands</th></tr>";
-			var $equipmentDiv = $('#equipmentDiv');
-			var row = 0;
-			for (var i in theObject.products)
-			{
-				var prod = theObject.products[i];
-				var quant = prod.Serial;
-				var prod_id = prod.Product_ID;
-				var prod_name = prod.Name;
-				var index = prod.Index;
-				text = text + "<tr class=\"row" + row + "\"><td>" + prod_id + "</td><td>" + prod_name + "</td><td>" + quant + "</td><td><a href=\"#\" onclick=\"deleteProduct(" + index + "); return false;\">Delete</a></td></tr>";
-				row = 1 - row;
-			}	
-			text = text + "</table>";
-			$equipmentDiv.html(text);
+			BindProductTable();
 
 			append = true;
 		}
@@ -1900,7 +1825,8 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 					var order_id = null;
 				}
 				$('#hOrderId').val(order_id);
-				updateForm();
+				GetOrderInfoAndFillForm();
+				//updateForm();
 				$('#dirty').val("0");
 			}
 		});			
@@ -2188,6 +2114,12 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	var $addProductLink = $('#formAddProduct, #formAddAccessory');
 	$addProductLink.submit( function() {
 
+		if (getCurrentOrderStatus() == 8)
+		{
+			alert("This order has been cancelled. New Equipment cannot be added.");
+			return false;
+		}		
+
 		if (this.id == 'formAddProduct')
 		{
 			var $prodArrayHiddenField = $('#hProductArray');
@@ -2219,6 +2151,11 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 				var theObject = {products: []};	
 			}
 			
+			if (!theObject.products)
+			{
+				theObject = {products: []};	
+			}
+
 			var i = theObject.products.length;
 
 			// Create new object for product
@@ -2306,7 +2243,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		var qs = new Querystring();
 		var order_id = qs.get("order_id", "");
 		
-		if (order_id != "")
+		if (order_id != "" && $('#ddlOrderStatuses').val() == 5)
 		{
 			// Show Link Box
 			$('#viewReport').css("display", "block");
@@ -2469,7 +2406,9 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	function saveAndContinue()
 	{
 		if (saveOrder())
+		{	
 			nextPage();
+		}
 	}
 
 	function nextPage() // Advances to next page.
@@ -2604,6 +2543,105 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		}
 	}
 	window.onbeforeunload=goodbye;
+
+function BindProductTable()
+{
+	var theObject = JSON.parse($('#hProductArray').val());
+	var $equipmentDiv = $('#equipmentDiv');
+
+	if (theObject.products)
+	{
+		var text = "<h3 class=\"tableHeadline\">Products</h3><table class=\"data\"><tr><th>Product_ID</th><th>Product Name</th><th>Serial</th><th>Commands</th></tr>";
+
+		var row = 0;
+		for (var i in theObject.products)
+		{
+			var prod = theObject.products[i];
+			var quant = prod.Serial;
+			var prod_id = prod.Product_ID;
+			var prod_name = prod.Name;
+			var index = prod.Index;
+			text = text + "<tr class=\"row" + row + "\"><td>" + prod_id + "</td><td>" + prod_name + "</td><td>" + quant + "</td><td><a href=\"#\" onclick=\"deleteProduct(" + index + "); return false;\">Delete</a></td></tr>";
+			row = 1 - row;
+		}	
+		text = text + "</table>";
+		$equipmentDiv.html(text);
+	}
+
+	else { $equipmentDiv.html("No Equipment has been added."); }
+	
+}
+
+
+function GetOrderInfoAndFillForm()
+{
+	var qs = new Querystring();
+	var order_id = qs.get("order_id", "");
+	if (order_id != "")
+	{
+		$.post('/<?= $ROOTPATH ?>/Includes/ajax.php', { id: "getOrderInfo",  value: order_id }, function(json) 
+		{
+			eval("var args = " + json);		
+			if (args.success == "success")
+			{
+				if (args.output)
+				{
+					var o = args.output[0];
+					var order_id = o.order_id;
+					var order_status = o.order_status_id;
+					var amount = o.amount;
+					var contact_id = o.contact_id;
+					var cobuyer_id = o.cobuyer_contact_id;
+					var commStructure = o.CommStructure;
+					var ProductsArray = o.ProductsArray;
+					var AccessoriesArray = o.AccessoriesArray;
+					var PaymentArray = o.PaymentArray;
+					var dateCompleted = o.DateCompleted;
+					var RolesArray = o.dealerArray;
+					if (dateCompleted != null)
+					{
+						var _date = dateCompleted.split(" ")[0];
+						_date = replaceAll(_date, "-", "/");
+						var myDate = new Date(_date);
+						var month = myDate.getMonth() + 1;
+						var prettyDate = month + '/' + myDate.getDate() + '/' + myDate.getFullYear();
+						$('#tbDateCompleted').val(prettyDate);
+					}
+
+					$('#hOrderId').val(order_id);
+					$('#ddlOrderStatuses').val(order_status);
+
+					if ($('#h_contact_id').val() == "Not Yet Set" && contact_id != "0")
+						$('#h_contact_id').val(contact_id);
+
+					if ($('#h_cobuyer_contact_id').val() == "Not Yet Set" && cobuyer_id != "0")						
+						$('#h_cobuyer_contact_id').val(cobuyer_id);
+					$('#tbSalePrice').val(amount);
+					$('#hCommissionArray').val(commStructure);
+					$('#hProductArray').val(ProductsArray);
+					$('#hAccessoryArray').val(AccessoriesArray);
+					$('#hPaymentArray').val(PaymentArray);
+					$('#hRolesArray').val(RolesArray);
+					
+//						updateSalesTax();
+					if ($('#hCommissionArray').val() != null)
+					{
+						updateForm();
+						updateSalesTax();
+						buildDefaultCommTable(false);
+						BindProductTable();
+					}
+				}
+			}
+		});
+	}
+}
+
+
+function getCurrentOrderStatus()
+{
+	return $('#ddlOrderStatuses').val();
+}
 
 -->
 </SCRIPT>

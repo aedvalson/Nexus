@@ -48,3 +48,7 @@ UPDATE  `permission_roles` SET  `roleid` =  'RO' WHERE  `permission_roles`.`id` 
 UPDATE  `permission_roles` SET  `roleid` =  'U' WHERE  `permission_roles`.`id` =2;
 UPDATE  `permission_roles` SET  `roleid` =  'SU' WHERE  `permission_roles`.`id` =3;
 UPDATE  `permission_roles` SET  `roleid` =  'A' WHERE  `permission_roles`.`id` =4;
+
+-- Done to here
+
+ALTER TABLE  `inventory` ADD  `dtoffice` VARCHAR( 64 ) NOT NULL AFTER  `storagelocation_id` 

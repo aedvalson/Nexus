@@ -7,10 +7,20 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 <? 
 
 $DB = new conn();
-
+	$DB->connect();
+$active_user = getLoggedUser($DB);
 ?>
 
+<SCRIPT TYPE="text/javascript">	
+	var locations = <?= json_encode($locations) ?>;
+	<?
+		if ($AgencyParams["EnableDTOffices"])
+		{
+		?> var DTOffices = <?= json_encode($AgencyParams["DTOffices"]); ?>; <?
+		}
+	?>
 
+</SCRIPT>
 
 
 <div class="navMenu">
@@ -61,7 +71,7 @@ $DB = new conn();
 
 
 	<?
-	$DB->connect();
+
 	$sql = <<<SQLEND
 			select inventory.inventory_id, inventory.product_id, inventory.invoice, products.product_model, products.product_name, inventory.serial, inventory.status, inventory.storagelocation_id, sl.storagelocation_name as slname, inventory_status.status_name
 			from inventory
@@ -366,6 +376,7 @@ SQLEND;
 					for (r in args.output)
 					{
 						_r = args.output[r];
+
 						var sellersText = "";
 						if (_r.CommStructure != '')
 							{

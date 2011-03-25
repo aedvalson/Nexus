@@ -153,7 +153,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		if (is_numeric($order_id))
 		{
 			$query2 = 'UPDATE orders SET order_status_id = ' . $orderStatus . ', contact_id = ' . $customer_id . ', cobuyer_contact_id = ' . $cobuyer_id . ',  tax=' . $tax . ', amount = ' . $amount . ', CommStructure = \'' . $CommStructureString . '\', ProductsArray = \'' . $ProductsString . '\', AccessoriesArray = \'' . $AccessoriesString . '\', PaymentArray = \'' . $PaymentString . '\', dealerArray = \'' . json_encode($dealerArrayObject) . '\' WHERE order_id = ' . $order_id;
-			$firephp->log($query2);
 
 			$DB->execute_nonquery($query2);
 			$output = $order_id;
@@ -162,7 +161,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		else
 		{
 			$query1 = 'insert into orders (order_status_id, contact_id, cobuyer_contact_id, amount, CommStructure, ProductsArray, AccessoriesArray, PaymentArray, AddedBy, dealerArray, tax) VALUES (' . $orderStatus . ', \'' . $customer_id . '\', \'' . $cobuyer_id . '\', ' . $amount . ', \'' . $CommStructureString . '\', \'' . $ProductsString . '\', \'' . $AccessoriesString . '\', \'' . $PaymentString . '\', ' . $user_id . ', \'' . $dealerArray . '\', ' . $tax . ')';
-			$firephp->log($query1);
 			$output = $DB->insert($query1);
 			$order_id = $output;
 		}
@@ -176,7 +174,6 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		$storagelocation_id = $row["storagelocation_id"];
 		$storagelocation_name = $row["storagelocation_name"];
 
-		$firephp->log("NEWSTATUS: " . $newStatus);
 
 		// Update inventory status for items in order.
 		if ($prodArray)
@@ -184,19 +181,22 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 			if ($newStatus == 1)  // Free up inventory - sale is cancelled
 			{
 				// Reset all inventory that is contained in this product to default locationa
-				$sql = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE (status = 4 or status = 5) AND status_data = " . $order_id;
-				$firephp->log("RESETTING INVENTORY");
-				$firephp->log($sql);
-				$DB->execute_nonquery($sql);
+				$sql_update = "update inventory set status = 1, status_data = " . $storagelocation_id . " , status_data_text = '" . $storagelocation_name . "' WHERE (status = 4 or status = 5) AND status_data = " . $order_id;
+				$firephp->log($sql_update);
+				$DB->execute_nonquery($sql_update);
+
+				$sql_update = "update orders set ProductsArray = '[]' where order_id = $order_id";
+				$firephp->log($sql_update);
+				$DB->execute_nonquery($sql_update);
 			}
 
 			else  // Inventory stays in sale. update it.
 			{
 				foreach ($prodArray as $product)
 				{
-						$serial = $product['Serial'];
-						$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
-						$DB->execute_nonquery($sql);
+					$serial = $product['Serial'];
+					$sql = "UPDATE inventory set status = " . $newStatus . ", status_data = " . $order_id . ", status_data_text = " . $order_id . " WHERE serial = " . $serial;
+					$DB->execute_nonquery($sql);
 				}
 			}
 		}
@@ -204,12 +204,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/class_inc.php";
 		// Update CompletedDate for order if set
 		if ($date && $orderStatus == 5) $sql = "UPDATE orders SET DateCompleted = '".$date."' WHERE order_id = " . $order_id;
 		else $sql = "UPDATE orders SET DateCompleted = null WHERE order_id = " . $order_id;
-		$firephp->log($sql);
 		$DB->execute_nonquery($sql);
-		
-		{
-
-		}
 	}
 
 
@@ -479,30 +474,40 @@ SQLEND;
 		$statusdate = $DB->sanitize($_REQUEST["date"]);
 		$receivedDate = $DB->sanitize($_REQUEST["receivedDate"]);
 		$statusdatatext = '';
+		$sqlparam = "";
 
 		if ($status == 1)
 		{
 			$sql = "select storagelocation_name from storagelocations where storagelocation_id = " .$statusdata;
 			$statusdatatext = $DB->query_scalar($sql);
+			$sqlparam = ", storagelocation_id = " . $statusdata;
 
 		}
-		elseif ($status == "2" || $status == "3")
+		elseif ($status == "2") #checked out
 		{
 			$sql = "select username from users where user_id = " . $statusdata;
 			$statusdatatext = $DB->query_scalar($sql);
 
 		}
+		elseif ($status == "3") #transferred
+		{
+			$sql = "UPDATE inventory set dtoffice = $statusdata where inventory_id = $inventory_id";
+			$DB->execute_nonquery($sql);
+		}
 		else
 		{
 			$statusdatatext = '';
 		}
+		
+		if ($status != "3")
+		{
+			$sql = "UPDATE inventory SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y'), DateReceived = STR_TO_DATE('".$receivedDate."', '%m/%d/%Y')" . $sqlparam . " WHERE inventory_id = ".$inventory_id;
 
-		$sql = "UPDATE inventory SET status = $status, status_data = $statusdata, status_data_text = '" . $statusdatatext . "', status_date =  STR_TO_DATE('".$statusdate."', '%m/%d/%Y'), DateReceived = STR_TO_DATE('".$receivedDate."', '%m/%d/%Y') WHERE inventory_id = ".$inventory_id;
+			$DB->execute_nonquery($sql);
+			$error = $sql;
+		}
 
-		$DB->execute_nonquery($sql);
-		$error = $sql;
-
-		$sql = "select inventory.*, inventory_status.status_name, inventory_status.preposition from inventory join inventory_status on inventory.status = inventory_status.status_id  where inventory_id = " . $inventory_id;
+		$sql = "select inventory.*, inventory_status.status_name, inventory_status.preposition from inventory join inventory_status on inventory.status = inventory_status.status_id, inventory.dtoffice  where inventory_id = " . $inventory_id;
 		$result = mysql_query($sql);
 		while ($row = mysql_fetch_assoc($result))
 		{
@@ -1311,6 +1316,7 @@ SQLEND;
 		if (!UserMay("Admin_EditComm")) { AccessDenied(); }		
 		$DB = new conn();
 		$DB->connect();
+		$user = getLoggedUser($DB);
 
 		if (isset($_REQUEST["maximum"]))
 			$max = $DB->sanitize($_REQUEST["maximum"]);
@@ -1337,6 +1343,7 @@ SQLEND;
 		if (!UserMay("ViewOrder")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
+		$user = getLoggedUser($DB);
 		$sql = <<<SQLEND
 			select orders.*, order_status.order_status_name as order_status,
 				users.username, users.FirstName, users.LastName, contacts.contact_DisplayName
@@ -1502,12 +1509,38 @@ SQLEND;
 
 		$result = mysql_query($sql);
 	
-		$firephp->log($sql);
+#		$firephp->log($sql);
 		if ($result) {
 			while ($row = mysql_fetch_assoc($result))
 			{
-				$retArray[] = $row;
-				
+				# Get approved DT's
+				$_ProductsString = $row["ProductsArray"];
+				$products = json_decode($_ProductsString, true);
+				$dts = array();
+				if ($products["products"])
+				{
+					foreach ($products["products"] as $product)
+					{
+						$_sql = "select dtoffice from inventory where Serial = " . $product["Serial"];
+						$_result = mysql_query($_sql);
+						while ($_row = mysql_fetch_assoc($_result))
+						{
+							$dt = $_row["dtoffice"];
+							if (!in_array($dt, $dts))
+							{
+								$dts[] = $dt;
+							}
+						}
+					}
+				}
+				$row["dts"] = $dts;
+				#see if user can see this
+
+				if ($user["dtoffice"] == "" || $user["dtoffice"] == "_" || in_array($user["dtoffice"], $dts))
+				{
+					$retArray[] = $row;
+				}
+			
 			}
 		}
 
@@ -1524,10 +1557,10 @@ SQLEND;
 		if (!UserMay("ViewInventory")) { AccessDenied(); }
 		$DB = new conn();
 		$DB->connect();
-
+		$user = getLoggedUser($DB);
 
 		$sql = <<<SQLEND
-			select inventory.inventory_id, inventory.product_id, inventory.invoice, products.product_model, products.product_name, inventory.serial, inventory.status, inventory.status_date, inventory.status_data, inventory.storagelocation_id, sl.storagelocation_name as slname, inventory_status.status_name, inventory_status.preposition, inventory.status_data_text, inventory.DateAdded, inventory.DateReceived, users.username AS AddedByName
+			select inventory.inventory_id, inventory.product_id, inventory.invoice, inventory.dtoffice, products.product_model, products.product_name, inventory.serial, inventory.status, inventory.status_date, inventory.status_data, inventory.storagelocation_id, sl.storagelocation_name as slname, inventory_status.status_name, inventory_status.preposition, inventory.status_data_text, inventory.DateAdded, inventory.DateReceived, users.username AS AddedByName
 			from inventory
 			join products on inventory.product_id = products.product_id
 			join storagelocations sl on inventory.storagelocation_id = sl.storagelocation_id
@@ -1597,7 +1630,14 @@ SQLEND;
 		
 		while ($row = mysql_fetch_assoc($result))
 		{
-			$retArray[] = $row;
+			#see if user can see this
+
+			if ($user["dtoffice"] == "" || $user["dtoffice"] == "_" || $user["dtoffice"] == $row["dtoffice"])
+			{
+				$retArray[] = $row;
+			}
+
+#			$retArray[] = $row;
 			$output = $retArray;
 		}
 		$DB->close();

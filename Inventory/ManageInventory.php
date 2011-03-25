@@ -1,14 +1,18 @@
 <? 
 include "./findconfig.php";
-include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" 
+include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php";
+
+
 ?>
 
 
 <? 
-
 $DB = new conn();
 $DB->connect();
+$user = getLoggedUser($DB);
 $locations = getStorageLocationsHash($DB);
+
+$firephp->log($user);
 ?>
 <SCRIPT TYPE="text/javascript">	
 	var locations = <?= json_encode($locations) ?>;
@@ -453,6 +457,14 @@ SQLEND;
 					{
 						_r = args.output[r];
 						var rowdata = _r.status_data;
+
+						var DTText = "";
+						if (typeof(DTOffices) !== 'undefined')
+						{
+							DTText = _r.dtoffice ? " <br/><b>(" + DTOffices[_r.dtoffice] + ")</b>" : "";
+//							console.log( _r.dtoffice + " - " + <?= $user["dtoffice"] ?>);
+						}
+
 						if (_r.status_name == "Sale Pending" || _r.status_name == "Sold")
 						{
 							rowdata = "Order <a href=\"/<?= $ROOTPATH ?>/Sales/NewSale.php?order_id=" + _r.status_data + "\" style=\"color: #CC0000;\">#" + _r.status_data + "</a>";
@@ -466,10 +478,9 @@ SQLEND;
 							rowdata = locations[_r.status_data].storagelocation_name;
 						}
 
-
 						_r.DateReceived = (_r.DateReceived.match(/^0000/g)) ? "" : prettyDate(_r.DateReceived);
 
-						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+" - "+_r.product_model+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + _r.DateReceived + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + _r.DateReceived + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
+						var newTR = $('<tr class="row'+row+'" id="row_' + _r.inventory_id + '"><td><div class="selected" style="display:none" id="commandDivSelected_' + _r.inventory_id + '"><a href="#" id="btnSave_' + _r.inventory_id + '" class="btnSave">' + saveLinkContent() + '</a><br><a href="#" class="cancelLink">' + cancelLinkContent() + '</a></div><div class="unselected" id="commandDiv_' + _r.inventory_id + '"><a href="#" id="editLink_' + _r.inventory_id + '" class="editLink" >' + editLinkContent() + '</a><br></div> </td><td><div class="view"><span>'+_r.product_name+" - "+_r.product_model+DTText+'</span></div></td><td><div class="view"><span>'+_r.invoice+'</span></div></td><td><div class="view"><span>'+_r.serial+'</span></div></td><td><div class="view"><span>' + getPrettyDate(_r.DateAdded) + '<br>by: ' + _r.AddedByName + '</span></div></td><td><div id="view_dateReceived_' + _r.inventory_id + '" class="view"><span>' + _r.DateReceived + '</span></div><div class="maskEdit" id="edit_dateReceived_' + _r.inventory_id + '"><input class="datepicker" id="dateReceived_'+_r.inventory_id + '" value="' + _r.DateReceived + '"></input></td><td class="maskContainer"><div id="view_status_' + _r.inventory_id + '" class="view"><span id="currentStatusName_' + _r.inventory_id + '">' + _r.status_name + '</span><br> <span id="currentStatusPreposition_' + _r.inventory_id + '">' +  _r.preposition + ':</span>  <span id="currentDataText_' + _r.inventory_id + '"> '+ rowdata +'</span><span style="display:none" id="currentStatusData_' + _r.inventory_id + '">'+ _r.status_data + '</span><br> on: <span id="current_date_' + _r.inventory_id + '">'+ prettyDate(_r.status_date) +'</span></div><div id="edit_status_' + _r.inventory_id + '" class="maskEdit"><span style="display:none;" id="currentStatus_' + _r.inventory_id + '">' + _r.status + '</span><SELECT id="ddlStatus_' + _r.inventory_id + '" style="width:90%;"><?
 						$products = $DB->getInventoryStatuses();
 						foreach ($products as $prod)
 						{

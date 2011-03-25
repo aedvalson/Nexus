@@ -244,20 +244,26 @@ class FormElements
 
 	function ddlDTOffices( $name="dtoffice", $labeltext="DT Office", $css="", $DTOffices, $user )
 	{
+		$nonselected = (!$user["dtoffice"] || $user["dtoffice"] == "_") ? "selected" : "";
 		?>
 		 <li class="validated" style="<?=$css?>" id="ddl<?= $name ?>_li">
 			  <label for="r_ddl<?= $name ?>"><?= $labeltext ?>:</label>
 			  <div id="ddl<?= $name ?>_img"></div>
 				<select class="validated" name="<?= $name ?>" id="ddl<?= $name ?>" >
+					<option value="_" <?= $nonselected ?> ></option>
 					<?
+					$i = 0;
 					foreach ($DTOffices as $DTOffice)
 						{
 						$selected = "";
-						if ($DTOffice == $user["dtoffice"])
+						
+						if (strcmp($i, $user["dtoffice"]) == 0)
 							{
+							echo $i . "is" . $user["dtoffice"];
 							$selected = "selected='selected'";
 							}
-						print "<option value='" . $DTOffice . "' " . $selected . ">" . $DTOffice . "</option>";
+						print "<option value='" . $i . "' " . $selected . ">" . $DTOffice . "</option>";
+						$i++;
 						}
 						?>
 				</select>	
@@ -368,7 +374,7 @@ class FormElements
           </li>
 			<?  if ($selected) { ?>
 		  <SCRIPT type="text/javascript">
-			$('#ddl<?=$id?>').val("<?= $selected ?>");
+			$('#ddlPermissionRole').val("<?= $selected ?>");
 		  </SCRIPT>
 			<? } ?>
 		<?

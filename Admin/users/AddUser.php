@@ -71,7 +71,9 @@ $dummytext = "";
 			$ContactPhone = $DB->sanitize($_REQUEST["ContactPhone"]);
 			$ContactCell = $DB->sanitize($_REQUEST["ContactCell"]);
 			$dtoffice = "";
-			if ($_REQUEST["dtoffice"]) {
+			$firephp->log($_REQUEST["dtoffice"]);
+			if (isset($_REQUEST["dtoffice"])) {
+				$firephp->log("DT Set");
 				$dtoffice = $DB->sanitize($_REQUEST["dtoffice"]);
 			}
 
@@ -92,9 +94,17 @@ $dummytext = "";
 
 				$sql = "UPDATE users SET FirstName = '" . $FirstName . "', LastName = '" . $LastName . "', permission_role = '" . $Role . "', team_id = '" . $Team . "', License = '" . $License . "', Social = '" . $Social . "', BirthDate = '" . $BirthDate . "', Address = '" . $Address1 . "', Address2 = '" . $Address2 . "', HomeType = '" . $HomeType . "', City = '" . $City . "', State = '" . $State . "', ZipCode = '" . $ZipCode . "', Phone = '" . $Phone . "', Cell = '" . $Cell . "', ContactFirstName = '" . $ContactFirstName . "', ContactLastName = '" . $ContactLastName . "', ContactAddress = '" . $ContactAddress1 . "', ContactAddress2 = '" . $ContactAddress2 . "', ContactCity = '" . $ContactCity . "', ContactState = '" . $ContactState . "', ContactZipCode = '" . $ContactZipCode . "', ContactPhone = '" . $ContactPhone . "', ContactCell = '" . $ContactCell . "', dtoffice = '" . $dtoffice . "' WHERE user_id = " . $user_id;
 
-				$firephp->log($sql);
 				$DB->execute_nonquery($sql);
 				$DB->addHistory( 'users', $_SESSION["user_id"],  "update", "" );
+
+
+				if ($Password && $Password != "dummytext")
+				{
+					$sql = "UPDATE users SET user_password = MD5('".$Password."') WHERE user_id = " . $user_id;
+
+					$DB->execute_nonquery($sql);
+					$DB->addHistory( 'users', $_SESSION["user_id"],  "update", "" );						
+				}
 
 				header("Location: ManageUsers.php");
 			}

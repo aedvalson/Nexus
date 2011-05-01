@@ -1,0 +1,30 @@
+#####################################################
+#
+# Nexus Right File
+#
+# PermissionName     Role  Role  Role  Role
+#
+#####################################################
+
+Admin                            SU    A
+Admin_ViewUsers                  SU    A
+Admin_EditUsers                        A
+Admin_ViewTeams                  SU    A
+Admin_EditTeams                        A
+Admin_ViewProducts               SU    A
+Admin_EditProducts                     A
+Admin_ViewStorage                SU    A
+Admin_EditStorage                      A
+Admin_ViewFinance                SU    A
+Admin_EditFinance                      A
+Admin_ViewComm                   SU    A
+Admin_EditComm                         A
+Admin_ViewTax                    SU    A
+Admin_EditTax                          A
+
+EditInventory                    SU    A
+PDFReports                       SU    A
+ViewContacts               U     SU    A
+ViewInventory        RO    U     SU    A
+ViewOrder            RO    U     SU    A
+ViewUsers                              A

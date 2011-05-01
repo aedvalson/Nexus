@@ -958,13 +958,14 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 		if ($('#hAccessoryArray').val() != "")
 		{
 			var text = '';
+			var $equipmentDiv = $('#equipmentDiv');
 			if (append == true)
 			{
 				text = $equipmentDiv.html();
 			}
 			var theObject = JSON.parse($('#hAccessoryArray').val());
 			text = text + "<h3 class=\"tableHeadline\">Accessories</h3><table class=\"data\"><tr><th>Product_ID</th><th>Product Name</th><th>Quantity</th><th>Commands</th></tr>";
-			var $equipmentDiv = $('#equipmentDiv');
+
 			var row = 0;
 			for (var i in theObject.products)
 			{
@@ -1932,6 +1933,7 @@ include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php"
 	});
 	var $addPaymentForm = $('#formCheckOptions, #formCreditOptions, #formCashOptions, #formFinanceOptions');
 	$addPaymentForm.submit( function() {
+
 		var $paymentArrayHiddenField = $('#hPaymentArray');
 
 		if (validateForm(this) == true)

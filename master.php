@@ -4,7 +4,7 @@
 
 <html>
  <head>
-  <title> Nexus </title>
+  <title> Executive Suite </title>
   
 <? $time = time(); ?>
 	<link rel="StyleSheet" type="text/css" href="/<?= $ROOTPATH ?>/CSS/main.css.php">
@@ -65,11 +65,11 @@ echo $pagemaincontent;
 <div id="divFooter">
 	<div style="z-index: 2; position:absolute; top:5px; background-color: #7690bf; height: 20px;width:100%"></div>
 	<div id="divFooterContent">
-		<div style="vertical-align:top; text-align:center; height:1em;">About Us | Contact Us | Features Request</div>
+		<div style="vertical-align:top; text-align:center; height:1em;">About Us | <a href="mailto:esuite@republictech.net">Contact Us</a> | <a href="mailto:esuite@republictech.net">Feature Request</a></div>
 
 		<div style="position: absolute; bottom:2px; width:100%; text-align:center;">
-		&copy; 2009 Republic Technologies Corporation. All Rights Reserved. <br>
-		Version 0.0.1
+		&copy; 2011 Republic Technologies Corporation. All Rights Reserved. <br>
+		Version 1.0.0
 		</div>
 		
 	</div>

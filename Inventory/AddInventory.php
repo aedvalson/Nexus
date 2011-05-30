@@ -66,8 +66,8 @@ $DB->close();
 ?>
 <form name="theForm" method="post" action="<? echo $_SERVER['PHP_SELF']; ?>">
 <div class="navMenu" id="navMenu">
+	<div class="navHeaderdiv"><h1>Inventory</h1></div>
 	<div id="bullets">
-		<div class="navHeaderdiv"><h1>Inventory</h1></div>
 		<div class="navBulletBorderTop"></div>
 		<div class="navBullet navBulletSelected" id="custBullet"><a href="#" id="custBulletLink">Add Inventory</a></div>
 		<div class="navBulletBorderBottom"></div>
@@ -183,14 +183,14 @@ $DB->close();
 		</ul>
 
 	</div>
-	<div class="spacer">
+	<div class="spacer"></div>
 
 
 </div>
 </div>
 </div>
 </form>
-
+<div class="spacer"></div>
 <script type="text/javascript">
 	$('document').ready( function() { fixHeight(); });
 	$('#tbAmtToAdd').change(function() {

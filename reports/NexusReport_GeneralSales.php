@@ -401,7 +401,7 @@ foreach ($days as $_day)
 
 <div class="reportContainer">
 	<div class="reportHeader">
-		<h1>General Sales Report Report</h1>
+		<h1>General Sales Report</h1>
 		<h2><?= date("m/d/Y", strtotime ( $params["startDate"] )) ?> to <?= date("m/d/Y", strtotime ( $params["endDate"] )) ?></h2>
 		<h2><?= $AgencyParams["AgencyName"] ?></h2>
 	</div>

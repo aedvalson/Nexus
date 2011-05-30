@@ -1474,7 +1474,7 @@ SQLEND;
 			{
 				if ($and) $sql = $sql . " AND ";
 				else $sql = $sql . " WHERE ";
-				$sql = $sql . "CommStructure LIKE '%\"user_id\":\"".$sellers."\"%'";
+				$sql = $sql . "CommStructure LIKE '%\"user\":\"".$sellers."\"%'";
 				$and = true;
 			}
 		}
@@ -1504,12 +1504,11 @@ SQLEND;
 		}
 
 
-		
+		$firephp->log($sql);
 
 
 		$result = mysql_query($sql);
 	
-#		$firephp->log($sql);
 		if ($result) {
 			while ($row = mysql_fetch_assoc($result))
 			{

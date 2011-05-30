@@ -3,7 +3,7 @@ include "./findconfig.php";
 include $_SERVER['DOCUMENT_ROOT']."/".$ROOTPATH."/Includes/Top.php" ?>
 
 <div style="width: 80%; margin: 2em auto;">
-<p class="content">Welcome to the Executive Suite Program.  We at Republic Technologies are pleased to offer you an exclusive sneak peek into what we have worked so hard to develop over the past 18 months.  I would like to take this time to offer you a brief introduction into what you will find in this great new tool for your office!  Please feel free to contact us at support@esuite.republictech.net with any questions you may have.</p>
+<p class="content">Welcome to the Executive Suite Program.  We at Republic Technologies are pleased to offer you an exclusive sneak peek into what we have worked so hard to develop over the past 18 months.  I would like to take this time to offer you a brief introduction into what you will find in this great new tool for your office!  Please feel free to contact us at <a href="mailto:esuite@republictech.net">esuite@republictech.net</a> with any questions you may have.</p>
 
 <h2 class="subheader">Inventory Management</h2>
 <p class="content">This advanced inventory tracking system features customizable product and accessory types with variable inventory status options.   As a inventory item is sold, the status of the item will automatically change from checked in to sold.  In addition, this section features a fully functional search and filtration system to easily locate information on any inventory item that you need.</p>

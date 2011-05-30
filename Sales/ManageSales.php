@@ -200,7 +200,7 @@ SQLEND;
 	                  	}
 	                  	else
 	                  	{
-	                         alert("Ajax failed.");
+//	                         alert("Ajax failed.");
 	                  	}
 	                  });
 					$("#hv_id").val(inventory_id);
@@ -230,7 +230,7 @@ SQLEND;
 	$('input[id^=tbDate]').change(function() {
 		var newVal = $(this).val();
 		$('input[id^=tbDate], #tbStartDateV, #tbEndDateV').each( function () {
-			alert(this.id);
+//			alert(this.id);
 			$(this).val(newVal);
 		});
 		createFilters();
@@ -494,7 +494,7 @@ SQLEND;
 			}
 			else
 			{
-				 alert("Ajax failed.");
+//				 alert("Ajax failed.");
 			}
 		  });
 	}

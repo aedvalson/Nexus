@@ -1,6 +1,6 @@
 -- MySQL dump 10.11
 --
--- Host: localhost    Database: NexusDemo
+-- Host: localhost    Database: NexusDev
 -- ------------------------------------------------------
 -- Server version	5.0.51a-24+lenny3
 
@@ -56,7 +56,7 @@ CREATE TABLE `admin_history` (
   `action_name` varchar(128) collate utf8_unicode_ci NOT NULL,
   `value` varchar(128) collate utf8_unicode_ci NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -65,7 +65,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `admin_history` WRITE;
 /*!40000 ALTER TABLE `admin_history` DISABLE KEYS */;
-INSERT INTO `admin_history` VALUES (1,'2010-08-14 13:18:59',11,'teams','insert',''),(2,'2010-08-14 13:19:30',11,'products','insert',''),(3,'2010-08-14 13:23:23',11,'users','update','5'),(4,'2010-08-14 13:24:00',11,'users','update','5'),(5,'2010-08-14 13:25:55',11,'products','insert',''),(6,'2010-08-14 13:39:28',11,'users','update','admin');
+INSERT INTO `admin_history` VALUES (1,'2011-05-30 19:38:13',11,'teams','insert',''),(2,'2011-05-30 19:38:32',11,'users','update','admin'),(3,'2011-05-30 19:39:13',11,'products','insert',''),(4,'2011-05-30 19:39:31',11,'storagelocations','insert',''),(5,'2011-05-30 19:40:30',11,'users','insert','');
 /*!40000 ALTER TABLE `admin_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,7 +87,7 @@ CREATE TABLE `commission_templates` (
   `quantity` varchar(100) collate utf8_unicode_ci NOT NULL,
   `amount` decimal(8,3) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -96,7 +96,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `commission_templates` WRITE;
 /*!40000 ALTER TABLE `commission_templates` DISABLE KEYS */;
-INSERT INTO `commission_templates` VALUES (1,'Corporate 1000 Split','{\"dealers\":[]}',1000,1e+06,'corporate','flat','','1000.000'),(7,'Dealer / Canvasser 50/50 Split','{\"dealers\":[{\"role\":\"Dealer\"},{\"role\":\"Canvasser\"}]}',1000,1e+07,'employee','remaining','','0.000');
+INSERT INTO `commission_templates` VALUES (2,'1000 Split - Dealer Remaining','{\"dealers\":[{\"role\":\"Dealer\"}]}',1000,999999,'employee','remaining','','0.000'),(3,'1000 Split - Corporate 1000','{\"dealers\":[]}',1000,999999,'corporate','flat','','1000.000');
 /*!40000 ALTER TABLE `commission_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `contacts` (
   `contact_license` varchar(200) collate ascii_bin NOT NULL,
   `contact_license_state` varchar(32) collate ascii_bin NOT NULL,
   PRIMARY KEY  (`contact_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -170,7 +170,6 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `contacts` WRITE;
 /*!40000 ALTER TABLE `contacts` DISABLE KEYS */;
-INSERT INTO `contacts` VALUES (1,'Sample','Customer','Sample Customer','sample@sample.com','1231231234','','123 ASD St.','','Gainesville','FL','32641','United States','','','','FL','','United States','','',2,'Alachua','House','Own',0,'','FL');
 /*!40000 ALTER TABLE `contacts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -200,6 +199,30 @@ INSERT INTO `dealer_roles` VALUES (1,'Factory Distributor','FD'),(2,'Distributor
 UNLOCK TABLES;
 
 --
+-- Table structure for table `dtoffices`
+--
+
+DROP TABLE IF EXISTS `dtoffices`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `dtoffices` (
+  `dtoffice` varchar(120) NOT NULL,
+  `master` int(4) NOT NULL,
+  PRIMARY KEY  (`dtoffice`),
+  KEY `master` (`master`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Dumping data for table `dtoffices`
+--
+
+LOCK TABLES `dtoffices` WRITE;
+/*!40000 ALTER TABLE `dtoffices` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dtoffices` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `finance_options`
 --
 
@@ -220,7 +243,7 @@ CREATE TABLE `finance_options` (
   `LoanOptions` varchar(4096) character set utf8 NOT NULL,
   `Reserve` decimal(6,3) NOT NULL default '0.000',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -229,7 +252,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `finance_options` WRITE;
 /*!40000 ALTER TABLE `finance_options` DISABLE KEYS */;
-INSERT INTO `finance_options` VALUES (5,'Some Financing Company','12529 O\'mally St. Suite 11092','Boston','MA','15225','Conan O\'Brien','(123) 123-1234','32','CoB@SomeFinancing.com','{\"loanOptions\":[{\"Index\":1,\"optionName\":\"10% Reserve\",\"displayOrder\":\"2\",\"reserve\":\"10\"},{\"Index\":1,\"optionName\":\"No Reserve\",\"displayOrder\":\"1\",\"reserve\":\"0\"},{\"Index\":2,\"optionName\":\"20% Reserve\",\"displayOrder\":\"3\",\"reserve\":\"20\"},{\"Index\":3,\"optionName\":\"30% Reserve\",\"displayOrder\":\"4\",\"reserve\":\"30\"}]}','0.000');
+INSERT INTO `finance_options` VALUES (1,'Default Finance Option','123 Asd Street.','Gainesville','FL','32641','John Smith','123-123-1234','123','jon@smith.org','{\"loanOptions\":[{\"Index\":0,\"optionName\":\"Default Rate\",\"displayOrder\":\"1\",\"reserve\":\"10\"}]}','0.000');
 /*!40000 ALTER TABLE `finance_options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -244,6 +267,7 @@ CREATE TABLE `inventory` (
   `inventory_id` int(4) NOT NULL auto_increment,
   `product_id` int(4) NOT NULL,
   `storagelocation_id` int(4) NOT NULL,
+  `dtoffice` varchar(64) collate ascii_bin NOT NULL,
   `invoice` varchar(20) collate ascii_bin NOT NULL,
   `serial` varchar(50) collate ascii_bin NOT NULL,
   `status` int(4) NOT NULL default '1',
@@ -263,7 +287,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `inventory` WRITE;
 /*!40000 ALTER TABLE `inventory` DISABLE KEYS */;
-INSERT INTO `inventory` VALUES (1,1,1,'12345','12345',5,1,'1','2010-08-14 04:00:00',11,'2010-08-14 13:38:18','2010-08-01 04:00:00'),(2,1,1,'12345','12346',1,1,'Default Location','2010-08-14 04:00:00',11,'2010-08-14 13:36:14','2010-08-01 04:00:00'),(3,1,1,'12345','12347',1,1,'Default Location','2010-08-14 04:00:00',11,'2010-08-14 13:36:14','2010-08-01 04:00:00');
+INSERT INTO `inventory` VALUES (1,8,10,'','1','1',1,10,'Default Location','2011-05-30 04:00:00',11,'2011-05-30 19:46:36','2011-05-01 04:00:00'),(2,8,10,'','1','2',1,10,'Default Location','2011-05-30 04:00:00',11,'2011-05-30 19:46:36','2011-05-01 04:00:00'),(3,8,10,'','1','3',1,10,'Default Location','2011-05-30 04:00:00',11,'2011-05-30 19:46:36','2011-05-01 04:00:00');
 /*!40000 ALTER TABLE `inventory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -419,7 +443,7 @@ CREATE TABLE `orders` (
   `DateAdded` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `DateCompleted` timestamp NULL default NULL,
   PRIMARY KEY  (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -428,7 +452,6 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,5,1800.00,117.000,1,0,'{\"roles\":[{\"Index\":0,\"user\":\"11\",\"userText\":\"admin\",\"role\":\"8\",\"roleText\":\"Dealer\",\"displayName\":\"Admin SuperAdmin\"}]}','{\"elements\":[{\"Index\":0,\"dealers\":[],\"payeeType\":\"corporate\",\"paymentType\":\"flat\",\"flatAmount\":\"1000.000\"},{\"Index\":1,\"dealers\":[{\"Index\":0,\"user\":\"11\",\"userText\":\"admin\",\"role\":\"8\",\"roleText\":\"Dealer\"}],\"payeeType\":\"employee\",\"paymentType\":\"remaining\"}]}','{\"products\":[{\"Index\":0,\"Product_ID\":\"1\",\"Serial\":\"12345\",\"Name\":\"Default Product\",\"quantity\":1}]}','{\"products\":[{\"Index\":0,\"Product_ID\":\"2\",\"Serial\":\"\",\"Name\":\"Sample Accessory\",\"quantity\":\"2\"}]}','{\"paymentMethods\":[{\"Index\":0,\"paymentType\":\"finance\",\"amount\":\"$1,917.00\",\"financeCompany\":\"Some Financing Company\",\"financeOption\":\"5\",\"loanOption\":\"10% Reserve\",\"reserveRate\":\"10\"}]}',11,'2010-08-14 13:24:55','2010-08-14 04:00:00');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -443,6 +466,7 @@ CREATE TABLE `permission_roles` (
   `id` int(4) NOT NULL auto_increment,
   `name` varchar(50) collate utf8_unicode_ci NOT NULL,
   `permission` int(8) NOT NULL,
+  `roleid` varchar(8) character set ucs2 NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
@@ -453,7 +477,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `permission_roles` WRITE;
 /*!40000 ALTER TABLE `permission_roles` DISABLE KEYS */;
-INSERT INTO `permission_roles` VALUES (1,'Read Only',1),(2,'User',10),(3,'Super User',100),(4,'Admin',1000);
+INSERT INTO `permission_roles` VALUES (1,'Read Only',1,'RO'),(2,'User',10,'U'),(3,'Super User',100,'SU'),(4,'Admin',1000,'A');
 /*!40000 ALTER TABLE `permission_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -472,7 +496,7 @@ CREATE TABLE `products` (
   `product_description` varchar(1000) collate ascii_bin default NULL,
   `status` varchar(50) collate ascii_bin NOT NULL default 'Active',
   PRIMARY KEY  (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -481,7 +505,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Product','Default Product','abc123','This is a Sample Product. Add your own products in the Admin Section','Active'),(2,'Accessory','Sample Accessory','acc123','Sample Accessory','Active');
+INSERT INTO `products` VALUES (8,'Product','Default Product','DP_001','Default Product.','Active');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -506,7 +530,6 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `relproducts_accessories` WRITE;
 /*!40000 ALTER TABLE `relproducts_accessories` DISABLE KEYS */;
-INSERT INTO `relproducts_accessories` VALUES (21,1,3),(23,2,3),(24,2,7),(25,5,7),(26,5,4),(27,8,7),(28,8,3);
 /*!40000 ALTER TABLE `relproducts_accessories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -521,7 +544,7 @@ CREATE TABLE `reports` (
   `id` int(4) NOT NULL auto_increment,
   `data` text collate utf8_unicode_ci NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=590 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -545,7 +568,7 @@ CREATE TABLE `storagelocations` (
   `storagelocation_name` varchar(200) collate ascii_bin NOT NULL,
   `description` varchar(250) character set utf8 NOT NULL,
   PRIMARY KEY  (`storagelocation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -554,7 +577,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `storagelocations` WRITE;
 /*!40000 ALTER TABLE `storagelocations` DISABLE KEYS */;
-INSERT INTO `storagelocations` VALUES (1,'Default Location','Default Storage Location');
+INSERT INTO `storagelocations` VALUES (10,'Default Location','Default');
 /*!40000 ALTER TABLE `storagelocations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -572,7 +595,7 @@ CREATE TABLE `teams` (
   `team_leader` int(16) NOT NULL,
   `date_added` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`team_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=ascii COLLATE=ascii_bin;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -581,7 +604,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
-INSERT INTO `teams` VALUES (1,'Default Team','Active',11,'2010-08-14 13:18:59');
+INSERT INTO `teams` VALUES (23,'Default Team','Active',11,'2011-05-30 19:38:13');
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -643,9 +666,10 @@ CREATE TABLE `users` (
   `ContactZipCode` varchar(32) NOT NULL,
   `ContactPhone` varchar(64) NOT NULL,
   `ContactCell` varchar(64) NOT NULL,
+  `dtoffice` varchar(120) NOT NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `username` (`Username`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -654,7 +678,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (11,'admin','4c835f5b332712d2aa2a8f1fc6110dd2',1,'Admin','SuperAdmin','Active',1,'','','0000-00-00','','','','','','','','','','','','','','','','','');
+INSERT INTO `users` VALUES (11,'admin','4c835f5b332712d2aa2a8f1fc6110dd2',23,'Admin','SuperAdmin','Active',4,'','','0000-00-00','','','','','','','','','','','','','','','','','','');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -667,4 +691,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-08-14 13:40:50
+-- Dump completed on 2011-05-30 19:55:27
